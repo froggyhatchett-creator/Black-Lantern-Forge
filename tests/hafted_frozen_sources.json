@@ -1,0 +1,18 @@
+{
+  "note": "SHA-256 of the Step 5A blade-family sources as Step 5A released them (black-lantern-forge-step5a.zip). Step 5B must leave every one byte-identical. The Step 4 generic sources are pinned separately, in arsenal_frozen_sources.json.",
+  "step5a": {
+    "forge/assets/blades.py": "7f272fe3ed5eb2a684122c328e7bc6c20b240fc0437c177d6b8076588a86d281",
+    "forge/blades/__init__.py": "6a85dd9b3ab59ea3df31f5a6042eef7f728235981ae57f1ce34e24c5f2dd8bef",
+    "forge/blades/build.py": "8de379c4c72aa2f4bd028904b3ef24549d5d6e7de1a9c7b9d7e5064fd8d5c759",
+    "forge/blades/curved_sword.py": "5bdc5d83e3389bf60e575bcf4a3b3067d0edbc8def499442e5a40736f2072ed7",
+    "forge/blades/dagger.py": "d9cd428e57afe3ac653f1a275d4af469f2e874b71948904a997b5c64f6ba481b",
+    "forge/blades/draws.py": "86b21e51e1f53a768cb03f3ba323255aeda4d757569157e92254756b89fc2ebd",
+    "forge/blades/great_sword.py": "ca3c761f7c3fc7d5731eef06f483aec97f148695b0461318a52a4f7f71e5f3ce",
+    "forge/blades/lineage.py": "455f97de635a01cca8dd8d92ae039a0cfda4e66ce5f2caad03154707f2dfdf51",
+    "forge/blades/long_sword.py": "eacfcf071aa5317db2e531b356221cc44c51da7ffe749863098e12632ab8f027",
+    "forge/blades/model.py": "73c36586dd4cc8d30eadfc893c3845268d71cca6085ecc0b65c0a4c01d0777ad",
+    "forge/blades/presentation.py": "98c5395747afe67e337d58aca4b7b1c83f80d415158448786c62cc78f1b317ba",
+    "forge/blades/shapes.py": "ebe6b5ca66812346a37a7e54445bcda2c76303f6744f6a66c3ccb2ca21b0a8ec",
+    "forge/render/fit.py": "03595f250f90e02f5be704fec6173b418600e07444e5d21149054a05232ebc78"
+  }
+}

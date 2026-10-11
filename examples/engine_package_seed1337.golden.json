@@ -1,0 +1,90 @@
+{
+  "collision": {
+    "collision_sha256": "4f0616a358c4c24bd4047425f3f838e4515c64a73b3599927088db2b2f93a9a2",
+    "node": "collision_hull",
+    "representation": "convex_hull",
+    "triangles": 94,
+    "vertices": 49
+  },
+  "files": {
+    "asset.glb": {
+      "bytes": 21640,
+      "sha256": "b91900f7a1fc95f3ec6678e3dc8fa875b91bcce115c3231bd14dc5d0e2828bc3"
+    },
+    "manifest.json": {
+      "bytes": 10488,
+      "sha256": "4a4d552e82a2ff2caf9c55420488005240ece4879db1d191ec725a2acffc7aaf"
+    }
+  },
+  "hashes": {
+    "collision_sha256": "4f0616a358c4c24bd4047425f3f838e4515c64a73b3599927088db2b2f93a9a2",
+    "glb_sha256": "b91900f7a1fc95f3ec6678e3dc8fa875b91bcce115c3231bd14dc5d0e2828bc3",
+    "gltf_bin_sha256": "181508ca0911dcd8540d80d26978a7ffdc39aa0b2a6e3291a2f05ceb53439da8",
+    "gltf_json_sha256": "43162cdfa6957f94aa49b53176d3b76708908727f64d2ada924d66eec69c249f",
+    "manifest_content_sha256": "42fba140907704b210303ba390c276edfaab3566bc0dbc0a249e0604c253da87",
+    "pbr_materials_sha256": "e76a7603265001497b220394f9bc4db87eac39b8d76313769ca7a9077f515803",
+    "render_geometry_sha256": "201b5ac0613a1e82d5d7fcb7c0ebc95516e0a3cb8ae03eecf5110cb6eacb271c",
+    "semantic_sha256": "030ba1d5afe84257734cc6973f2665b590b7ae7d9f165c0877bcf3776ac7347c",
+    "sockets_sha256": "e7f9290ed839ddae1ba255a1f10eac9026fe3b51aa3f6e686621c52aa418afd0",
+    "source_geometry_sha256": "558b91f33db8aba45a74eb390708aae9b12d4532a6c6f9de24681d687d047439",
+    "source_materials_sha256": "c50f5bf1e734e534a008614385c0fab3093cb8cb297d6a1a4504ca5a6d5e8ec9",
+    "source_normals_sha256": "e2918ee8a872619ce3ae310a70722368daf60175bb5bc8c01b293cdb150111aa",
+    "source_obj_format1_sha256": "7d9c4ad5d6ed11eab57517654ea1a2a97b8da36889032327495f890582ffd08a",
+    "source_uvs_sha256": "ecdf3f0dd367f41c65463791e3bdcf603bf5760432540d8aff691d74a1fc24ee"
+  },
+  "identity": {
+    "asset_type": "short_sword",
+    "contract": {
+      "id": "forge.engine-contract",
+      "version": 1
+    },
+    "exporter": {
+      "format_id": "glb",
+      "format_version": 1
+    },
+    "generator_id": "forge.sword",
+    "generator_version": 1,
+    "presentation_id": "forge.presentation",
+    "presentation_version": 1,
+    "seed": "1337"
+  },
+  "lod0": {
+    "nodes": [
+      "blade",
+      "guard",
+      "grip",
+      "pommel"
+    ],
+    "triangles": 280,
+    "vertices": 379
+  },
+  "note": "Step 3 golden fixture: short_sword, seed 1337, generator 1, presentation 1, exporter glb:1, contract 1. Produced by: python -m forge generate short_sword --seed 1337 --generator-version 1 --presentation-version 1 --export glb:1 --out examples/short_sword_seed1337_v1.forgepkg",
+  "sockets": {
+    "socket_grip": {
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "socket_tip": {
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "translation": [
+        0.0,
+        0.60488361120224,
+        0.0
+      ]
+    }
+  }
+}

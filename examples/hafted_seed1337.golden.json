@@ -1,0 +1,925 @@
+{
+  "families": {
+    "mace": {
+      "collision": {
+        "collision_sha256": "d57ae39dbd50c78269ef567d0c66ed31eb91597c73366e29b2781f4fc15ff242",
+        "node": "collision_hull",
+        "representation": "convex_hull",
+        "triangles": 126,
+        "vertices": 65
+      },
+      "dimensions": {
+        "bounds_max": [
+          0.040410986805510044,
+          0.6017630107415813,
+          0.040410986805510044
+        ],
+        "bounds_min": [
+          -0.040410986805510044,
+          -0.09180917899697089,
+          -0.040410986805510044
+        ],
+        "depth_z": 0.08082197361102009,
+        "grip_length": 0.13020203769207,
+        "haft_length": 0.6467088392493315,
+        "head_mass_kg": 0.586506515329402,
+        "overall_length": 0.6935721897385523,
+        "width_x": 0.08082197361102009
+      },
+      "files": {
+        "asset.glb": {
+          "bytes": 67892,
+          "sha256": "e07bcc9cda6e9c25b96fd9b584388d4b0e447096da6c84b394eda05ae0c0bc43"
+        },
+        "manifest.json": {
+          "bytes": 12641,
+          "sha256": "deb27f202a8d19079009815b31824a5371cf1dfa8e08baf948279273761c55c4"
+        },
+        "record.json": {
+          "bytes": 3892,
+          "sha256": "7f1b827273692db804c35a4dc28f59768ae894e1c0322a54402b8d7b12b75b98"
+        }
+      },
+      "identity": {
+        "asset_type": "mace",
+        "contract": {
+          "id": "forge.engine-contract",
+          "version": 1
+        },
+        "exporter": {
+          "format_id": "glb",
+          "format_version": 1
+        },
+        "generator_id": "forge.mace",
+        "generator_version": 1,
+        "presentation_id": "forge.hafted-presentation",
+        "presentation_version": 1,
+        "preview": {
+          "preview_id": "forge.preview.fit",
+          "preview_version": 1
+        },
+        "seed": "1337"
+      },
+      "integrity": {
+        "geometry_sha256": "defc9102d43afa48f0aa1173ee933ce59ba8768842b6909e8128a7eeb6b92a69",
+        "materials_sha256": "73fffa7fa1bff343ac73c0b871745237212b4b16a652f815c9a9b2113f2fc49b",
+        "normals_sha256": "34e78a13bbf6794194a1089cccfa46fbe66e968ed48648dc52ded4dcf2f7ddfb",
+        "record_content_sha256": "f524b68a0f6b536fc5708c4bd73c0fd8eb06fc00383bd0d92f47f0887b566d31",
+        "uvs_sha256": "50496a26056fbb1cab03719df624579ff9a1dff6a486f24af9c05a60b6d22be0"
+      },
+      "landmarks": {
+        "grip_bottom_center": [
+          0.0,
+          -0.065101018846035,
+          0.0
+        ],
+        "grip_center": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "grip_top_center": [
+          0.0,
+          0.065101018846035,
+          0.0
+        ],
+        "head_bottom": [
+          0.0,
+          0.5215519068179626,
+          0.0
+        ],
+        "head_center": [
+          0.0,
+          0.5585284435026322,
+          0.0
+        ],
+        "strike_point": [
+          0.040410986805510044,
+          0.565311788770137,
+          0.0
+        ],
+        "tip": [
+          0.0,
+          0.6017630107415813,
+          0.0
+        ]
+      },
+      "lod0": {
+        "nodes": [
+          "haft",
+          "grip",
+          "collar",
+          "head",
+          "flanges",
+          "butt_cap"
+        ],
+        "triangles": 1176,
+        "vertices": 1554
+      },
+      "obj2": {
+        "file": "mace_seed1337_v1.obj",
+        "mtl": {
+          "mace_seed1337_v1.mtl": "b316fec2987a0d614c6f6e162649e600d0f0e358bf1e338170df42504b3b21ff"
+        },
+        "obj_sha256": "736d532a622cb9363c6f33ea309dc94a420de8c6e558dabb5844b20f77edb9f8"
+      },
+      "package_hashes": {
+        "collision_sha256": "d57ae39dbd50c78269ef567d0c66ed31eb91597c73366e29b2781f4fc15ff242",
+        "glb_sha256": "e07bcc9cda6e9c25b96fd9b584388d4b0e447096da6c84b394eda05ae0c0bc43",
+        "gltf_bin_sha256": "affc5b19b5947f54e4b35bbbc76a005cf4ff3bdb47e255cda0aff4b0b473259f",
+        "gltf_json_sha256": "195b90ebad9525901b4fe6c9d1a4f53a72cfee5a6a04040c639789dc9a72b295",
+        "manifest_content_sha256": "4d19af72246de22858908795e6789dbcdb2680e2f39601aff57d8aa7544eafb7",
+        "pbr_materials_sha256": "fb976c307e321dd3a74e8b9c3e81e7600969672270c4a3d91be4f65c4a4376b7",
+        "render_geometry_sha256": "9d690185b8bbde458ae092092e80cc61f6f4af54f9768d825aaa1e8fa99d934e",
+        "semantic_sha256": "ef6d307ab550152c5650f9d6c2ad648122e1bad83a8f151e8a22ab54992b16dd",
+        "sockets_sha256": "cad4db736765359fef890cb3e2d98030a6a10d177419aeb837da5934fc3ea937",
+        "source_geometry_sha256": "defc9102d43afa48f0aa1173ee933ce59ba8768842b6909e8128a7eeb6b92a69",
+        "source_materials_sha256": "73fffa7fa1bff343ac73c0b871745237212b4b16a652f815c9a9b2113f2fc49b",
+        "source_normals_sha256": "34e78a13bbf6794194a1089cccfa46fbe66e968ed48648dc52ded4dcf2f7ddfb",
+        "source_uvs_sha256": "50496a26056fbb1cab03719df624579ff9a1dff6a486f24af9c05a60b6d22be0"
+      },
+      "preview": {
+        "height": 960,
+        "pixels_sha256": "974fe6da4ceba7105a5114cb4ba87d9d00c9be8c254a2526bf5c9ee27886c069",
+        "png_sha256": "6e7fd35ee1938beb98d8196db8b902a7dc1cc8a2efc16da2bf421763a004ca4b",
+        "ssaa": 2,
+        "view": "three_quarter",
+        "width": 480
+      },
+      "sockets": {
+        "socket_grip": {
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "socket_head": {
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "translation": [
+            0.0,
+            0.5585284233093262,
+            0.0
+          ]
+        },
+        "socket_strike": {
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "translation": [
+            0.04041098803281784,
+            0.5653117895126343,
+            0.0
+          ]
+        },
+        "socket_tip": {
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "translation": [
+            0.0,
+            0.6017630100250244,
+            0.0
+          ]
+        }
+      },
+      "source_mesh": {
+        "triangles": 1176,
+        "vertices": 614
+      },
+      "tags": [
+        "asset_type:mace",
+        "butt_cap.shape:disc",
+        "category:weapon",
+        "class:mace",
+        "hands:one",
+        "head.core:round",
+        "head.elements:8",
+        "head.form:flanged",
+        "lineage:hafted",
+        "material.butt_cap:bronze",
+        "material.collar:steel",
+        "material.flanges:bronze",
+        "material.grip:oxblood_leather",
+        "material.haft:dark_wood",
+        "material.head:bronze"
+      ]
+    },
+    "one_hand_axe": {
+      "collision": {
+        "collision_sha256": "ae5f14df25b1f4c8bb65eba83a9a5a89d9987b7369d3c73ac23c47b8831885d4",
+        "node": "collision_hull",
+        "representation": "convex_hull",
+        "triangles": 210,
+        "vertices": 107
+      },
+      "dimensions": {
+        "bounds_max": [
+          0.12088104392169044,
+          0.4703657945552293,
+          0.01627010114803469
+        ],
+        "bounds_min": [
+          -0.022330681411785624,
+          -0.07782189608411863,
+          -0.01627010114803469
+        ],
+        "depth_z": 0.03254020229606938,
+        "grip_length": 0.11504740576259792,
+        "haft_length": 0.5238591861526947,
+        "head_mass_kg": 0.8319925793694005,
+        "overall_length": 0.5481876906393479,
+        "width_x": 0.14321172533347606
+      },
+      "files": {
+        "asset.glb": {
+          "bytes": 43820,
+          "sha256": "5c8cf46b11caa8995f137dda462a732ffb0562c2fe80dcb0681456633d1f4493"
+        },
+        "manifest.json": {
+          "bytes": 11521,
+          "sha256": "8553ccfd6255c2d1b8acc437cb197812eff9dc3b0d65509b6d21ed326d6c9d87"
+        },
+        "record.json": {
+          "bytes": 3096,
+          "sha256": "92fb2fd747801ecfdc24c7410cf77e45313789186842a606734cb5957a23d9d8"
+        }
+      },
+      "identity": {
+        "asset_type": "one_hand_axe",
+        "contract": {
+          "id": "forge.engine-contract",
+          "version": 1
+        },
+        "exporter": {
+          "format_id": "glb",
+          "format_version": 1
+        },
+        "generator_id": "forge.one_hand_axe",
+        "generator_version": 1,
+        "presentation_id": "forge.hafted-presentation",
+        "presentation_version": 1,
+        "preview": {
+          "preview_id": "forge.preview.fit",
+          "preview_version": 1
+        },
+        "seed": "1337"
+      },
+      "integrity": {
+        "geometry_sha256": "7f0b616047e50642023dd805183ed661a297c1e105ed16ee6e0f7423eeff2355",
+        "materials_sha256": "0e0553e6afc61108b0da09634d53cbbe9fe8bfa902bd44683f595c5d37a09910",
+        "normals_sha256": "1d032d1ac86f1e3b1b7a1de18f1ad85c4bb8b9a66009791b3d72e57a7d3a7eb0",
+        "record_content_sha256": "b87b92df7cd11841993a967e4b0fc80908d33c27ea893ea69ecc5e6790e41369",
+        "uvs_sha256": "297d1c38dd5026cf504683bb37e27ae4b5af051bcdd8546c75289f036c093c2a"
+      },
+      "landmarks": {
+        "eye_bottom": [
+          0.0,
+          0.38410281022847625,
+          0.0
+        ],
+        "eye_top": [
+          0.0,
+          0.44458945685834617,
+          0.0
+        ],
+        "grip_bottom_center": [
+          0.0,
+          -0.05752370288129896,
+          0.0
+        ],
+        "grip_center": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "grip_top_center": [
+          0.0,
+          0.05752370288129896,
+          0.0
+        ],
+        "head_center": [
+          0.0,
+          0.4143461335434112,
+          0.0
+        ],
+        "strike_point": [
+          0.12088104392169044,
+          0.4134871749373405,
+          0.0
+        ],
+        "tip": [
+          0.0,
+          0.44603729006857606,
+          0.0
+        ]
+      },
+      "lod0": {
+        "nodes": [
+          "haft",
+          "grip",
+          "head",
+          "bit"
+        ],
+        "triangles": 1014,
+        "vertices": 881
+      },
+      "obj2": {
+        "file": "one_hand_axe_seed1337_v1.obj",
+        "mtl": {
+          "one_hand_axe_seed1337_v1.mtl": "57b4393c2bc02896489e41032182d0e1ca1f555e1bc8c6a80f2b620f2b2d952d"
+        },
+        "obj_sha256": "51e2c42a98ffc02567aaa74eb377e453c949c65733ba1e79567d2ed4c7ecf5e4"
+      },
+      "package_hashes": {
+        "collision_sha256": "ae5f14df25b1f4c8bb65eba83a9a5a89d9987b7369d3c73ac23c47b8831885d4",
+        "glb_sha256": "5c8cf46b11caa8995f137dda462a732ffb0562c2fe80dcb0681456633d1f4493",
+        "gltf_bin_sha256": "e214b295521cd4ebdc8e17191cae5ea19af644a9fcd2a72434b9a69beb8bacee",
+        "gltf_json_sha256": "61d6654d08468f4d81c03fa5075fc5d0d8222f4e5d2eddc71d687fcb30dc7248",
+        "manifest_content_sha256": "6eced8e74abc9bf91d48bf31e129019562108ec0a6388ad617e108fc19faf5b9",
+        "pbr_materials_sha256": "c71a447c65fcd21a6151330d9601e95b0b8f010a9f74a70c3f64f5287bbce253",
+        "render_geometry_sha256": "92b05cb2ba590fb80e58c7590f861c25068508aaa2f6670b56c05c9ee162bc40",
+        "semantic_sha256": "33b506bcf9313340ebac4b8bd502858a79cadb1b77de3b02299add48272caf5f",
+        "sockets_sha256": "fea00e353e6cc07e9c9bca59bfed5f1244c9aff4f9afee22440abd28337546b6",
+        "source_geometry_sha256": "7f0b616047e50642023dd805183ed661a297c1e105ed16ee6e0f7423eeff2355",
+        "source_materials_sha256": "0e0553e6afc61108b0da09634d53cbbe9fe8bfa902bd44683f595c5d37a09910",
+        "source_normals_sha256": "1d032d1ac86f1e3b1b7a1de18f1ad85c4bb8b9a66009791b3d72e57a7d3a7eb0",
+        "source_uvs_sha256": "297d1c38dd5026cf504683bb37e27ae4b5af051bcdd8546c75289f036c093c2a"
+      },
+      "preview": {
+        "height": 960,
+        "pixels_sha256": "d53382e4272e818a2aa56453ff0e724004ca8b333d7f879b72a98afd22c389f9",
+        "png_sha256": "a4e6fc9f35ad770d620f2a685f8c8f8c482bdc41a63b301cfbe2c9f43370bcdd",
+        "ssaa": 2,
+        "view": "three_quarter",
+        "width": 480
+      },
+      "sockets": {
+        "socket_grip": {
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "socket_head": {
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "translation": [
+            0.0,
+            0.4143461287021637,
+            0.0
+          ]
+        },
+        "socket_strike": {
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "translation": [
+            0.12088104337453842,
+            0.41348716616630554,
+            0.0
+          ]
+        },
+        "socket_tip": {
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "translation": [
+            0.0,
+            0.44603729248046875,
+            0.0
+          ]
+        }
+      },
+      "source_mesh": {
+        "triangles": 1014,
+        "vertices": 517
+      },
+      "tags": [
+        "asset_type:one_hand_axe",
+        "category:weapon",
+        "class:axe",
+        "hands:one",
+        "head.collar:yes",
+        "head.poll:flat",
+        "head.style:crescent",
+        "lineage:hafted",
+        "material.bit:forged_iron",
+        "material.grip:oxblood_leather",
+        "material.haft:hickory_wood",
+        "material.head:forged_iron"
+      ]
+    },
+    "two_hand_axe": {
+      "collision": {
+        "collision_sha256": "7197bdb413692d03392aec87409d782a0cd167c2f3b8ca3946c11614bc6c2d98",
+        "node": "collision_hull",
+        "representation": "convex_hull",
+        "triangles": 188,
+        "vertices": 96
+      },
+      "dimensions": {
+        "bounds_max": [
+          0.15715137702645735,
+          1.0291948171554588,
+          0.018480744581399124
+        ],
+        "bounds_min": [
+          -0.07320173214157413,
+          -0.1485841876734048,
+          -0.018480744581399124
+        ],
+        "depth_z": 0.03696148916279825,
+        "grip_length": 0.17678772555664182,
+        "haft_length": 1.1659845197759569,
+        "head_mass_kg": 1.2158147319918644,
+        "overall_length": 1.1777790048288637,
+        "width_x": 0.23035310916803148
+      },
+      "files": {
+        "asset.glb": {
+          "bytes": 40728,
+          "sha256": "b0d9ba223adc764622a165bfb30e286ca3675f2f58662b08bb51d359cb1e1ebd"
+        },
+        "manifest.json": {
+          "bytes": 11509,
+          "sha256": "a91c491293648b8f5a33d9db636b0a42edd3a9539e054e05daf7ac03678ffcf5"
+        },
+        "record.json": {
+          "bytes": 3095,
+          "sha256": "5b9f35c842f8123d96536b242be59c5044d4a18aeedde6908aea627b5e06a101"
+        }
+      },
+      "identity": {
+        "asset_type": "two_hand_axe",
+        "contract": {
+          "id": "forge.engine-contract",
+          "version": 1
+        },
+        "exporter": {
+          "format_id": "glb",
+          "format_version": 1
+        },
+        "generator_id": "forge.two_hand_axe",
+        "generator_version": 1,
+        "presentation_id": "forge.hafted-presentation",
+        "presentation_version": 1,
+        "preview": {
+          "preview_id": "forge.preview.fit",
+          "preview_version": 1
+        },
+        "seed": "1337"
+      },
+      "integrity": {
+        "geometry_sha256": "a29d51c61749dca32a5e0b4523d4af3d1ec1a825a5402d1c8738dc4ed61bb85a",
+        "materials_sha256": "5de60ae16e120dd7fcb3f8b3d9b8591e91c834213714267a1e05ea9e9f2aa0d7",
+        "normals_sha256": "5ef0e98f90f13e1f2703be2f1dc4932b7e1513dc09fe4d72af98c7152aed4d7c",
+        "record_content_sha256": "24f3f3770276e02ccf8dd15bc960963b13f73bf6966386994bd7d9bc9e976f25",
+        "uvs_sha256": "e089effda1052311667b4da51b27749cdc8ea4b68e6223135a06575145decc4b"
+      },
+      "landmarks": {
+        "eye_bottom": [
+          0.0,
+          0.9457334476467221,
+          0.0
+        ],
+        "eye_top": [
+          0.0,
+          1.0150224649813024,
+          0.0
+        ],
+        "grip_bottom_center": [
+          0.0,
+          -0.08839386277832091,
+          0.0
+        ],
+        "grip_center": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "grip_top_center": [
+          0.0,
+          0.08839386277832091,
+          0.0
+        ],
+        "head_center": [
+          0.0,
+          0.9803779563140123,
+          0.0
+        ],
+        "strike_point": [
+          0.15715137702645735,
+          0.9550443315974321,
+          0.0
+        ],
+        "tip": [
+          0.0,
+          1.017400332102552,
+          0.0
+        ],
+        "upper_grip_bottom": [
+          0.0,
+          0.7339970778990537,
+          0.0
+        ],
+        "upper_grip_top": [
+          0.0,
+          0.8882012784425168,
+          0.0
+        ]
+      },
+      "lod0": {
+        "nodes": [
+          "haft",
+          "grip",
+          "head",
+          "bit"
+        ],
+        "triangles": 934,
+        "vertices": 808
+      },
+      "obj2": {
+        "file": "two_hand_axe_seed1337_v1.obj",
+        "mtl": {
+          "two_hand_axe_seed1337_v1.mtl": "a6311e8ba7bb7976b5e52734989845d5e804e8dcfdf8df69c1768c5c84c48c98"
+        },
+        "obj_sha256": "6503954e4d5c2660c701206806f4492ce71743db8bcb3556453a2684ad0e1169"
+      },
+      "package_hashes": {
+        "collision_sha256": "7197bdb413692d03392aec87409d782a0cd167c2f3b8ca3946c11614bc6c2d98",
+        "glb_sha256": "b0d9ba223adc764622a165bfb30e286ca3675f2f58662b08bb51d359cb1e1ebd",
+        "gltf_bin_sha256": "08b488b4f6d656786807fb4bccc174fbe1861a634b5995ff985284300b4130af",
+        "gltf_json_sha256": "ce84edceb2b5ed1ca7ad9c9e5642469a06e8f81c82f27bf48cb43dcbd881c817",
+        "manifest_content_sha256": "d3b2a5a2fe57df61ed1b846836b9dbaaeb94719a91b7dbb39678897dca05ba8d",
+        "pbr_materials_sha256": "1fa92f4a56de2a27679b6dfea08d0c6a9ff181280129a3fdee14d78f26490c28",
+        "render_geometry_sha256": "318bc2390865778d182af4984bf1e2285e2832601cad6f2a12766edf682503f1",
+        "semantic_sha256": "252290996a6f87e924220c347d0eba4902a6774d78d200409ca120b91421647e",
+        "sockets_sha256": "02573e91fc1c38de82b96c43a1990fa64fde9436ca77a80724377304c7477f4e",
+        "source_geometry_sha256": "a29d51c61749dca32a5e0b4523d4af3d1ec1a825a5402d1c8738dc4ed61bb85a",
+        "source_materials_sha256": "5de60ae16e120dd7fcb3f8b3d9b8591e91c834213714267a1e05ea9e9f2aa0d7",
+        "source_normals_sha256": "5ef0e98f90f13e1f2703be2f1dc4932b7e1513dc09fe4d72af98c7152aed4d7c",
+        "source_uvs_sha256": "e089effda1052311667b4da51b27749cdc8ea4b68e6223135a06575145decc4b"
+      },
+      "preview": {
+        "height": 960,
+        "pixels_sha256": "91de9e7afada772cd3abf85129a98e5c3d83a26727ee574162fb13bbebd5b1a6",
+        "png_sha256": "c692802a7a01f2c625d82692fd8ec8492fca123453e4571dbfd1e5f8d3354c19",
+        "ssaa": 2,
+        "view": "three_quarter",
+        "width": 480
+      },
+      "sockets": {
+        "socket_grip": {
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "socket_head": {
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "translation": [
+            0.0,
+            0.9803779721260071,
+            0.0
+          ]
+        },
+        "socket_strike": {
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "translation": [
+            0.15715137124061584,
+            0.9550443291664124,
+            0.0
+          ]
+        },
+        "socket_tip": {
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "translation": [
+            0.0,
+            1.0174003839492798,
+            0.0
+          ]
+        }
+      },
+      "source_mesh": {
+        "triangles": 934,
+        "vertices": 477
+      },
+      "tags": [
+        "asset_type:two_hand_axe",
+        "category:weapon",
+        "class:axe",
+        "hands:two",
+        "head.collar:no",
+        "head.poll:spike",
+        "head.style:broad",
+        "lineage:hafted",
+        "material.bit:bright_steel",
+        "material.grip:black_leather",
+        "material.haft:ash_wood",
+        "material.head:bright_steel"
+      ]
+    },
+    "war_hammer": {
+      "collision": {
+        "collision_sha256": "3fae2058e0cf6a5f6101ef843b78a69cf9de2fc5733709b9920d7af3420a6cc0",
+        "node": "collision_hull",
+        "representation": "convex_hull",
+        "triangles": 154,
+        "vertices": 79
+      },
+      "dimensions": {
+        "bounds_max": [
+          0.053295282626208224,
+          0.4795528038195334,
+          0.02058645964971
+        ],
+        "bounds_min": [
+          -0.12185363143814841,
+          -0.09820271177063697,
+          -0.02058645964971
+        ],
+        "depth_z": 0.04117291929942,
+        "grip_length": 0.1272800236940384,
+        "haft_length": 0.5648075164400507,
+        "head_mass_kg": 0.6766378765751547,
+        "overall_length": 0.5777555155901704,
+        "width_x": 0.17514891406435662
+      },
+      "files": {
+        "asset.glb": {
+          "bytes": 50692,
+          "sha256": "a4cbfb63c6947a0504ba5c14f1da3753eec9c2953670ce55386dcdf34c3e56f0"
+        },
+        "manifest.json": {
+          "bytes": 13243,
+          "sha256": "9be0d9c6366713eaeb649d7722f8dde4a7e553ab1bec3395617b21e6465c15c7"
+        },
+        "record.json": {
+          "bytes": 3912,
+          "sha256": "4a7ff8b889852f91be0d925f4b80c13b510696dea3e2187615c0d2aae199b281"
+        }
+      },
+      "identity": {
+        "asset_type": "war_hammer",
+        "contract": {
+          "id": "forge.engine-contract",
+          "version": 1
+        },
+        "exporter": {
+          "format_id": "glb",
+          "format_version": 1
+        },
+        "generator_id": "forge.war_hammer",
+        "generator_version": 1,
+        "presentation_id": "forge.hafted-presentation",
+        "presentation_version": 1,
+        "preview": {
+          "preview_id": "forge.preview.fit",
+          "preview_version": 1
+        },
+        "seed": "1337"
+      },
+      "integrity": {
+        "geometry_sha256": "afaeae2b9c93c95e0b846137dee7905933b4724572d055f3c3808216d2800303",
+        "materials_sha256": "bb490098b0ae5db455e86d54daa13a9509045e4d5918ca9aa73b428e39be16cd",
+        "normals_sha256": "10abc7e8f2d6f390b04be6398748dbb3bd847532ae566735e48f8577efd6ceb4",
+        "record_content_sha256": "b5c725228e6b4ebf7c99ade539e717e6c17ace81318133b5e93977c2eec0b80e",
+        "uvs_sha256": "4df2b230d6e7bda75e7e8ceca7c9a823064163c9608bc2bf79af7575f7665886"
+      },
+      "landmarks": {
+        "eye_bottom": [
+          0.0,
+          0.4262221954818815,
+          0.0
+        ],
+        "eye_top": [
+          0.0,
+          0.47845766435563564,
+          0.0
+        ],
+        "grip_bottom_center": [
+          0.0,
+          -0.0636400118470192,
+          0.0
+        ],
+        "grip_center": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "grip_top_center": [
+          0.0,
+          0.0636400118470192,
+          0.0
+        ],
+        "head_center": [
+          0.0,
+          0.4523399299187586,
+          0.0
+        ],
+        "secondary_strike_point": [
+          -0.12185363143814841,
+          0.43072594063000114,
+          0.0
+        ],
+        "strike_point": [
+          0.053295282626208224,
+          0.4523399299187586,
+          0.0
+        ],
+        "tip": [
+          0.0,
+          0.4795528038195334,
+          0.0
+        ]
+      },
+      "lod0": {
+        "nodes": [
+          "haft",
+          "grip",
+          "head",
+          "face",
+          "rear",
+          "butt_cap"
+        ],
+        "triangles": 824,
+        "vertices": 1066
+      },
+      "obj2": {
+        "file": "war_hammer_seed1337_v1.obj",
+        "mtl": {
+          "war_hammer_seed1337_v1.mtl": "398432b7219423e2777fc31bdfc92b1968867a2386268de4b15decc064653b6d"
+        },
+        "obj_sha256": "599a0a5f0be38b737b0ff37609d580842490fd5a4e217ecd62ced0c415bfcbfd"
+      },
+      "package_hashes": {
+        "collision_sha256": "3fae2058e0cf6a5f6101ef843b78a69cf9de2fc5733709b9920d7af3420a6cc0",
+        "glb_sha256": "a4cbfb63c6947a0504ba5c14f1da3753eec9c2953670ce55386dcdf34c3e56f0",
+        "gltf_bin_sha256": "267c9337e6764fb2e3379b9ec8c79fe5cb3623ed0bd33ec791a1426c26694614",
+        "gltf_json_sha256": "a3f0c631d41001359a52089b1ac713cc6f583e75fbaca7e9605da517110c131e",
+        "manifest_content_sha256": "2f91eb70592e7406129a6e210d35a1b8f7cb9f15dcadd82acea49bb85b153597",
+        "pbr_materials_sha256": "6e01a1deb6d7586698dd62cff6eba9cf14123f2b29606027dac84e22da0d4851",
+        "render_geometry_sha256": "d1853ba428beb69052005dab0b50db00eb09a6888e44eab1dddf295e595361d9",
+        "semantic_sha256": "6b66b0e7a78ca55376141599aa88e9df977dbd680b783115a2e6d2004744398b",
+        "sockets_sha256": "be1e5d2de2a2820548dd453b6f2cfbe1285efe637de91d89a58f3ff7fbee07b9",
+        "source_geometry_sha256": "afaeae2b9c93c95e0b846137dee7905933b4724572d055f3c3808216d2800303",
+        "source_materials_sha256": "bb490098b0ae5db455e86d54daa13a9509045e4d5918ca9aa73b428e39be16cd",
+        "source_normals_sha256": "10abc7e8f2d6f390b04be6398748dbb3bd847532ae566735e48f8577efd6ceb4",
+        "source_uvs_sha256": "4df2b230d6e7bda75e7e8ceca7c9a823064163c9608bc2bf79af7575f7665886"
+      },
+      "preview": {
+        "height": 960,
+        "pixels_sha256": "f819611fcfb70ee69389e29fca3af2996beecbdfb74c0d39d53b4a4d9e860154",
+        "png_sha256": "aef41fd26219566a9b16183e0204a57bd6382595c3de4cd820137fc13e8bcc05",
+        "ssaa": 2,
+        "view": "three_quarter",
+        "width": 480
+      },
+      "sockets": {
+        "socket_grip": {
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "socket_head": {
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "translation": [
+            0.0,
+            0.45233991742134094,
+            0.0
+          ]
+        },
+        "socket_secondary_strike": {
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "translation": [
+            -0.12185363471508026,
+            0.43072593212127686,
+            0.0
+          ]
+        },
+        "socket_strike": {
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "translation": [
+            0.053295280784368515,
+            0.45233991742134094,
+            0.0
+          ]
+        },
+        "socket_tip": {
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "translation": [
+            0.0,
+            0.4795528054237366,
+            0.0
+          ]
+        }
+      },
+      "source_mesh": {
+        "triangles": 824,
+        "vertices": 426
+      },
+      "tags": [
+        "asset_type:war_hammer",
+        "butt_cap.shape:disc",
+        "category:weapon",
+        "class:hammer",
+        "face.shape:square",
+        "hands:one",
+        "lineage:hafted",
+        "material.butt_cap:grey_steel",
+        "material.face:grey_steel",
+        "material.grip:brown_leather",
+        "material.haft:dark_wood",
+        "material.head:grey_steel",
+        "material.rear:grey_steel",
+        "rear.style:pick"
+      ]
+    }
+  },
+  "note": "Step 5B golden fixtures: seed 1337, generator v1, presentation forge.hafted-presentation v1, exporter glb:1, Contract v1, preview forge.preview.fit v1 (three_quarter, 480x960, ssaa 2). Produced per family by: python -m forge generate <family> --seed 1337 --generator-version 1 --presentation-version 1 --export glb:1 --out examples/<family>_seed1337_v1.forgepkg --save examples/<family>_record_seed1337.json --preview examples/<family>_preview_seed1337_three_quarter.png ; obj:2 hashes from --export obj:2 --out <scratch>/<family>_seed1337_v1.obj (not stored; the OBJ names its .mtl, so the hash depends on that file name)."
+}

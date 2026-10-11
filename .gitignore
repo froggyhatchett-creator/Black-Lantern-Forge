@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+
+# Generated assets. Regenerate them from seeds; don't commit them.
+output/*
+!output/.gitkeep

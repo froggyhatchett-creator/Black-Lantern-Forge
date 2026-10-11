@@ -1,0 +1,577 @@
+{
+  "families": {
+    "curved_sword": {
+      "blade_tip_landmark": [
+        -0.12711419199973636,
+        0.7690549756256023,
+        0.0
+      ],
+      "collision": {
+        "collision_sha256": "c88b88a7d27640e71585f5365eefe5595e1c64b730d7d05741cf84c52b2cd632",
+        "node": "collision_hull",
+        "representation": "convex_hull",
+        "triangles": 166,
+        "vertices": 85
+      },
+      "files": {
+        "asset.glb": {
+          "bytes": 30160,
+          "sha256": "d321ecbb7d990766ef37e8df0a6a955c8db8697c92a935d822846eefba7f1fca"
+        },
+        "manifest.json": {
+          "bytes": 10408,
+          "sha256": "5543121fdbe844595032494084cac8145cf34d83bba3d0bcaa12f8d967e2a722"
+        },
+        "record.json": {
+          "bytes": 3087,
+          "sha256": "d04d1963b58604a28e0da3baba124c3317a25569e38648c13e7fa89f9e0a921e"
+        }
+      },
+      "identity": {
+        "asset_type": "curved_sword",
+        "contract": {
+          "id": "forge.engine-contract",
+          "version": 1
+        },
+        "exporter": {
+          "format_id": "glb",
+          "format_version": 1
+        },
+        "generator_id": "forge.curved_sword",
+        "generator_version": 1,
+        "presentation_id": "forge.blade-presentation",
+        "presentation_version": 1,
+        "preview": {
+          "preview_id": "forge.preview.fit",
+          "preview_version": 1
+        },
+        "seed": "1337"
+      },
+      "integrity": {
+        "geometry_sha256": "14e497d123e918798f69a7dacff21211f6e7d0ff3b82dadc57e9d632266b6d76",
+        "materials_sha256": "3bcb61741103000da217f72d34daecec361753f1f28ee9972ab38c7d5b1e7f06",
+        "normals_sha256": "bfa94f5b7f2f51408f5ce380faace5835d5b83fc8956d2ba427fa9815628a212",
+        "record_content_sha256": "16ae5dad293d515c10ed6d9f69c6f152b3e36d9814310bf26e662ad0c9be964c",
+        "uvs_sha256": "8c3c50dd571203aca053930d382b0898a0bde4ce95473ec10b8b2585f0ac2a30"
+      },
+      "lod0": {
+        "nodes": [
+          "blade",
+          "guard",
+          "grip",
+          "pommel"
+        ],
+        "triangles": 568,
+        "vertices": 563
+      },
+      "obj2": {
+        "file": "curved_sword_seed1337_v1.obj",
+        "mtl": {
+          "curved_sword_seed1337_v1.mtl": "237c3b4a3b985662208d640b56b5dea96296b38cac197ba6daf91f7fd8ac4926"
+        },
+        "obj_sha256": "a5ae36e6d674ca1ed673a75f18acc80c91e8029eadeff2bc8c1338b1e6fa4579"
+      },
+      "package_hashes": {
+        "collision_sha256": "c88b88a7d27640e71585f5365eefe5595e1c64b730d7d05741cf84c52b2cd632",
+        "glb_sha256": "d321ecbb7d990766ef37e8df0a6a955c8db8697c92a935d822846eefba7f1fca",
+        "gltf_bin_sha256": "a36943ff741da5d481d609e88b367e1ef768e7319f634a6697d981082f552ae4",
+        "gltf_json_sha256": "5449bbad040e12a7e490d4f4a2a93fc2a4f4d59d8663c4b9c2c21fd972e7084f",
+        "manifest_content_sha256": "f697fae7ab3ca731ad9b545c9fa4801a57793cb06cb78a894cf3b9bf7ec453c8",
+        "pbr_materials_sha256": "61947ab882f76153266ddf92da44fb0eecfd6c209901483a78562d95833cfbb2",
+        "render_geometry_sha256": "6933b96e562f3173e6254c341a63bd7fef1650cb2618c22eba53f4235b246acd",
+        "semantic_sha256": "4276ce15f308c8896e8f7bd7c60c37edff9bb92c35ef9cbcf3fc710cbfdb7a81",
+        "sockets_sha256": "df1923f8328a62a13af0e40622c593d8195cbb8e8f25764348e3321e0d33f21e",
+        "source_geometry_sha256": "14e497d123e918798f69a7dacff21211f6e7d0ff3b82dadc57e9d632266b6d76",
+        "source_materials_sha256": "3bcb61741103000da217f72d34daecec361753f1f28ee9972ab38c7d5b1e7f06",
+        "source_normals_sha256": "bfa94f5b7f2f51408f5ce380faace5835d5b83fc8956d2ba427fa9815628a212",
+        "source_uvs_sha256": "8c3c50dd571203aca053930d382b0898a0bde4ce95473ec10b8b2585f0ac2a30"
+      },
+      "preview": {
+        "height": 960,
+        "pixels_sha256": "2add0ecd22221ffadcc2dd92028023b4ab880a86d85285eee15b13780eaefcc1",
+        "png_sha256": "4cd6882946e47a8d31fca97163084daf49ccc35dd5a00355ab00d107dec185cb",
+        "ssaa": 2,
+        "view": "three_quarter",
+        "width": 480
+      },
+      "sockets": {
+        "socket_grip": {
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "socket_tip": {
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "translation": [
+            -0.1271141916513443,
+            0.7690549492835999,
+            0.0
+          ]
+        }
+      },
+      "source_mesh": {
+        "triangles": 568,
+        "vertices": 292
+      },
+      "tags": [
+        "asset_type:curved_sword",
+        "blade.curvature:curved",
+        "blade.point:clipped",
+        "blade.section:single_edge",
+        "category:weapon",
+        "edge:single",
+        "guard.shape:bar",
+        "hands:hand_and_half",
+        "lineage:sword",
+        "material.blade:bright_steel",
+        "material.grip:brown_leather",
+        "material.guard:steel",
+        "material.pommel:steel",
+        "pommel.shape:orb"
+      ]
+    },
+    "dagger": {
+      "blade_tip_landmark": [
+        0.0,
+        0.25501545644900764,
+        0.0
+      ],
+      "collision": {
+        "collision_sha256": "65ed65859f419c1513103d086ef17edf43da0a6aff5a44860722dc468438a140",
+        "node": "collision_hull",
+        "representation": "convex_hull",
+        "triangles": 132,
+        "vertices": 68
+      },
+      "files": {
+        "asset.glb": {
+          "bytes": 16604,
+          "sha256": "bef7e755e7bb172ce88e6e5e0ecdef89bb5ae2277bbeadd75278d20b96851c7c"
+        },
+        "manifest.json": {
+          "bytes": 10342,
+          "sha256": "d73a6f376e414e8b95e9edba13e472db2fd530399470ccf7e7b57e72da099504"
+        },
+        "record.json": {
+          "bytes": 3076,
+          "sha256": "08f97c06d097ab2a64802e24efedca723322105d887bc26c184590a5355a1070"
+        }
+      },
+      "identity": {
+        "asset_type": "dagger",
+        "contract": {
+          "id": "forge.engine-contract",
+          "version": 1
+        },
+        "exporter": {
+          "format_id": "glb",
+          "format_version": 1
+        },
+        "generator_id": "forge.dagger",
+        "generator_version": 1,
+        "presentation_id": "forge.blade-presentation",
+        "presentation_version": 1,
+        "preview": {
+          "preview_id": "forge.preview.fit",
+          "preview_version": 1
+        },
+        "seed": "1337"
+      },
+      "integrity": {
+        "geometry_sha256": "174bd33ba74c6b16497ddd4c256fd25a6e6853660f398b738545fdd5410922e8",
+        "materials_sha256": "4147140e5e1d353bc81d9051796ba54f0aa48b979503c938c78a05377043e626",
+        "normals_sha256": "264e254681708fab14045117e7f8ea287f7deb5fb2ae25bc3b267fee21cb0ae3",
+        "record_content_sha256": "2de2913bca1568eb5428d16d1d4e910f1c419e5ac570e8c138470d1c60be847c",
+        "uvs_sha256": "cb9dcf0b523a559e803637bcd591fa0d5c5319f48688efbf4ea2c9522ddb1427"
+      },
+      "lod0": {
+        "nodes": [
+          "blade",
+          "guard",
+          "grip",
+          "pommel"
+        ],
+        "triangles": 192,
+        "vertices": 224
+      },
+      "obj2": {
+        "file": "dagger_seed1337_v1.obj",
+        "mtl": {
+          "dagger_seed1337_v1.mtl": "5e8608cf9e99ae71db4b536f76fe22a3328517f38dc26225d1aa39dc38c9bb8a"
+        },
+        "obj_sha256": "a3337816fb6dd7967119787888318a6024cfb80af821394140284c3f688eee9b"
+      },
+      "package_hashes": {
+        "collision_sha256": "65ed65859f419c1513103d086ef17edf43da0a6aff5a44860722dc468438a140",
+        "glb_sha256": "bef7e755e7bb172ce88e6e5e0ecdef89bb5ae2277bbeadd75278d20b96851c7c",
+        "gltf_bin_sha256": "3ab501a6b1bead89cedfe879b624f4db208fbc771e55f34d17370f68df7c955f",
+        "gltf_json_sha256": "75002b5d5c9baa72d77c9a3d5bbda7237cf1f326ac263aca1e0cb6cb6f0b43dd",
+        "manifest_content_sha256": "457318635e7e7d3248e385263dbbc24579bcd5c3645b8233689b8b383615e9aa",
+        "pbr_materials_sha256": "c68cc3b071f12eca2ebdaf76cf6056fefbaa85b2fcdf783cc816d7e2d853f645",
+        "render_geometry_sha256": "3d0aad878d36c650777d38df0f44c9db86ed269744f0bf8833f19405d0b0e1f9",
+        "semantic_sha256": "13c8646a110f6acae90862c11c3480e093edfafea6949c40a282612d5429db64",
+        "sockets_sha256": "9836d1de0c9b5058bc04d5cab6a509109b5e825b74b6e6db764d3458c2a73b65",
+        "source_geometry_sha256": "174bd33ba74c6b16497ddd4c256fd25a6e6853660f398b738545fdd5410922e8",
+        "source_materials_sha256": "4147140e5e1d353bc81d9051796ba54f0aa48b979503c938c78a05377043e626",
+        "source_normals_sha256": "264e254681708fab14045117e7f8ea287f7deb5fb2ae25bc3b267fee21cb0ae3",
+        "source_uvs_sha256": "cb9dcf0b523a559e803637bcd591fa0d5c5319f48688efbf4ea2c9522ddb1427"
+      },
+      "preview": {
+        "height": 960,
+        "pixels_sha256": "5e4766b755d3947053da950f52a9fab15262a938b784a926cd6d7ab69f009fe8",
+        "png_sha256": "35a6c853fdeb6ad7b111660d0ded3f79387ea12d84db47aefee4c10a2d5f6b68",
+        "ssaa": 2,
+        "view": "three_quarter",
+        "width": 480
+      },
+      "sockets": {
+        "socket_grip": {
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "socket_tip": {
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "translation": [
+            0.0,
+            0.25501546263694763,
+            0.0
+          ]
+        }
+      },
+      "source_mesh": {
+        "triangles": 192,
+        "vertices": 104
+      },
+      "tags": [
+        "asset_type:dagger",
+        "blade.curvature:straight",
+        "blade.point:acute",
+        "blade.section:diamond",
+        "category:weapon",
+        "edge:double",
+        "guard.shape:disc",
+        "hands:one",
+        "lineage:short_blade",
+        "material.blade:dark_iron",
+        "material.grip:brown_leather",
+        "material.guard:brass",
+        "material.pommel:brass",
+        "pommel.shape:cap"
+      ]
+    },
+    "great_sword": {
+      "blade_tip_landmark": [
+        0.0,
+        1.3897263385090044,
+        0.0
+      ],
+      "collision": {
+        "collision_sha256": "83d62d57eaf1bf230c8db6c4e919952c7887f0704eebdae76071d800b21aef1c",
+        "node": "collision_hull",
+        "representation": "convex_hull",
+        "triangles": 46,
+        "vertices": 25
+      },
+      "files": {
+        "asset.glb": {
+          "bytes": 19416,
+          "sha256": "302c04f5c6e5c3bcba89121039f1cbdcf82d084a2ba76c613347200916bb6051"
+        },
+        "manifest.json": {
+          "bytes": 10355,
+          "sha256": "08ca379840e073ec9eaff0f2060057b627f872f3e9dc827ff729b7650ea87f1b"
+        },
+        "record.json": {
+          "bytes": 3076,
+          "sha256": "a1c3fb7c0e7fddf0868b53c5396c562b2d19901596489435655656c70ec4e74f"
+        }
+      },
+      "identity": {
+        "asset_type": "great_sword",
+        "contract": {
+          "id": "forge.engine-contract",
+          "version": 1
+        },
+        "exporter": {
+          "format_id": "glb",
+          "format_version": 1
+        },
+        "generator_id": "forge.great_sword",
+        "generator_version": 1,
+        "presentation_id": "forge.blade-presentation",
+        "presentation_version": 1,
+        "preview": {
+          "preview_id": "forge.preview.fit",
+          "preview_version": 1
+        },
+        "seed": "1337"
+      },
+      "integrity": {
+        "geometry_sha256": "8e2cc76ba5ba12f680a0e8044f8f7cf79fc3f893ece3f69d2fbea7f6a0863ab8",
+        "materials_sha256": "e47445ddb43aea9eef1e42f54548d270f39caa64cc31dc4c35a2f7d49de9d110",
+        "normals_sha256": "8ee167ec9b73fec4c42882a69f8d248c9e47e1c9486d8c972895d4631473a1d3",
+        "record_content_sha256": "2843870a2c05901130a5dc138cbaed0e5c7e4987a02dadc71ded43fe413d42ff",
+        "uvs_sha256": "00f2bc8cb457e725fe769ebb441c77bc9f033e054636863fe80539c5a7e1025a"
+      },
+      "lod0": {
+        "nodes": [
+          "blade",
+          "guard",
+          "grip",
+          "pommel"
+        ],
+        "triangles": 232,
+        "vertices": 336
+      },
+      "obj2": {
+        "file": "great_sword_seed1337_v1.obj",
+        "mtl": {
+          "great_sword_seed1337_v1.mtl": "40d3ad7b8237ee104c2b0779d9646619228a5ac56588010d7fe84961dd3f69f9"
+        },
+        "obj_sha256": "3ca9aea99349ae81d74878f5600bcbaee36d46e9b397885e6037cfad81466f67"
+      },
+      "package_hashes": {
+        "collision_sha256": "83d62d57eaf1bf230c8db6c4e919952c7887f0704eebdae76071d800b21aef1c",
+        "glb_sha256": "302c04f5c6e5c3bcba89121039f1cbdcf82d084a2ba76c613347200916bb6051",
+        "gltf_bin_sha256": "c82dc11052d3c47398706b9463774afcb83aa1c168048191a6740f1e48b87d96",
+        "gltf_json_sha256": "596cc69b9b83539e9c1d0eb2fb38eca73deb1ece9fbb93cb1ae1c96190e16cbf",
+        "manifest_content_sha256": "b6eb103b6db8518edacf1f07d54e948b02da941c6fa3b9c20ee1bfc0d31adf14",
+        "pbr_materials_sha256": "1fc471a7794fcfb9c5904fb5338d3c8ae760072be2d3eb895af9e2e434bdbc2e",
+        "render_geometry_sha256": "8c572639a2cbfe35b19be5ac2705566181b28307052cfdd88c3ce4e37a86b14b",
+        "semantic_sha256": "6014ffc31742409c9286797f0005e31c4c7426b2278a84c89555d603b85306b4",
+        "sockets_sha256": "e741a7d6bb00686055ac445e2cf12fa9342b7d51480b0df9f0ec81f65fe476b7",
+        "source_geometry_sha256": "8e2cc76ba5ba12f680a0e8044f8f7cf79fc3f893ece3f69d2fbea7f6a0863ab8",
+        "source_materials_sha256": "e47445ddb43aea9eef1e42f54548d270f39caa64cc31dc4c35a2f7d49de9d110",
+        "source_normals_sha256": "8ee167ec9b73fec4c42882a69f8d248c9e47e1c9486d8c972895d4631473a1d3",
+        "source_uvs_sha256": "00f2bc8cb457e725fe769ebb441c77bc9f033e054636863fe80539c5a7e1025a"
+      },
+      "preview": {
+        "height": 960,
+        "pixels_sha256": "b11643ca144e0b18a632889e1370e5f7dc2dd9e9f116b7c4a9fd9a2e8c2d2615",
+        "png_sha256": "f5da1724495ca5b023a0ae4767cd5f5c76ff6691aaf32c0064cfc6d391ffc6eb",
+        "ssaa": 2,
+        "view": "three_quarter",
+        "width": 480
+      },
+      "sockets": {
+        "socket_grip": {
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "socket_tip": {
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "translation": [
+            0.0,
+            1.3897262811660767,
+            0.0
+          ]
+        }
+      },
+      "source_mesh": {
+        "triangles": 232,
+        "vertices": 124
+      },
+      "tags": [
+        "asset_type:great_sword",
+        "blade.curvature:straight",
+        "blade.point:acute",
+        "blade.section:hex",
+        "category:weapon",
+        "edge:double",
+        "guard.shape:bar",
+        "hands:two",
+        "lineage:sword",
+        "material.blade:grey_steel",
+        "material.grip:cord_wrap",
+        "material.guard:steel",
+        "material.pommel:steel",
+        "pommel.shape:faceted"
+      ]
+    },
+    "long_sword": {
+      "blade_tip_landmark": [
+        0.0,
+        1.1842899849289097,
+        0.0
+      ],
+      "collision": {
+        "collision_sha256": "a269e6065ba09091de1609e89d771ba816b206120b9c45dd49880f147919154d",
+        "node": "collision_hull",
+        "representation": "convex_hull",
+        "triangles": 106,
+        "vertices": 55
+      },
+      "files": {
+        "asset.glb": {
+          "bytes": 22904,
+          "sha256": "3b16e4f88f88adcecb349038794f50060f277bcc2f47ed9e841455c03a58fadf"
+        },
+        "manifest.json": {
+          "bytes": 10421,
+          "sha256": "b9f6d5a374cb2ffd46d8f4c65536b2dfbe00934c8754cb49e31c4f0bafbf9d16"
+        },
+        "record.json": {
+          "bytes": 3104,
+          "sha256": "9ad27e966206e3024d94d81240b60e3e1eeb5a8e1bad26a731e41637871cd930"
+        }
+      },
+      "identity": {
+        "asset_type": "long_sword",
+        "contract": {
+          "id": "forge.engine-contract",
+          "version": 1
+        },
+        "exporter": {
+          "format_id": "glb",
+          "format_version": 1
+        },
+        "generator_id": "forge.long_sword",
+        "generator_version": 1,
+        "presentation_id": "forge.blade-presentation",
+        "presentation_version": 1,
+        "preview": {
+          "preview_id": "forge.preview.fit",
+          "preview_version": 1
+        },
+        "seed": "1337"
+      },
+      "integrity": {
+        "geometry_sha256": "c459637739e0d8214ada87416c464f52d8470e02e8187c67f554af3001c12dbb",
+        "materials_sha256": "03c126070a4830cd7b966255bb4d42ad389f0d16d91e8ebad0776dc86cb48a61",
+        "normals_sha256": "7a8ba55f9d7b78f97ca7f4d2a7d1fdc2b228d382c648bd9fe06405d081ad44da",
+        "record_content_sha256": "25937b7a25a5a5266023aa9bac33f206d32863af49a9783c02cf9690e705b258",
+        "uvs_sha256": "9b78fa187c80e689379dc8a8d6e77f2400383072b05507a76853e5144f2bf68c"
+      },
+      "lod0": {
+        "nodes": [
+          "blade",
+          "guard",
+          "grip",
+          "pommel"
+        ],
+        "triangles": 320,
+        "vertices": 405
+      },
+      "obj2": {
+        "file": "long_sword_seed1337_v1.obj",
+        "mtl": {
+          "long_sword_seed1337_v1.mtl": "aee4b7d8686f0d5c012647684db8baab620c1a685bc36fc0f6d74b10ac607646"
+        },
+        "obj_sha256": "874299bf762bdd56ff398e11aefaf59532d60d90c97eb90917057e2d326f3425"
+      },
+      "package_hashes": {
+        "collision_sha256": "a269e6065ba09091de1609e89d771ba816b206120b9c45dd49880f147919154d",
+        "glb_sha256": "3b16e4f88f88adcecb349038794f50060f277bcc2f47ed9e841455c03a58fadf",
+        "gltf_bin_sha256": "d12125e48f6be41c7ebafdccdc4780a3630de381a5fe1b62bc024a5592929de8",
+        "gltf_json_sha256": "bea208f6452a1ec2696bdb4fa2b7c3585b30491a4cb45e048d1fd9887a348fcb",
+        "manifest_content_sha256": "955b206f21bb2d23db57dd0302c0ff097dc2d2d5349c19046e890dd642cb4124",
+        "pbr_materials_sha256": "6c118c69c05b4a1728427b2e577182a71044bf7152ab6aeb3b4300edf85c63f3",
+        "render_geometry_sha256": "757316247148ca94d8a32f9bfea52a054452641d186efc8c4bbe4104719be98a",
+        "semantic_sha256": "35d0ffe33c5a0beb8aa7e90815ed912b7488e3aeb919c3e05c3d6b33aed34adf",
+        "sockets_sha256": "982d53166466cd852d8eb2b45678aef55aefbe371ec2106e3b12af1415e0cb3c",
+        "source_geometry_sha256": "c459637739e0d8214ada87416c464f52d8470e02e8187c67f554af3001c12dbb",
+        "source_materials_sha256": "03c126070a4830cd7b966255bb4d42ad389f0d16d91e8ebad0776dc86cb48a61",
+        "source_normals_sha256": "7a8ba55f9d7b78f97ca7f4d2a7d1fdc2b228d382c648bd9fe06405d081ad44da",
+        "source_uvs_sha256": "9b78fa187c80e689379dc8a8d6e77f2400383072b05507a76853e5144f2bf68c"
+      },
+      "preview": {
+        "height": 960,
+        "pixels_sha256": "3a0cea7ec589d1424fccec0e0b70241e5903a9f44e990e46bf4da76be48e7884",
+        "png_sha256": "8c4b899702b03f73f2f0606f1721b8c073c5ee4e24f403797688f329c07cdeeb",
+        "ssaa": 2,
+        "view": "three_quarter",
+        "width": 480
+      },
+      "sockets": {
+        "socket_grip": {
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "socket_tip": {
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "translation": [
+            0.0,
+            1.1842899322509766,
+            0.0
+          ]
+        }
+      },
+      "source_mesh": {
+        "triangles": 320,
+        "vertices": 168
+      },
+      "tags": [
+        "asset_type:long_sword",
+        "blade.curvature:straight",
+        "blade.point:ogive",
+        "blade.section:diamond",
+        "category:weapon",
+        "edge:double",
+        "guard.shape:tapered",
+        "hands:hand_and_half",
+        "lineage:sword",
+        "material.blade:grey_steel",
+        "material.grip:oxblood_leather",
+        "material.guard:blackened_steel",
+        "material.pommel:blackened_steel",
+        "pommel.shape:wheel"
+      ]
+    }
+  },
+  "note": "Step 5A golden fixtures: seed 1337, generator v1, presentation forge.blade-presentation v1, exporter glb:1, Contract v1, preview forge.preview.fit v1 (three_quarter, 480x960, ssaa 2). Produced per family by: python -m forge generate <family> --seed 1337 --generator-version 1 --presentation-version 1 --export glb:1 --out examples/<family>_seed1337_v1.forgepkg --save examples/<family>_record_seed1337.json --preview examples/<family>_preview_seed1337_three_quarter.png ; obj:2 hashes from --export obj:2 --out <scratch>/<family>_seed1337_v1.obj (not stored; the OBJ names its .mtl, so the hash depends on that file name)."
+}

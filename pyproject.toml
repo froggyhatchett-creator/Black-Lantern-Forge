@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "black-lantern-forge"
+version = "0.6.0"   # distribution version; forge.__version__ 0.6.0 (Step 5B hafted families); forge_engine_viewer stays 0.4.0
+description = "Black Lantern Forge - deterministic procedural asset generation (Step 1: short sword + OBJ; Step 2: presentation, records, preview; Step 2.5: explicit registries; Step 2.75: desktop shell; Step 3: Forge -> Engine contract v1, GLB; Step 4: independent engine-side viewer; Step 5A: blade families; Step 5B: hafted families)"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []  # stdlib-only on purpose. Forge Desktop uses Tkinter, which ships with Python.
+
+[project.scripts]
+forge = "forge.cli:main"
+forge-engine-viewer = "forge_engine_viewer.cli:main"
+
+[project.gui-scripts]
+forge-desktop = "forge_desktop.app:main"
+
+[tool.setuptools.packages.find]
+include = ["forge*", "forge_desktop*", "forge_engine_viewer*"]
+
+# Optional: lets `pytest` run the unittest suite too. Not required.
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".", "tests"]

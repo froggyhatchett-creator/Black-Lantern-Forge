@@ -1,0 +1,110 @@
+{
+  "asset_type": "one_hand_axe",
+  "conventions": {
+    "blade_tip_axis": "+Y",
+    "front_face_winding": "counter_clockwise",
+    "handedness": "right",
+    "id": "forge.rh-y-up-meters.grip-origin.v1",
+    "origin": "grip_center",
+    "units": "meters",
+    "up_axis": "+Y"
+  },
+  "generator": "forge.one_hand_axe",
+  "generator_version": 1,
+  "info": {
+    "forge_version": "0.6.0",
+    "note": "informational only; ignored on load and excluded from every hash"
+  },
+  "integrity": {
+    "geometry_sha256": "7f0b616047e50642023dd805183ed661a297c1e105ed16ee6e0f7423eeff2355",
+    "materials_sha256": "0e0553e6afc61108b0da09634d53cbbe9fe8bfa902bd44683f595c5d37a09910",
+    "normals_sha256": "1d032d1ac86f1e3b1b7a1de18f1ad85c4bb8b9a66009791b3d72e57a7d3a7eb0",
+    "record_content_sha256": "b87b92df7cd11841993a967e4b0fc80908d33c27ea893ea69ecc5e6790e41369",
+    "uvs_sha256": "297d1c38dd5026cf504683bb37e27ae4b5af051bcdd8546c75289f036c093c2a"
+  },
+  "presentation": {
+    "material_version": 1,
+    "materials": {
+      "bit": {
+        "base_color": [
+          0.369005696224235,
+          0.369005696224235,
+          0.3884270486570895
+        ],
+        "component": "bit",
+        "metallic": 1.0,
+        "pattern": {
+          "seed": 1423590387,
+          "strength": 0.09629670617170633,
+          "type": "brushed"
+        },
+        "preset": "forged_iron",
+        "roughness": 0.4553642119280994
+      },
+      "grip": {
+        "base_color": [
+          0.3389099222190678,
+          0.08472748055476695,
+          0.07531331604868174
+        ],
+        "component": "grip",
+        "metallic": 0.0,
+        "pattern": {
+          "bands": 11,
+          "contrast": 0.43694903614232317,
+          "seed": 3020841268,
+          "twist": 0,
+          "type": "wrap"
+        },
+        "preset": "oxblood_leather",
+        "roughness": 0.618487459179014
+      },
+      "haft": {
+        "base_color": [
+          0.4821952835051343,
+          0.34718060412369667,
+          0.2121659247422591
+        ],
+        "component": "haft",
+        "metallic": 0.0,
+        "pattern": {
+          "seed": 3843105474,
+          "strength": 0.048938657650724054,
+          "type": "brushed"
+        },
+        "preset": "hickory_wood",
+        "roughness": 0.6221380883129314
+      },
+      "head": {
+        "base_color": [
+          0.40190916547197847,
+          0.40190916547197847,
+          0.4230622794441879
+        ],
+        "component": "head",
+        "metallic": 1.0,
+        "pattern": {
+          "seed": 554569205,
+          "strength": 0.17998668473446744,
+          "type": "patina"
+        },
+        "preset": "forged_iron",
+        "roughness": 0.46443530765827745
+      }
+    },
+    "normals_version": 1,
+    "presentation_version": 1,
+    "uv_version": 1
+  },
+  "preview": {
+    "height": 960,
+    "pixels_sha256": "d53382e4272e818a2aa56453ff0e724004ca8b333d7f879b72a98afd22c389f9",
+    "preview_version": 1,
+    "ssaa": 2,
+    "view": "three_quarter",
+    "width": 480
+  },
+  "record_format": "black-lantern-forge/asset-record",
+  "record_version": 1,
+  "seed": "1337"
+}

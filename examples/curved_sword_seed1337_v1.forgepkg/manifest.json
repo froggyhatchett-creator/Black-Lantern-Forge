@@ -1,0 +1,300 @@
+{
+  "asset": {
+    "asset_type": "curved_sword",
+    "display_name": "procedural curved sword",
+    "generator_id": "forge.curved_sword",
+    "generator_version": 1,
+    "seed": "1337"
+  },
+  "collision": {
+    "derivation": "exact convex hull (integer arithmetic) of every LOD0 render vertex position after binary32 rounding; its vertices are exactly the extreme points",
+    "gltf_representation": "triangle mesh (mode 4) with POSITION and indices only, no material, as the only root of the non-default scene 'forge_collision'",
+    "node": "collision_hull",
+    "node_index": 7,
+    "representation": "convex_hull",
+    "scene": "forge_collision",
+    "scene_index": 1,
+    "triangles": 166,
+    "vertices": 85
+  },
+  "contract": {
+    "id": "forge.engine-contract",
+    "name": "Forge -> Engine Asset Contract",
+    "version": 1
+  },
+  "coordinates": {
+    "blade_tip_axis": "+Y",
+    "convention_id": "forge.rh-y-up-meters.grip-origin.v1",
+    "conversion": "none: native glTF 2.0 frame; engine-side axis and unit conversion is the importer's job",
+    "front_face_winding": "counter_clockwise",
+    "handedness": "right",
+    "meters_per_unit": 1,
+    "origin": "grip_center",
+    "units": "meters",
+    "up_axis": "+Y"
+  },
+  "hashes": {
+    "collision_sha256": {
+      "covers": "semantic: b'forge.engine.collision.v1\\0', node name, NUL, u32 vertex count, u32 index count, POSITION 3xf32, indices as u32; little-endian",
+      "sha256": "c88b88a7d27640e71585f5365eefe5595e1c64b730d7d05741cf84c52b2cd632",
+      "verifiable_from_package": true
+    },
+    "glb_sha256": {
+      "covers": "every byte of asset.glb",
+      "sha256": "d321ecbb7d990766ef37e8df0a6a955c8db8697c92a935d822846eefba7f1fca",
+      "verifiable_from_package": true
+    },
+    "gltf_bin_sha256": {
+      "covers": "the GLB BIN chunk data exactly as stored, including its trailing zero padding",
+      "sha256": "a36943ff741da5d481d609e88b367e1ef768e7319f634a6697d981082f552ae4",
+      "verifiable_from_package": true
+    },
+    "gltf_json_sha256": {
+      "covers": "the GLB JSON chunk data exactly as stored, including its trailing space padding",
+      "sha256": "5449bbad040e12a7e490d4f4a2a93fc2a4f4d59d8663c4b9c2c21fd972e7084f",
+      "verifiable_from_package": true
+    },
+    "manifest_content_sha256": {
+      "covers": "canonical JSON of this manifest with hashes.manifest_content_sha256 removed",
+      "sha256": "f697fae7ab3ca731ad9b545c9fa4801a57793cb06cb78a894cf3b9bf7ec453c8",
+      "verifiable_from_package": true
+    },
+    "pbr_materials_sha256": {
+      "covers": "canonical JSON of the glTF materials array exactly as stored in the GLB",
+      "sha256": "61947ab882f76153266ddf92da44fb0eecfd6c209901483a78562d95833cfbb2",
+      "verifiable_from_package": true
+    },
+    "render_geometry_sha256": {
+      "covers": "semantic, layout-independent: b'forge.engine.render-geometry.v1\\0' then, per LOD0 render node in manifest order: node name, NUL, material name, NUL, u32 vertex count, u32 index count, POSITION 3xf32, NORMAL 3xf32, TEXCOORD_0 2xf32, indices as u32; little-endian",
+      "sha256": "6933b96e562f3173e6254c341a63bd7fef1650cb2618c22eba53f4235b246acd",
+      "verifiable_from_package": true
+    },
+    "semantic_sha256": {
+      "covers": "canonical JSON of {contract: {id, version}, coordinates, lods, collision_sha256, pbr_materials_sha256, render_geometry_sha256, sockets_sha256}",
+      "sha256": "4276ce15f308c8896e8f7bd7c60c37edff9bb92c35ef9cbcf3fc710cbfdb7a81",
+      "verifiable_from_package": true
+    },
+    "sockets_sha256": {
+      "covers": "canonical JSON of [{name, parent, translation, rotation}] for each socket node, in node order",
+      "sha256": "df1923f8328a62a13af0e40622c593d8195cbb8e8f25764348e3321e0d33f21e",
+      "verifiable_from_package": true
+    },
+    "source_geometry_sha256": {
+      "covers": "provenance: Forge's Step 2 integrity hash geometry_sha256 of the source asset; reproducible with Forge from the asset section, not from this package",
+      "sha256": "14e497d123e918798f69a7dacff21211f6e7d0ff3b82dadc57e9d632266b6d76",
+      "verifiable_from_package": false
+    },
+    "source_materials_sha256": {
+      "covers": "provenance: Forge's Step 2 integrity hash materials_sha256 of the source asset; reproducible with Forge from the asset section, not from this package",
+      "sha256": "3bcb61741103000da217f72d34daecec361753f1f28ee9972ab38c7d5b1e7f06",
+      "verifiable_from_package": false
+    },
+    "source_normals_sha256": {
+      "covers": "provenance: Forge's Step 2 integrity hash normals_sha256 of the source asset; reproducible with Forge from the asset section, not from this package",
+      "sha256": "bfa94f5b7f2f51408f5ce380faace5835d5b83fc8956d2ba427fa9815628a212",
+      "verifiable_from_package": false
+    },
+    "source_uvs_sha256": {
+      "covers": "provenance: Forge's Step 2 integrity hash uvs_sha256 of the source asset; reproducible with Forge from the asset section, not from this package",
+      "sha256": "8c3c50dd571203aca053930d382b0898a0bde4ce95473ec10b8b2585f0ac2a30",
+      "verifiable_from_package": false
+    }
+  },
+  "lods": {
+    "count": 1,
+    "levels": [
+      {
+        "level": 0,
+        "nodes": [
+          "blade",
+          "guard",
+          "grip",
+          "pommel"
+        ],
+        "triangles": 568,
+        "vertices": 563
+      }
+    ],
+    "note": "LOD0 only. Contract v1 declares no reduced levels and none are generated."
+  },
+  "materials": {
+    "base_color_space": "linear (Forge material v1 factors, passed through unchanged)",
+    "channels": {
+      "populated": {
+        "base_color": "factor",
+        "emissive": "absent",
+        "metallic_roughness": "factor",
+        "normal": "absent",
+        "occlusion": "absent"
+      },
+      "supported": [
+        "base_color",
+        "metallic_roughness",
+        "normal",
+        "occlusion",
+        "emissive"
+      ]
+    },
+    "components": [
+      {
+        "base_color_factor": [
+          0.7683130058353768,
+          0.7880133393183351,
+          0.8175638395427726,
+          1.0
+        ],
+        "component": "blade",
+        "material": "forge_blade",
+        "material_index": 0,
+        "metallic_factor": 1.0,
+        "node": "blade",
+        "preset": "bright_steel",
+        "procedural_pattern": {
+          "seed": 4161271460,
+          "strength": 0.07660984580870718,
+          "type": "brushed"
+        },
+        "roughness_factor": 0.2587653220910579
+      },
+      {
+        "base_color_factor": [
+          0.7273460497334598,
+          0.7481273654401301,
+          0.7792993390001356,
+          1.0
+        ],
+        "component": "guard",
+        "material": "forge_guard",
+        "material_index": 1,
+        "metallic_factor": 1.0,
+        "node": "guard",
+        "preset": "steel",
+        "procedural_pattern": {
+          "seed": 1738456441,
+          "strength": 0.1641062098322436,
+          "type": "patina"
+        },
+        "roughness_factor": 0.2844099202612415
+      },
+      {
+        "base_color_factor": [
+          0.33452179917395114,
+          0.1986223182595335,
+          0.1149918684660457,
+          1.0
+        ],
+        "component": "grip",
+        "material": "forge_grip",
+        "material_index": 2,
+        "metallic_factor": 0.0,
+        "node": "grip",
+        "preset": "brown_leather",
+        "procedural_pattern": {
+          "bands": 12,
+          "contrast": 0.3604733647662215,
+          "seed": 4105102729,
+          "twist": 0,
+          "type": "wrap"
+        },
+        "roughness_factor": 0.7063226815825328
+      },
+      {
+        "base_color_factor": [
+          0.6710770902791992,
+          0.6902507214300334,
+          0.7190111681562849,
+          1.0
+        ],
+        "component": "pommel",
+        "material": "forge_pommel",
+        "material_index": 3,
+        "metallic_factor": 1.0,
+        "node": "pommel",
+        "preset": "steel",
+        "procedural_pattern": {
+          "seed": 1038134100,
+          "strength": 0.14698588384781033,
+          "type": "patina"
+        },
+        "roughness_factor": 0.2769681636663154
+      }
+    ],
+    "model": "pbr_metallic_roughness",
+    "procedural_patterns": "not baked: no textures are written; parameters are informational",
+    "textures": []
+  },
+  "package": {
+    "exporter": {
+      "format_id": "glb",
+      "format_version": 1
+    },
+    "glb": "asset.glb",
+    "layout": "directory",
+    "manifest": "manifest.json",
+    "render_scene": "forge_render",
+    "render_scene_index": 0,
+    "root_node": "curved_sword"
+  },
+  "presentation": {
+    "material_version": 1,
+    "normals_version": 1,
+    "presentation_id": "forge.blade-presentation",
+    "presentation_version": 1,
+    "texcoord_0": "(u, 1 - v) of Forge uv v1: glTF's UV origin is the image's top-left",
+    "uv_version": 1
+  },
+  "sockets": [
+    {
+      "derivation": "the asset origin, which the coordinate convention defines as the grip center (checked: grip bounding-box center within 1e-9 m of the origin)",
+      "frame": "asset axes, identity rotation: +Y along the blade's base toward the tip, +X toward the (convex) edge side, +Z out of the blade flats",
+      "name": "socket_grip",
+      "node_index": 5,
+      "parent": "curved_sword",
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "derivation": "the blade's terminal point: the apex vertex where the blade sweep ends (recorded by the generator; for a curved blade it is not chosen by height), rounded to binary32",
+      "frame": "asset axes, identity rotation: +Y along the blade's base toward the tip, +X toward the (convex) edge side, +Z out of the blade flats",
+      "name": "socket_tip",
+      "node_index": 6,
+      "parent": "curved_sword",
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "translation": [
+        -0.1271141916513443,
+        0.7690549492835999,
+        0.0
+      ]
+    }
+  ],
+  "tags": [
+    "asset_type:curved_sword",
+    "blade.curvature:curved",
+    "blade.point:clipped",
+    "blade.section:single_edge",
+    "category:weapon",
+    "edge:single",
+    "guard.shape:bar",
+    "hands:hand_and_half",
+    "lineage:sword",
+    "material.blade:bright_steel",
+    "material.grip:brown_leather",
+    "material.guard:steel",
+    "material.pommel:steel",
+    "pommel.shape:orb"
+  ]
+}

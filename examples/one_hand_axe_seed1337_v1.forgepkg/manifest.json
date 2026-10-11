@@ -1,0 +1,334 @@
+{
+  "asset": {
+    "asset_type": "one_hand_axe",
+    "display_name": "procedural one-hand axe",
+    "generator_id": "forge.one_hand_axe",
+    "generator_version": 1,
+    "seed": "1337"
+  },
+  "collision": {
+    "derivation": "exact convex hull (integer arithmetic) of every LOD0 render vertex position after binary32 rounding; its vertices are exactly the extreme points",
+    "gltf_representation": "triangle mesh (mode 4) with POSITION and indices only, no material, as the only root of the non-default scene 'forge_collision'",
+    "node": "collision_hull",
+    "node_index": 9,
+    "representation": "convex_hull",
+    "scene": "forge_collision",
+    "scene_index": 1,
+    "triangles": 210,
+    "vertices": 107
+  },
+  "contract": {
+    "id": "forge.engine-contract",
+    "name": "Forge -> Engine Asset Contract",
+    "version": 1
+  },
+  "coordinates": {
+    "blade_tip_axis": "+Y",
+    "convention_id": "forge.rh-y-up-meters.grip-origin.v1",
+    "conversion": "none: native glTF 2.0 frame; engine-side axis and unit conversion is the importer's job",
+    "front_face_winding": "counter_clockwise",
+    "handedness": "right",
+    "meters_per_unit": 1,
+    "origin": "grip_center",
+    "units": "meters",
+    "up_axis": "+Y"
+  },
+  "hashes": {
+    "collision_sha256": {
+      "covers": "semantic: b'forge.engine.collision.v1\\0', node name, NUL, u32 vertex count, u32 index count, POSITION 3xf32, indices as u32; little-endian",
+      "sha256": "ae5f14df25b1f4c8bb65eba83a9a5a89d9987b7369d3c73ac23c47b8831885d4",
+      "verifiable_from_package": true
+    },
+    "glb_sha256": {
+      "covers": "every byte of asset.glb",
+      "sha256": "5c8cf46b11caa8995f137dda462a732ffb0562c2fe80dcb0681456633d1f4493",
+      "verifiable_from_package": true
+    },
+    "gltf_bin_sha256": {
+      "covers": "the GLB BIN chunk data exactly as stored, including its trailing zero padding",
+      "sha256": "e214b295521cd4ebdc8e17191cae5ea19af644a9fcd2a72434b9a69beb8bacee",
+      "verifiable_from_package": true
+    },
+    "gltf_json_sha256": {
+      "covers": "the GLB JSON chunk data exactly as stored, including its trailing space padding",
+      "sha256": "61d6654d08468f4d81c03fa5075fc5d0d8222f4e5d2eddc71d687fcb30dc7248",
+      "verifiable_from_package": true
+    },
+    "manifest_content_sha256": {
+      "covers": "canonical JSON of this manifest with hashes.manifest_content_sha256 removed",
+      "sha256": "6eced8e74abc9bf91d48bf31e129019562108ec0a6388ad617e108fc19faf5b9",
+      "verifiable_from_package": true
+    },
+    "pbr_materials_sha256": {
+      "covers": "canonical JSON of the glTF materials array exactly as stored in the GLB",
+      "sha256": "c71a447c65fcd21a6151330d9601e95b0b8f010a9f74a70c3f64f5287bbce253",
+      "verifiable_from_package": true
+    },
+    "render_geometry_sha256": {
+      "covers": "semantic, layout-independent: b'forge.engine.render-geometry.v1\\0' then, per LOD0 render node in manifest order: node name, NUL, material name, NUL, u32 vertex count, u32 index count, POSITION 3xf32, NORMAL 3xf32, TEXCOORD_0 2xf32, indices as u32; little-endian",
+      "sha256": "92b05cb2ba590fb80e58c7590f861c25068508aaa2f6670b56c05c9ee162bc40",
+      "verifiable_from_package": true
+    },
+    "semantic_sha256": {
+      "covers": "canonical JSON of {contract: {id, version}, coordinates, lods, collision_sha256, pbr_materials_sha256, render_geometry_sha256, sockets_sha256}",
+      "sha256": "33b506bcf9313340ebac4b8bd502858a79cadb1b77de3b02299add48272caf5f",
+      "verifiable_from_package": true
+    },
+    "sockets_sha256": {
+      "covers": "canonical JSON of [{name, parent, translation, rotation}] for each socket node, in node order",
+      "sha256": "fea00e353e6cc07e9c9bca59bfed5f1244c9aff4f9afee22440abd28337546b6",
+      "verifiable_from_package": true
+    },
+    "source_geometry_sha256": {
+      "covers": "provenance: Forge's Step 2 integrity hash geometry_sha256 of the source asset; reproducible with Forge from the asset section, not from this package",
+      "sha256": "7f0b616047e50642023dd805183ed661a297c1e105ed16ee6e0f7423eeff2355",
+      "verifiable_from_package": false
+    },
+    "source_materials_sha256": {
+      "covers": "provenance: Forge's Step 2 integrity hash materials_sha256 of the source asset; reproducible with Forge from the asset section, not from this package",
+      "sha256": "0e0553e6afc61108b0da09634d53cbbe9fe8bfa902bd44683f595c5d37a09910",
+      "verifiable_from_package": false
+    },
+    "source_normals_sha256": {
+      "covers": "provenance: Forge's Step 2 integrity hash normals_sha256 of the source asset; reproducible with Forge from the asset section, not from this package",
+      "sha256": "1d032d1ac86f1e3b1b7a1de18f1ad85c4bb8b9a66009791b3d72e57a7d3a7eb0",
+      "verifiable_from_package": false
+    },
+    "source_uvs_sha256": {
+      "covers": "provenance: Forge's Step 2 integrity hash uvs_sha256 of the source asset; reproducible with Forge from the asset section, not from this package",
+      "sha256": "297d1c38dd5026cf504683bb37e27ae4b5af051bcdd8546c75289f036c093c2a",
+      "verifiable_from_package": false
+    }
+  },
+  "lods": {
+    "count": 1,
+    "levels": [
+      {
+        "level": 0,
+        "nodes": [
+          "haft",
+          "grip",
+          "head",
+          "bit"
+        ],
+        "triangles": 1014,
+        "vertices": 881
+      }
+    ],
+    "note": "LOD0 only. Contract v1 declares no reduced levels and none are generated."
+  },
+  "materials": {
+    "base_color_space": "linear (Forge material v1 factors, passed through unchanged)",
+    "channels": {
+      "populated": {
+        "base_color": "factor",
+        "emissive": "absent",
+        "metallic_roughness": "factor",
+        "normal": "absent",
+        "occlusion": "absent"
+      },
+      "supported": [
+        "base_color",
+        "metallic_roughness",
+        "normal",
+        "occlusion",
+        "emissive"
+      ]
+    },
+    "components": [
+      {
+        "base_color_factor": [
+          0.4821952835051343,
+          0.34718060412369667,
+          0.2121659247422591,
+          1.0
+        ],
+        "component": "haft",
+        "material": "forge_haft",
+        "material_index": 0,
+        "metallic_factor": 0.0,
+        "node": "haft",
+        "preset": "hickory_wood",
+        "procedural_pattern": {
+          "seed": 3843105474,
+          "strength": 0.048938657650724054,
+          "type": "brushed"
+        },
+        "roughness_factor": 0.6221380883129314
+      },
+      {
+        "base_color_factor": [
+          0.3389099222190678,
+          0.08472748055476695,
+          0.07531331604868174,
+          1.0
+        ],
+        "component": "grip",
+        "material": "forge_grip",
+        "material_index": 1,
+        "metallic_factor": 0.0,
+        "node": "grip",
+        "preset": "oxblood_leather",
+        "procedural_pattern": {
+          "bands": 11,
+          "contrast": 0.43694903614232317,
+          "seed": 3020841268,
+          "twist": 0,
+          "type": "wrap"
+        },
+        "roughness_factor": 0.618487459179014
+      },
+      {
+        "base_color_factor": [
+          0.40190916547197847,
+          0.40190916547197847,
+          0.4230622794441879,
+          1.0
+        ],
+        "component": "head",
+        "material": "forge_head",
+        "material_index": 2,
+        "metallic_factor": 1.0,
+        "node": "head",
+        "preset": "forged_iron",
+        "procedural_pattern": {
+          "seed": 554569205,
+          "strength": 0.17998668473446744,
+          "type": "patina"
+        },
+        "roughness_factor": 0.46443530765827745
+      },
+      {
+        "base_color_factor": [
+          0.369005696224235,
+          0.369005696224235,
+          0.3884270486570895,
+          1.0
+        ],
+        "component": "bit",
+        "material": "forge_bit",
+        "material_index": 3,
+        "metallic_factor": 1.0,
+        "node": "bit",
+        "preset": "forged_iron",
+        "procedural_pattern": {
+          "seed": 1423590387,
+          "strength": 0.09629670617170633,
+          "type": "brushed"
+        },
+        "roughness_factor": 0.4553642119280994
+      }
+    ],
+    "model": "pbr_metallic_roughness",
+    "procedural_patterns": "not baked: no textures are written; parameters are informational",
+    "textures": []
+  },
+  "package": {
+    "exporter": {
+      "format_id": "glb",
+      "format_version": 1
+    },
+    "glb": "asset.glb",
+    "layout": "directory",
+    "manifest": "manifest.json",
+    "render_scene": "forge_render",
+    "render_scene_index": 0,
+    "root_node": "one_hand_axe"
+  },
+  "presentation": {
+    "material_version": 1,
+    "normals_version": 1,
+    "presentation_id": "forge.hafted-presentation",
+    "presentation_version": 1,
+    "texcoord_0": "(u, 1 - v) of Forge uv v1: glTF's UV origin is the image's top-left",
+    "uv_version": 1
+  },
+  "sockets": [
+    {
+      "derivation": "the asset origin, which the coordinate convention defines as the grip center (checked: grip bounding-box center within 1e-9 m of the origin)",
+      "frame": "asset axes, identity rotation: +Y along the haft toward the head, +X toward the striking side (edge, face or reference element), +Z across the head's thickness",
+      "name": "socket_grip",
+      "node_index": 5,
+      "parent": "one_hand_axe",
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "derivation": "the head's reference center on the haft axis: the middle of the socket's height (axes, hammer) or of the head's height (mace)",
+      "frame": "asset axes, identity rotation: +Y along the haft toward the head, +X toward the striking side (edge, face or reference element), +Z across the head's thickness",
+      "name": "socket_head",
+      "node_index": 6,
+      "parent": "one_hand_axe",
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "translation": [
+        0.0,
+        0.4143461287021637,
+        0.0
+      ]
+    },
+    {
+      "derivation": "the cutting edge's furthest-forward vertex, at the middle of the edge's height (a bit vertex), rounded to binary32",
+      "frame": "asset axes, identity rotation: +Y along the haft toward the head, +X toward the striking side (edge, face or reference element), +Z across the head's thickness",
+      "name": "socket_strike",
+      "node_index": 7,
+      "parent": "one_hand_axe",
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "translation": [
+        0.12088104337453842,
+        0.41348716616630554,
+        0.0
+      ]
+    },
+    {
+      "derivation": "the weapon's distal end on its primary axis: the haft's top center (Contract v1 requires socket_tip), rounded to binary32",
+      "frame": "asset axes, identity rotation: +Y along the haft toward the head, +X toward the striking side (edge, face or reference element), +Z across the head's thickness",
+      "name": "socket_tip",
+      "node_index": 8,
+      "parent": "one_hand_axe",
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "translation": [
+        0.0,
+        0.44603729248046875,
+        0.0
+      ]
+    }
+  ],
+  "tags": [
+    "asset_type:one_hand_axe",
+    "category:weapon",
+    "class:axe",
+    "hands:one",
+    "head.collar:yes",
+    "head.poll:flat",
+    "head.style:crescent",
+    "lineage:hafted",
+    "material.bit:forged_iron",
+    "material.grip:oxblood_leather",
+    "material.haft:hickory_wood",
+    "material.head:forged_iron"
+  ]
+}
