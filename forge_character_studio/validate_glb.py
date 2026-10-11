@@ -37,10 +37,16 @@ def validate_character_glb_bytes(data: bytes) -> dict:
     if bin_kind != BIN_CHUNK or bin_offset + 8 + bin_len != len(data):
         raise CharacterGlbError("invalid BIN chunk")
     extras = document.get("asset", {}).get("extras", {})
-    if extras.get("contract") != {"id": CONTRACT_ID, "version": 1}:
+    if extras.get("contract") not in ({"id": CONTRACT_ID, "version": 1}, {"id": CONTRACT_ID, "version": 2}):
         raise CharacterGlbError("unsupported or missing character contract")
     if extras.get("units") != "meters" or extras.get("up_axis") != "+Y":
         raise CharacterGlbError("unsupported character coordinates")
+    if extras["contract"]["version"] == 2:
+        skeleton = extras.get("skeleton_landmarks", {})
+        if skeleton.get("contract") != {"id": "forge.character-skeleton-landmarks", "version": 1}:
+            raise CharacterGlbError("v2 character is missing skeleton landmarks")
+        if len(skeleton.get("joints", [])) < 20:
+            raise CharacterGlbError("v2 skeleton landmark set is incomplete")
     meshes = document.get("meshes")
     nodes = document.get("nodes")
     if not isinstance(meshes, list) or len(meshes) != 1 or not isinstance(nodes, list) or len(nodes) != 1:

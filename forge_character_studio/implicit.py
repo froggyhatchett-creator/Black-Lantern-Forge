@@ -69,7 +69,42 @@ _TETS = (
 )
 
 
-def extract_surface(field: OrganicField, bounds, cells=(30, 52, 24), iso: float = 0.07123456789) -> Mesh:
+def _project_to_field(field: OrganicField, p, iso: float, iterations: int = 3):
+    x, y, z = p
+    for _ in range(iterations):
+        value = field.sample((x, y, z)) - iso
+        gx, gy, gz = field.gradient((x, y, z))
+        norm2 = gx * gx + gy * gy + gz * gz
+        if norm2 <= 1e-18:
+            break
+        step = max(-0.015, min(0.015, value / norm2))
+        x -= step * gx
+        y -= step * gy
+        z -= step * gz
+    return (float(x), float(y), float(z))
+
+
+def _anatomical_relax(mesh: Mesh, field: OrganicField, iso: float, passes: int) -> Mesh:
+    """Tangential relaxation followed by field projection preserves anatomy."""
+    if passes <= 0:
+        return mesh
+    neighbors = [set() for _ in mesh.positions]
+    for a, b, c in mesh.triangles:
+        neighbors[a].update((b, c)); neighbors[b].update((a, c)); neighbors[c].update((a, b))
+    positions = mesh.positions
+    for _ in range(passes):
+        relaxed = []
+        for index, point in enumerate(positions):
+            ring = neighbors[index]
+            center = tuple(sum(positions[n][axis] for n in ring) / len(ring) for axis in range(3))
+            candidate = tuple(point[axis] * .72 + center[axis] * .28 for axis in range(3))
+            relaxed.append(_project_to_field(field, candidate, iso))
+        positions = tuple(relaxed)
+    return Mesh(mesh.name, positions, mesh.triangles)
+
+
+def extract_surface(field: OrganicField, bounds, cells=(30, 52, 24), iso: float = 0.07123456789,
+                    relaxation_passes: int = 0) -> Mesh:
     """Extract one indexed, closed, outward-wound triangle surface."""
     (x0, y0, z0), (x1, y1, z1) = bounds
     nx, ny, nz = cells
@@ -188,4 +223,4 @@ def extract_surface(field: OrganicField, bounds, cells=(30, 52, 24), iso: float 
     mesh = Mesh("body", tuple(positions), tuple(oriented))
     if mesh.signed_volume() < 0.0:
         mesh = Mesh("body", mesh.positions, tuple((a, c, b) for a, b, c in mesh.triangles))
-    return mesh
+    return _anatomical_relax(mesh, field, iso, relaxation_passes)

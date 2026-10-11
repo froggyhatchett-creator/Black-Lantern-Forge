@@ -29,7 +29,7 @@ def mesh_sha256(asset: CharacterAsset) -> str:
 
 def recipe_data(asset: CharacterAsset) -> dict:
     return {
-        "contract": {"id": RECIPE_CONTRACT_ID, "version": RECIPE_CONTRACT_VERSION},
+        "contract": {"id": RECIPE_CONTRACT_ID, "version": asset.generator_version},
         "generator": {"id": GENERATOR_ID, "version": asset.generator_version},
         "body_plan_id": asset.body_plan_id,
         "seed": str(asset.seed),
@@ -54,17 +54,20 @@ def load_recipe(path: str | Path) -> CharacterAsset:
         raise ValueError(f"cannot read character recipe: {exc}") from exc
     if set(data) != {"contract", "generator", "body_plan_id", "seed", "parameters", "integrity"}:
         raise ValueError("character recipe has missing or unknown sections")
-    if data["contract"] != {"id": RECIPE_CONTRACT_ID, "version": RECIPE_CONTRACT_VERSION}:
+    contract = data["contract"]
+    if contract not in ({"id": RECIPE_CONTRACT_ID, "version": 1},
+                        {"id": RECIPE_CONTRACT_ID, "version": 2}):
         raise ValueError("unsupported character recipe contract")
-    if data["generator"] != {"id": GENERATOR_ID, "version": 1}:
+    generator = data["generator"]
+    if generator not in ({"id": GENERATOR_ID, "version": 1}, {"id": GENERATOR_ID, "version": 2}):
         raise ValueError("unsupported character generator")
-    if data["body_plan_id"] != "humanoid.neutral.v1":
+    if data["body_plan_id"] not in ("humanoid.neutral.v1", "humanoid.neutral.v2"):
         raise ValueError("unsupported character body plan")
     try:
         seed = int(data["seed"])
     except (TypeError, ValueError) as exc:
         raise ValueError("recipe seed is not an integer string") from exc
-    asset = generate_character(seed, CharacterParameters.from_dict(data["parameters"]), 1)
+    asset = generate_character(seed, CharacterParameters.from_dict(data["parameters"]), generator["version"])
     if data["integrity"] != {"mesh_sha256": mesh_sha256(asset)}:
         raise ValueError("character recipe integrity check failed")
     return asset

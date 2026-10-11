@@ -16,9 +16,9 @@ DEMO = ROOT / "examples" / "character_step6a_seed1337"
 class TestRecipeContract(unittest.TestCase):
     def test_recipe_is_explicit_and_versioned(self):
         data = recipe_data(generate_character(5))
-        self.assertEqual(data["contract"], {"id": "forge.character-recipe", "version": 1})
-        self.assertEqual(data["generator"], {"id": "forge.character.humanoid-base", "version": 1})
-        self.assertEqual(data["body_plan_id"], "humanoid.neutral.v1")
+        self.assertEqual(data["contract"], {"id": "forge.character-recipe", "version": 2})
+        self.assertEqual(data["generator"], {"id": "forge.character.humanoid-base", "version": 2})
+        self.assertEqual(data["body_plan_id"], "humanoid.neutral.v2")
 
     def test_demo_recipe_regenerates_exact_mesh(self):
         asset = load_recipe(DEMO / "character.recipe.json")
@@ -40,7 +40,7 @@ class TestCharacterGlbContract(unittest.TestCase):
 
     def test_independent_validator_accepts_generated_glb(self):
         result = validate_character_glb_bytes(character_glb(generate_character(1337)))
-        self.assertEqual(result["contract"], {"id": "forge.character-mesh", "version": 1})
+        self.assertEqual(result["contract"], {"id": "forge.character-mesh", "version": 2})
         self.assertGreater(result["vertices"], 4000)
         self.assertGreater(result["triangles"], 8000)
 

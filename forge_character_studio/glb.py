@@ -14,9 +14,10 @@ from pathlib import Path
 from forge.engine.contract import MODE_TRIANGLES
 from forge.engine.glb import GlbBuilder, pack_glb
 from forge_character_studio.model import CharacterAsset, GENERATOR_ID
+from forge_character_studio.skeleton import build_skeleton
 
 CONTRACT_ID = "forge.character-mesh"
-CONTRACT_VERSION = 1
+CONTRACT_VERSION = 2
 
 
 def _vertex_normals(mesh) -> tuple[tuple[float, float, float], ...]:
@@ -63,10 +64,11 @@ def character_glb(asset: CharacterAsset) -> bytes:
         "units": "meters",
         "up_axis": "+Y",
         "recipe_required_for_regeneration": True,
+        "skeleton_landmarks": build_skeleton(asset.parameters).to_dict(),
     }
     gltf = {
         "accessors": builder.accessors,
-        "asset": {"version": "2.0", "generator": "Black Lantern Forge Character Studio Step 6A",
+        "asset": {"version": "2.0", "generator": "Black Lantern Forge Character Studio Step 6B",
                   "extras": identity},
         "bufferViews": builder.buffer_views,
         "buffers": [{"byteLength": len(builder.bin_bytes)}],
