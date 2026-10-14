@@ -92,7 +92,7 @@ git commit -m "fix: Windows-only CRLF golden-fixture and path-separator test fai
 
 **Interfaces:**
 - Consumes: nothing
-- Produces: `BaseMeshProvenance` dataclass, `save_provenance(record, path) -> Path`, `load_provenance(path) -> BaseMeshProvenance`, `ALLOWED_LICENSE_IDS` (initially `("CC0-1.0",)`)
+- Produces: `BaseMeshProvenance` dataclass, `save_provenance(record, path) -> Path`, `load_provenance(path) -> BaseMeshProvenance`, `ALLOWED_LICENSE_IDS` (initially `("CC0-1.0",)`); `BaseMeshRef` dataclass (`source_name: str`, `version: str`, `archive_sha256: str`) — the minimal subset embedded in a recipe or a stamped mesh, as opposed to the full `BaseMeshProvenance` record which also carries `source_url`, `license_id`, `retrieved_date` and is never reconstructed from a partial source
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -148,17 +148,17 @@ git commit -m "feat: add base-mesh provenance record (CC0-only, Step 6C)"
 - Test: `tests/test_character_recipe_v3.py`
 
 **Interfaces:**
-- Consumes: `CharacterAsset`, `CharacterParameters` from `forge_character_studio/model.py` (existing); `BaseMeshProvenance` from Task 2
-- Produces: `RECIPE_CONTRACT_VERSION_V3 = 3`; `recipe_data_v3(asset: CharacterAsset, base_mesh: BaseMeshProvenance, blender_build: str) -> dict`; `save_recipe_v3(asset, base_mesh, blender_build, path) -> Path`; `load_recipe_v3(path) -> tuple[CharacterAsset, BaseMeshProvenance, str]`
+- Consumes: `CharacterAsset`, `CharacterParameters` from `forge_character_studio/model.py` (existing); `BaseMeshRef` from Task 2
+- Produces: `RECIPE_CONTRACT_VERSION_V3 = 3`; `recipe_data_v3(asset: CharacterAsset, base_mesh: BaseMeshRef, blender_build: str) -> dict`; `save_recipe_v3(asset, base_mesh, blender_build, path) -> Path`; `load_recipe_v3(path) -> tuple[CharacterAsset, BaseMeshRef, str]`
 
 - [ ] **Step 1: Write the failing tests**
 
 ```python
-def test_recipe_v3_round_trips(demo_asset, demo_provenance):
-    path = save_recipe_v3(demo_asset, demo_provenance, "4.2.3", tmp_path / "r.json")
-    asset, provenance, blender_build = load_recipe_v3(path)
+def test_recipe_v3_round_trips(demo_asset, demo_base_mesh_ref):
+    path = save_recipe_v3(demo_asset, demo_base_mesh_ref, "4.2.3", tmp_path / "r.json")
+    asset, base_mesh, blender_build = load_recipe_v3(path)
     assert asset == demo_asset
-    assert provenance == demo_provenance
+    assert base_mesh == demo_base_mesh_ref
     assert blender_build == "4.2.3"
 
 def test_recipe_v2_still_loads_unchanged(existing_v2_fixture_path):
@@ -180,7 +180,7 @@ Expected: FAIL (functions don't exist yet)
 
 - [ ] **Step 3: Implement the v3 functions in `forge_character_studio/recipe.py`**
 
-`recipe_data_v3` reuses `recipe_data(asset)` for the existing sections and adds a `"pipeline"` section: `{"base_mesh": {"source_name", "version", "archive_sha256"}, "blender_build": blender_build}`. Its `contract.version` is `RECIPE_CONTRACT_VERSION_V3` (decoupled from `generator_version`, unlike v1/v2 — document this decoupling in a one-line comment since it's a deliberate change from the existing `"version": asset.generator_version` pattern). `load_recipe_v3` parses the same way `load_recipe` does but additionally requires and validates the `pipeline` section, reconstructing a `BaseMeshProvenance` from it (without the fields `save_provenance` writes that don't apply here, i.e. no `retrieved_date`/`source_url`/`license_id` round-trip is needed inside the recipe — only `source_name`, `version`, `archive_sha256`; keep the recipe's `pipeline.base_mesh` schema minimal and distinct from the full `BaseMeshProvenance` record).
+`recipe_data_v3` reuses `recipe_data(asset)` for the existing sections and adds a `"pipeline"` section: `{"base_mesh": {"source_name", "version", "archive_sha256"}, "blender_build": blender_build}`. Its `contract.version` is `RECIPE_CONTRACT_VERSION_V3` (decoupled from `generator_version`, unlike v1/v2 — document this decoupling in a one-line comment since it's a deliberate change from the existing `"version": asset.generator_version` pattern). `load_recipe_v3` parses the same way `load_recipe` does but additionally requires and validates the `pipeline` section, reconstructing a `BaseMeshRef` (Task 2) from its three fields — never a full `BaseMeshProvenance`, which needs fields (`source_url`, `license_id`, `retrieved_date`) a recipe does not and should not carry.
 
 - [ ] **Step 4: Run tests to verify they pass**
 
@@ -583,26 +583,26 @@ Exact `bpy` API call bodies cannot be written or verified without a live Blender
 - Test: `tests/test_character_mesh_v3.py`
 
 **Interfaces:**
-- Consumes: `CharacterAsset` (existing, `model.py`); `SkeletonRig` (Task 4); `BlendShapeSet` (Task 5); `BaseMeshProvenance` (Task 2); a raw GLB's bytes (synthetic in this task's own tests; Task 10's real output once Phase 4 runs)
-- Produces: `MESH_V3_CONTRACT_ID = "forge.character-mesh"`, `MESH_V3_CONTRACT_VERSION = 3`, `stamp_character_v3_identity(raw_glb_bytes: bytes, asset: CharacterAsset, rig: SkeletonRig, shapes: BlendShapeSet, base_mesh: BaseMeshProvenance) -> bytes`
+- Consumes: `CharacterAsset` (existing, `model.py`); `SkeletonRig` (Task 4); `BlendShapeSet` (Task 5); `BaseMeshRef` (Task 2); a raw GLB's bytes (synthetic in this task's own tests; Task 10's real output once Phase 4 runs)
+- Produces: `MESH_V3_CONTRACT_ID = "forge.character-mesh"`, `MESH_V3_CONTRACT_VERSION = 3`, `stamp_character_v3_identity(raw_glb_bytes: bytes, asset: CharacterAsset, rig: SkeletonRig, shapes: BlendShapeSet, base_mesh: BaseMeshRef) -> bytes`
 
 - [ ] **Step 1: Write the failing tests**
 
 ```python
-def test_stamped_glb_carries_v3_identity_extras(synthetic_raw_glb, demo_asset, demo_rig, demo_shapes, demo_provenance):
-    stamped = stamp_character_v3_identity(synthetic_raw_glb, demo_asset, demo_rig, demo_shapes, demo_provenance)
+def test_stamped_glb_carries_v3_identity_extras(synthetic_raw_glb, demo_asset, demo_rig, demo_shapes, demo_base_mesh_ref):
+    stamped = stamp_character_v3_identity(synthetic_raw_glb, demo_asset, demo_rig, demo_shapes, demo_base_mesh_ref)
     doc = parse_gltf_json_chunk(stamped)  # local test helper, mirrors validate_glb.py's own chunk parsing
     extras = doc["asset"]["extras"]
     assert extras["contract"] == {"id": "forge.character-mesh", "version": 3}
-    assert extras["base_mesh"]["source_name"] == demo_provenance.source_name
+    assert extras["base_mesh"]["source_name"] == demo_base_mesh_ref.source_name
 
-def test_stamping_does_not_alter_vertex_or_index_data(synthetic_raw_glb, demo_asset, demo_rig, demo_shapes, demo_provenance):
-    stamped = stamp_character_v3_identity(synthetic_raw_glb, demo_asset, demo_rig, demo_shapes, demo_provenance)
+def test_stamping_does_not_alter_vertex_or_index_data(synthetic_raw_glb, demo_asset, demo_rig, demo_shapes, demo_base_mesh_ref):
+    stamped = stamp_character_v3_identity(synthetic_raw_glb, demo_asset, demo_rig, demo_shapes, demo_base_mesh_ref)
     assert extract_accessor_bytes(stamped, "POSITION") == extract_accessor_bytes(synthetic_raw_glb, "POSITION")
 
-def test_stamping_is_deterministic(synthetic_raw_glb, demo_asset, demo_rig, demo_shapes, demo_provenance):
-    a = stamp_character_v3_identity(synthetic_raw_glb, demo_asset, demo_rig, demo_shapes, demo_provenance)
-    b = stamp_character_v3_identity(synthetic_raw_glb, demo_asset, demo_rig, demo_shapes, demo_provenance)
+def test_stamping_is_deterministic(synthetic_raw_glb, demo_asset, demo_rig, demo_shapes, demo_base_mesh_ref):
+    a = stamp_character_v3_identity(synthetic_raw_glb, demo_asset, demo_rig, demo_shapes, demo_base_mesh_ref)
+    b = stamp_character_v3_identity(synthetic_raw_glb, demo_asset, demo_rig, demo_shapes, demo_base_mesh_ref)
     assert a == b
 ```
 
