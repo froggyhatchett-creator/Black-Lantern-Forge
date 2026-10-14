@@ -8,3 +8,6 @@ dist/
 # Generated assets. Regenerate them from seeds; don't commit them.
 output/*
 !output/.gitkeep
+
+# Subagent-driven-development scratch workspace (ledger, briefs, review packages)
+.superpowers/
