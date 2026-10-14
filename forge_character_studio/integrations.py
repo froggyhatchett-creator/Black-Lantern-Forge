@@ -14,10 +14,19 @@ class SourceReference:
     incomplete: bool = False
 
 
+@dataclass(frozen=True)
+class CharacterDNA:
+    """Thin reference to a forge.character-recipe v3 file (loaded via load_recipe_v3)."""
+
+    contract_id: str
+    contract_version: int
+    recipe_path: Path
+
+
 class ReconstructionProvider(Protocol):
     provider_id: str
 
-    def reconstruct(self, references: tuple[SourceReference, ...], output: Path) -> Path: ...
+    def reconstruct(self, references: tuple[SourceReference, ...], output: Path) -> CharacterDNA: ...
 
 
 class RiggingProvider(Protocol):
