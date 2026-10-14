@@ -53,11 +53,15 @@ class TestRecipeV3(unittest.TestCase):
         self.assertEqual(set(data), {"contract", "generator", "body_plan_id", "seed", "parameters", "integrity", "pipeline"})
 
     def test_recipe_v2_still_loads_unchanged(self):
-        # existing load_recipe() path must be untouched by this task
-        asset = load_recipe(DEMO_V1)
-        self.assertEqual(asset.generator_version, 1)
-        path = save_recipe(self.asset, self.tmp_path / "v2.json")
-        self.assertEqual(load_recipe(path), self.asset)
+        # existing v1/v2 save/load path must be untouched by this task
+        v1_asset = load_recipe(DEMO_V1)
+        self.assertEqual(v1_asset.generator_version, 1)
+        v2_asset = generate_character(7, CharacterParameters(), 2)
+        self.assertEqual(v2_asset.generator_version, 2)
+        path = save_recipe(v2_asset, self.tmp_path / "v2.json")
+        loaded = load_recipe(path)
+        self.assertEqual(loaded.generator_version, 2)
+        self.assertEqual(loaded, v2_asset)
 
     def test_recipe_v3_rejects_missing_pipeline_section(self):
         path = self.tmp_path / "bad.json"
