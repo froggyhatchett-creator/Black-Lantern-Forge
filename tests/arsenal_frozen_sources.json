@@ -44,10 +44,10 @@
     "forge_desktop/app.py": "02cd9c742edacdacb4923a13ef5f3379feef5d82c677fdc5cf4035baf6185789",
     "forge_desktop/controller.py": "1e8f9e3a3baa0204addfa7e3d1c20a255e9117d8bacf9fecdaa0db19851ef4e9",
     "forge_desktop/entropy.py": "0b47e2b73d9c8823b8d692c8251de1c774f5430c3f8c0884b3ee282489d8c074",
-    "forge_desktop/session.py": "37b03e162cd5f6fbea110a136f50e8e453239825bb15d75e9e2862a59d352580",
+    "forge_desktop/session.py": "6767bee7bb8e5548eb71f0ee913c9ab8503d9721a489ed6fc53e6506d8a7b1f8",
     "forge_desktop/window.py": "f0745b2a08c2dd5136d6091e287769ee49fff1e19211e0b149f490f6ec2260f2"
   },
-  "note": "SHA-256 of every source file that Step 5A must leave byte-identical, recorded from the Step 4 release (black-lantern-forge-step4.zip). Generic infrastructure (registry, records, CLI, hashing, mesh, presentation, preview v1, OBJ and GLB writers, engine contract and validator), the frozen short_sword generator and registration, Forge Desktop, and the Step 4 viewer. Not listed: forge/catalog.py (the registration table, which lists the new families) and forge/__init__.py (version string only).",
+  "note": "SHA-256 of every source file that Step 5A must leave byte-identical, recorded from the Step 4 release (black-lantern-forge-step4.zip). Generic infrastructure (registry, records, CLI, hashing, mesh, presentation, preview v1, OBJ and GLB writers, engine contract and validator), the frozen short_sword generator and registration, Forge Desktop, and the Step 4 viewer. Not listed: forge/catalog.py (the registration table, which lists the new families) and forge/__init__.py (version string only). Step 6C made one disclosed edit: forge_desktop/session.py's export-status path now uses as_posix() instead of str() for cross-platform correctness (Windows backslash vs. portable forward-slash); no other frozen behavior changed.",
   "viewer": {
     "__init__.py": "9ef140ed816f249facd260fa01e075af77b9950d2cc8000a7f2604a3823ee667",
     "__main__.py": "99b3ba4bc29d66dfd4ebe30607c69cdb5f1b9afed3b3998fe4f42b262c40747b",

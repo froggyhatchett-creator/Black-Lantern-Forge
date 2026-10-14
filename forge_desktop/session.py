@@ -385,7 +385,7 @@ class DesktopSession:
 
             def shown(p: Path) -> str:      # relative to the chosen location: "x.obj", "x.forgepkg/asset.glb"
                 try:
-                    return str(p.relative_to(base))
+                    return p.relative_to(base).as_posix()
                 except ValueError:
                     return p.name
             extra = f" (+ {', '.join(shown(p) for p in written[1:])})" if len(written) > 1 else ""
