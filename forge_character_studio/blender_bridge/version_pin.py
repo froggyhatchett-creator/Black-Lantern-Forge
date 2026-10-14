@@ -27,7 +27,7 @@ def check_blender_version(executable: Path) -> str:
             text=True,
             timeout=30,
         )
-    except OSError as exc:
+    except (OSError, subprocess.TimeoutExpired) as exc:
         raise BlenderVersionError(f"Blender executable not runnable: {executable}") from exc
     if result.returncode != 0:
         raise BlenderVersionError(

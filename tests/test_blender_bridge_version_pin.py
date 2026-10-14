@@ -66,6 +66,12 @@ class BlenderVersionPinTests(unittest.TestCase):
         with mock.patch(RUN_TARGET, return_value=_completed("Blender 4.2.0 LTS\n")):
             self.assertEqual(check_blender_version(self.executable), "4.2.0")
 
+    def test_require_pinned_blender_refuses_timeout(self):
+        timeout = subprocess.TimeoutExpired(cmd="blender", timeout=30)
+        with mock.patch(RUN_TARGET, side_effect=timeout):
+            with self.assertRaises(BlenderVersionError):
+                require_pinned_blender(self.executable)
+
     def test_blender_version_error_is_value_error(self):
         self.assertTrue(issubclass(BlenderVersionError, ValueError))
 
