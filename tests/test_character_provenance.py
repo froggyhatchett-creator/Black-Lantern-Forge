@@ -2,7 +2,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from forge_character_studio.provenance import BaseMeshProvenance, load_provenance, save_provenance
+from forge_character_studio.provenance import BaseMeshProvenance, BaseMeshRef, load_provenance, save_provenance
 
 
 def _record(**overrides):
@@ -16,6 +16,23 @@ def _record(**overrides):
     )
     fields.update(overrides)
     return BaseMeshProvenance(**fields)
+
+
+class TestBaseMeshRef(unittest.TestCase):
+    def test_valid_ref_constructs(self):
+        ref = BaseMeshRef(source_name="Blender Studio Human Base Meshes", version="1.4.1",
+                          archive_sha256="0" * 64)
+        self.assertEqual(ref.source_name, "Blender Studio Human Base Meshes")
+        self.assertEqual(ref.version, "1.4.1")
+        self.assertEqual(ref.archive_sha256, "0" * 64)
+
+    def test_ref_rejects_malformed_sha256(self):
+        with self.assertRaises(ValueError):
+            BaseMeshRef(source_name="x", version="1", archive_sha256="not-a-hash")
+
+    def test_ref_rejects_empty_version(self):
+        with self.assertRaises(ValueError):
+            BaseMeshRef(source_name="x", version="", archive_sha256="0" * 64)
 
 
 class TestBaseMeshProvenance(unittest.TestCase):
