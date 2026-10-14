@@ -42,6 +42,19 @@ class CharacterSkeletonRigTests(unittest.TestCase):
             SkeletonRig(CONTRACT_ID, 1,
                         (BoneJoint("a", "a", IDENTITY_4X4),), ())
 
+    def test_rejects_duplicate_bone_names_hiding_a_cycle(self):
+        # The real pair x<->y is cyclic; the shadowing pair reuses the names with no parent.
+        with self.assertRaises(ValueError):
+            SkeletonRig(CONTRACT_ID, 1,
+                        (BoneJoint("x", "y", IDENTITY_4X4),
+                         BoneJoint("y", "x", IDENTITY_4X4),
+                         BoneJoint("x", None, IDENTITY_4X4),
+                         BoneJoint("y", None, IDENTITY_4X4)), ())
+
+    def test_rejects_nan_weight(self):
+        with self.assertRaises(ValueError):
+            VertexWeights((0, 1, 0, 0), (float("nan"), 0.5, 0.5, 0.0))
+
 
 if __name__ == "__main__":
     unittest.main()

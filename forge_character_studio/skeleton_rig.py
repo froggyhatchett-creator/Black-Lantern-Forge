@@ -24,7 +24,7 @@ class VertexWeights:
     weights: tuple[float, float, float, float]
 
     def __post_init__(self) -> None:
-        if any(weight < 0.0 for weight in self.weights):
+        if not all(weight >= 0.0 for weight in self.weights):
             raise ValueError(f"vertex weights must be non-negative; got {self.weights!r}")
         if abs(sum(self.weights) - 1.0) > _WEIGHT_SUM_TOLERANCE:
             raise ValueError(f"vertex weights must sum to 1.0; got {self.weights!r}")
@@ -41,6 +41,8 @@ class SkeletonRig:
 
     def __post_init__(self) -> None:
         by_name = {bone.name: bone for bone in self.bones}
+        if len(by_name) != len(self.bones):
+            raise ValueError("bone names must be unique")
         for bone in self.bones:
             if bone.parent is not None and bone.parent not in by_name:
                 raise ValueError(f"bone {bone.name!r} has unknown parent {bone.parent!r}")
