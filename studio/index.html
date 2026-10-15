@@ -67,6 +67,7 @@ legend { font-family: var(--display); font-size: 0.78rem; text-transform: upperc
 .garment { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 3px 0; }
 .garment label { font-family: var(--mono); font-size: 0.82rem; display: inline-flex; gap: 6px; align-items: center; }
 input[type=color] { width: 40px; height: 26px; padding: 0; border: 1px solid var(--line); border-radius: 4px; background: none; }
+.q { font-size: 0.68rem; color: var(--muted); border: 1px solid var(--line); border-radius: 3px; padding: 0 3px; margin-left: 4px; cursor: help; }
 .note { font-size: 0.8rem; color: var(--muted); line-height: 1.45; margin: 6px 0; }
 #coverage-note { color: var(--warn); }
 textarea { width: 100%; box-sizing: border-box; font-family: var(--mono); font-size: 0.72rem; min-height: 160px; background: var(--bg); color: var(--fg); border: 1px solid var(--line); }
@@ -76,6 +77,9 @@ code { font-family: var(--mono); font-size: 0.8em; }
 <div class="app">
   <header>
     <h1>Character Studio</h1>
+    <div class="row"><label for="generator">Generator</label><select id="generator">
+      <option value="v2">v2 (Forge SDF body)</option><option value="v3">v3 realistic human (Phase 1, MakeHuman CC0 base)</option></select></div>
+    <p class="note" id="generator-note"></p>
     <div class="presets" role="group" aria-label="Body preset">
       <button type="button" data-preset="female">Female</button>
       <button type="button" data-preset="male">Male</button>
@@ -123,7 +127,7 @@ code { font-family: var(--mono); font-size: 0.8em; }
           <fieldset><legend>Eyes</legend>
             <div class="row"><label for="eye">Eye color</label><select id="eye"></select></div>
           </fieldset>
-          <fieldset><legend>Hair (styling, kept apart from anatomy in the DNA)</legend>
+          <fieldset id="hair-fs"><legend>Hair (styling, kept apart from anatomy in the DNA)</legend>
             <div class="row"><label for="hairstyle">Style</label><select id="hairstyle"></select></div>
             <div class="row"><label for="haircolor">Color</label><input type="color" id="haircolor">
               <label for="hlcolor">Highlights</label><input type="color" id="hlcolor"></div>

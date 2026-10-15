@@ -60,6 +60,8 @@ def make_handler(pack: Path, out_dir: Path):
                 return self._send(200, f.read_bytes(), TYPES[".glb"])
             if path == "/studio_pack.bin":
                 return self._send(200, pack.read_bytes(), TYPES[".bin"])
+            if path == "/studio_pack_v3.bin" and (pack.parent / "studio_pack_v3.bin").is_file():  # generator v3
+                return self._send(200, (pack.parent / "studio_pack_v3.bin").read_bytes(), TYPES[".bin"])
             m = re.fullmatch(r"/([\w.-]+\.(?:js|json))", path)
             if m and (STUDIO_DIR / m.group(1)).is_file():
                 f = STUDIO_DIR / m.group(1)

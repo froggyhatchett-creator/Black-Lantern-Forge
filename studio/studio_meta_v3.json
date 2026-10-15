@@ -1,0 +1,858 @@
+{
+ "dna": {
+  "schema": "forge.character-dna",
+  "version": 1
+ },
+ "defaults": {
+  "body": {
+   "height_m": 1.75,
+   "femininity": 0.5,
+   "body_fat": 0.35,
+   "muscle": 0.45,
+   "shoulder_width": 1.0,
+   "chest_width": 1.0,
+   "chest_depth": 1.0,
+   "waist_width": 1.0,
+   "hip_width": 1.0,
+   "glute_size": 1.0,
+   "belly": 0.0,
+   "torso_length": 1.0,
+   "neck_length": 1.0,
+   "neck_thickness": 1.0,
+   "arm_length": 1.0,
+   "arm_thickness": 1.0,
+   "leg_length": 1.0,
+   "thigh_thickness": 1.0,
+   "calf_thickness": 1.0,
+   "hand_size": 1.0,
+   "foot_size": 1.0,
+   "head_size": 1.0,
+   "breast_size": 0.0,
+   "breast_spacing": 1.0,
+   "breast_height": 1.0,
+   "breast_projection": 1.0,
+   "breast_sag": 0.3,
+   "nipple_size": 1.0,
+   "areola_size": 1.0
+  },
+  "face": {
+   "face_width": 1.0,
+   "face_length": 1.0,
+   "jaw_width": 1.0,
+   "jaw_angle": 1.0,
+   "chin_width": 1.0,
+   "chin_length": 1.0,
+   "chin_projection": 1.0,
+   "cheekbone_width": 1.0,
+   "cheekbone_height": 1.0,
+   "cheek_fullness": 1.0,
+   "nose_length": 1.0,
+   "nose_width": 1.0,
+   "nose_bridge": 1.0,
+   "nose_tip": 1.0,
+   "nose_upturn": 0.0,
+   "brow_height": 1.0,
+   "brow_prominence": 1.0,
+   "eye_size": 1.0,
+   "eye_spacing": 1.0,
+   "eye_tilt": 0.0,
+   "lip_upper": 1.0,
+   "lip_lower": 1.0,
+   "mouth_width": 1.0,
+   "ear_size": 1.0,
+   "ear_protrusion": 1.0,
+   "asymmetry": 0.0
+  },
+  "genital": {
+   "enabled": 0.0,
+   "penis_length": 1.0,
+   "penis_girth": 1.0,
+   "glans_size": 1.0,
+   "penis_curve": 0.0,
+   "scrotum_size": 1.0,
+   "testicle_size": 1.0,
+   "testicle_asymmetry": 0.4
+  },
+  "appearance": {
+   "skin_tone": 0.3,
+   "undertone": 0.0,
+   "flush": 0.5,
+   "eye_color": "brown",
+   "hair_style": "short",
+   "hair_color": "#3b2416",
+   "hair_highlight_color": "#a47b52",
+   "hair_highlight_amount": 0.0,
+   "brow_color": "",
+   "lip_tint": 0.5,
+   "skin_roughness": 0.5
+  }
+ },
+ "presets": {
+  "male": {
+   "body": {
+    "height_m": 1.78,
+    "femininity": 0.0,
+    "body_fat": 0.22,
+    "muscle": 0.6,
+    "shoulder_width": 1.08,
+    "chest_width": 1.06,
+    "chest_depth": 1.0,
+    "waist_width": 1.0,
+    "hip_width": 0.96,
+    "glute_size": 0.95,
+    "belly": 0.0,
+    "torso_length": 1.0,
+    "neck_length": 1.0,
+    "neck_thickness": 1.12,
+    "arm_length": 1.0,
+    "arm_thickness": 1.08,
+    "leg_length": 1.0,
+    "thigh_thickness": 1.0,
+    "calf_thickness": 1.0,
+    "hand_size": 1.0,
+    "foot_size": 1.0,
+    "head_size": 1.0,
+    "breast_size": 0.0,
+    "breast_spacing": 1.0,
+    "breast_height": 1.0,
+    "breast_projection": 1.0,
+    "breast_sag": 0.3,
+    "nipple_size": 0.8,
+    "areola_size": 0.8
+   },
+   "face": {
+    "face_width": 1.04,
+    "face_length": 1.0,
+    "jaw_width": 1.12,
+    "jaw_angle": 1.2,
+    "chin_width": 1.12,
+    "chin_length": 1.05,
+    "chin_projection": 1.0,
+    "cheekbone_width": 1.0,
+    "cheekbone_height": 1.0,
+    "cheek_fullness": 0.9,
+    "nose_length": 1.05,
+    "nose_width": 1.08,
+    "nose_bridge": 1.1,
+    "nose_tip": 1.0,
+    "nose_upturn": 0.0,
+    "brow_height": 0.97,
+    "brow_prominence": 1.25,
+    "eye_size": 1.0,
+    "eye_spacing": 1.0,
+    "eye_tilt": 0.0,
+    "lip_upper": 0.85,
+    "lip_lower": 0.92,
+    "mouth_width": 1.0,
+    "ear_size": 1.0,
+    "ear_protrusion": 1.0,
+    "asymmetry": 0.0
+   },
+   "genital": {
+    "enabled": 1.0,
+    "penis_length": 1.0,
+    "penis_girth": 1.0,
+    "glans_size": 1.0,
+    "penis_curve": 0.0,
+    "scrotum_size": 1.0,
+    "testicle_size": 1.0,
+    "testicle_asymmetry": 0.4
+   }
+  },
+  "female": {
+   "body": {
+    "height_m": 1.66,
+    "femininity": 1.0,
+    "body_fat": 0.38,
+    "muscle": 0.35,
+    "shoulder_width": 0.94,
+    "chest_width": 0.95,
+    "chest_depth": 1.0,
+    "waist_width": 0.97,
+    "hip_width": 0.98,
+    "glute_size": 1.08,
+    "belly": 0.0,
+    "torso_length": 1.0,
+    "neck_length": 1.05,
+    "neck_thickness": 0.9,
+    "arm_length": 1.0,
+    "arm_thickness": 0.92,
+    "leg_length": 1.0,
+    "thigh_thickness": 1.04,
+    "calf_thickness": 1.0,
+    "hand_size": 0.94,
+    "foot_size": 0.92,
+    "head_size": 1.0,
+    "breast_size": 1.0,
+    "breast_spacing": 1.0,
+    "breast_height": 1.0,
+    "breast_projection": 1.0,
+    "breast_sag": 0.3,
+    "nipple_size": 1.0,
+    "areola_size": 1.0
+   },
+   "face": {
+    "face_width": 0.96,
+    "face_length": 0.97,
+    "jaw_width": 0.9,
+    "jaw_angle": 0.8,
+    "chin_width": 0.88,
+    "chin_length": 0.95,
+    "chin_projection": 1.0,
+    "cheekbone_width": 1.0,
+    "cheekbone_height": 1.04,
+    "cheek_fullness": 1.08,
+    "nose_length": 0.94,
+    "nose_width": 0.9,
+    "nose_bridge": 0.92,
+    "nose_tip": 0.92,
+    "nose_upturn": 0.0,
+    "brow_height": 1.04,
+    "brow_prominence": 0.75,
+    "eye_size": 1.06,
+    "eye_spacing": 1.0,
+    "eye_tilt": 0.0,
+    "lip_upper": 1.12,
+    "lip_lower": 1.12,
+    "mouth_width": 1.0,
+    "ear_size": 1.0,
+    "ear_protrusion": 1.0,
+    "asymmetry": 0.0
+   },
+   "genital": {
+    "enabled": 0.0,
+    "penis_length": 1.0,
+    "penis_girth": 1.0,
+    "glans_size": 1.0,
+    "penis_curve": 0.0,
+    "scrotum_size": 1.0,
+    "testicle_size": 1.0,
+    "testicle_asymmetry": 0.4
+   }
+  },
+  "neutral": {
+   "body": {
+    "height_m": 1.75,
+    "femininity": 0.5,
+    "body_fat": 0.35,
+    "muscle": 0.45,
+    "shoulder_width": 1.0,
+    "chest_width": 1.0,
+    "chest_depth": 1.0,
+    "waist_width": 1.0,
+    "hip_width": 1.0,
+    "glute_size": 1.0,
+    "belly": 0.0,
+    "torso_length": 1.0,
+    "neck_length": 1.0,
+    "neck_thickness": 1.0,
+    "arm_length": 1.0,
+    "arm_thickness": 1.0,
+    "leg_length": 1.0,
+    "thigh_thickness": 1.0,
+    "calf_thickness": 1.0,
+    "hand_size": 1.0,
+    "foot_size": 1.0,
+    "head_size": 1.0,
+    "breast_size": 0.0,
+    "breast_spacing": 1.0,
+    "breast_height": 1.0,
+    "breast_projection": 1.0,
+    "breast_sag": 0.3,
+    "nipple_size": 1.0,
+    "areola_size": 1.0
+   },
+   "face": {
+    "face_width": 1.0,
+    "face_length": 1.0,
+    "jaw_width": 1.0,
+    "jaw_angle": 1.0,
+    "chin_width": 1.0,
+    "chin_length": 1.0,
+    "chin_projection": 1.0,
+    "cheekbone_width": 1.0,
+    "cheekbone_height": 1.0,
+    "cheek_fullness": 1.0,
+    "nose_length": 1.0,
+    "nose_width": 1.0,
+    "nose_bridge": 1.0,
+    "nose_tip": 1.0,
+    "nose_upturn": 0.0,
+    "brow_height": 1.0,
+    "brow_prominence": 1.0,
+    "eye_size": 1.0,
+    "eye_spacing": 1.0,
+    "eye_tilt": 0.0,
+    "lip_upper": 1.0,
+    "lip_lower": 1.0,
+    "mouth_width": 1.0,
+    "ear_size": 1.0,
+    "ear_protrusion": 1.0,
+    "asymmetry": 0.0
+   },
+   "genital": {
+    "enabled": 0.0,
+    "penis_length": 1.0,
+    "penis_girth": 1.0,
+    "glans_size": 1.0,
+    "penis_curve": 0.0,
+    "scrotum_size": 1.0,
+    "testicle_size": 1.0,
+    "testicle_asymmetry": 0.4
+   }
+  }
+ },
+ "skin_srgb": [
+  [
+   0.97,
+   0.83,
+   0.75
+  ],
+  [
+   0.87,
+   0.67,
+   0.56
+  ],
+  [
+   0.76,
+   0.54,
+   0.4
+  ],
+  [
+   0.6,
+   0.4,
+   0.28
+  ],
+  [
+   0.42,
+   0.27,
+   0.18
+  ],
+  [
+   0.25,
+   0.16,
+   0.11
+  ]
+ ],
+ "eye_colors": {
+  "brown": [
+   0.2,
+   0.09,
+   0.03
+  ],
+  "dark_brown": [
+   0.08,
+   0.035,
+   0.015
+  ],
+  "hazel": [
+   0.28,
+   0.2,
+   0.06
+  ],
+  "green": [
+   0.12,
+   0.25,
+   0.1
+  ],
+  "blue": [
+   0.1,
+   0.22,
+   0.45
+  ],
+  "grey": [
+   0.3,
+   0.33,
+   0.36
+  ],
+  "amber": [
+   0.45,
+   0.22,
+   0.03
+  ]
+ },
+ "hair_styles": [],
+ "garments": [
+  "basic_top",
+  "basic_shorts"
+ ],
+ "garment_colors": {
+  "basic_top": [
+   0.3,
+   0.34,
+   0.42
+  ],
+  "basic_shorts": [
+   0.16,
+   0.17,
+   0.2
+  ]
+ },
+ "covers": {
+  "pelvis": [
+   "basic_shorts"
+  ],
+  "chest": [
+   "basic_top"
+  ]
+ },
+ "base_skin_tone": 0.3,
+ "studio_ranges": {
+  "body.height_m": [
+   1.45,
+   2.1
+  ],
+  "body.femininity": [
+   0.0,
+   1.0
+  ],
+  "body.body_fat": [
+   0.0,
+   1.0
+  ],
+  "body.muscle": [
+   0.0,
+   1.0
+  ],
+  "body.shoulder_width": [
+   0.8,
+   1.25
+  ],
+  "body.chest_width": [
+   0.8,
+   1.25
+  ],
+  "body.chest_depth": [
+   0.8,
+   1.25
+  ],
+  "body.waist_width": [
+   0.8,
+   1.3
+  ],
+  "body.hip_width": [
+   0.8,
+   1.3
+  ],
+  "body.glute_size": [
+   0.6,
+   1.6
+  ],
+  "body.belly": [
+   0.0,
+   1.0
+  ],
+  "body.torso_length": [
+   0.85,
+   1.2
+  ],
+  "body.neck_length": [
+   0.8,
+   1.3
+  ],
+  "body.neck_thickness": [
+   0.8,
+   1.3
+  ],
+  "body.arm_length": [
+   0.85,
+   1.2
+  ],
+  "body.arm_thickness": [
+   0.75,
+   1.4
+  ],
+  "body.leg_length": [
+   0.85,
+   1.2
+  ],
+  "body.thigh_thickness": [
+   0.75,
+   1.4
+  ],
+  "body.calf_thickness": [
+   0.75,
+   1.4
+  ],
+  "body.hand_size": [
+   0.8,
+   1.25
+  ],
+  "body.foot_size": [
+   0.8,
+   1.25
+  ],
+  "body.head_size": [
+   0.85,
+   1.25
+  ],
+  "body.breast_size": [
+   0.0,
+   2.5
+  ],
+  "body.breast_spacing": [
+   0.8,
+   1.25
+  ],
+  "body.breast_height": [
+   0.85,
+   1.15
+  ],
+  "body.breast_projection": [
+   0.6,
+   1.6
+  ],
+  "body.breast_sag": [
+   0.0,
+   1.0
+  ],
+  "face.face_width": [
+   0.75,
+   1.3
+  ],
+  "face.face_length": [
+   0.75,
+   1.3
+  ],
+  "face.jaw_width": [
+   0.75,
+   1.3
+  ],
+  "face.jaw_angle": [
+   0.75,
+   1.3
+  ],
+  "face.chin_width": [
+   0.75,
+   1.3
+  ],
+  "face.chin_length": [
+   0.75,
+   1.3
+  ],
+  "face.chin_projection": [
+   0.75,
+   1.3
+  ],
+  "face.cheekbone_width": [
+   0.75,
+   1.3
+  ],
+  "face.cheekbone_height": [
+   0.75,
+   1.3
+  ],
+  "face.cheek_fullness": [
+   0.75,
+   1.3
+  ],
+  "face.nose_length": [
+   0.75,
+   1.3
+  ],
+  "face.nose_width": [
+   0.75,
+   1.3
+  ],
+  "face.nose_bridge": [
+   0.75,
+   1.3
+  ],
+  "face.nose_tip": [
+   0.75,
+   1.3
+  ],
+  "face.nose_upturn": [
+   -1.0,
+   1.0
+  ],
+  "face.brow_height": [
+   0.75,
+   1.3
+  ],
+  "face.brow_prominence": [
+   0.75,
+   1.3
+  ],
+  "face.eye_size": [
+   0.8,
+   1.25
+  ],
+  "face.eye_spacing": [
+   0.85,
+   1.2
+  ],
+  "face.eye_tilt": [
+   -1.0,
+   1.0
+  ],
+  "face.lip_upper": [
+   0.75,
+   1.3
+  ],
+  "face.lip_lower": [
+   0.75,
+   1.3
+  ],
+  "face.mouth_width": [
+   0.75,
+   1.3
+  ],
+  "face.ear_size": [
+   0.75,
+   1.3
+  ],
+  "face.ear_protrusion": [
+   0.75,
+   1.3
+  ],
+  "face.asymmetry": [
+   0.0,
+   1.0
+  ]
+ },
+ "generator": {
+  "id": "forge.character-forge",
+  "version": 3,
+  "template_vertices": 13380,
+  "foundation": "makehuman-hm08-cc0",
+  "template": "human-adult"
+ },
+ "coverage_defaults": {
+  "pelvis": "basic_shorts",
+  "chest": "basic_top"
+ },
+ "breast_support": {
+  "basic_top": 1.15
+ },
+ "controls": {
+  "body.height_m": {
+   "quality": "direct",
+   "note": "exact uniform scale about the floor; v3 neutral is scaled to the 1.75 m default"
+  },
+  "body.femininity": {
+   "quality": "direct",
+   "note": "neutral = base + 0.5 female + 0.5 male macro; ends are the pure macros"
+  },
+  "body.body_fat": {
+   "quality": "approximate",
+   "note": "MakeHuman weight = fat and mass together; female/male targets averaged"
+  },
+  "body.muscle": {
+   "quality": "direct",
+   "note": "female/male targets averaged"
+  },
+  "body.shoulder_width": {
+   "quality": "approximate",
+   "note": "V-shape: shoulders and lats, not the shoulder joints"
+  },
+  "body.chest_width": {
+   "quality": "approximate",
+   "note": "scales the whole torso width"
+  },
+  "body.chest_depth": {
+   "quality": "approximate",
+   "note": "scales the whole torso depth"
+  },
+  "body.waist_width": {
+   "quality": "approximate",
+   "note": "no isolated waist target: half torso width"
+  },
+  "body.hip_width": {
+   "quality": "direct",
+   "note": ""
+  },
+  "body.glute_size": {
+   "quality": "direct",
+   "note": ""
+  },
+  "body.belly": {
+   "quality": "approximate",
+   "note": "pregnancy-shaped belly, not abdominal fat"
+  },
+  "body.torso_length": {
+   "quality": "direct",
+   "note": ""
+  },
+  "body.neck_length": {
+   "quality": "direct",
+   "note": ""
+  },
+  "body.neck_thickness": {
+   "quality": "direct",
+   "note": ""
+  },
+  "body.arm_length": {
+   "quality": "direct",
+   "note": ""
+  },
+  "body.arm_thickness": {
+   "quality": "direct",
+   "note": ""
+  },
+  "body.leg_length": {
+   "quality": "direct",
+   "note": "upper legs per side; lower legs use the both-sides height target"
+  },
+  "body.thigh_thickness": {
+   "quality": "direct",
+   "note": ""
+  },
+  "body.calf_thickness": {
+   "quality": "direct",
+   "note": ""
+  },
+  "body.hand_size": {
+   "quality": "direct",
+   "note": ""
+  },
+  "body.foot_size": {
+   "quality": "direct",
+   "note": ""
+  },
+  "body.head_size": {
+   "quality": "direct",
+   "note": ""
+  },
+  "body.breast_size": {
+   "quality": "direct",
+   "note": "cup targets of the average-weight young female set; the low side is unused (default = minimum)"
+  },
+  "body.breast_spacing": {
+   "quality": "direct",
+   "note": ""
+  },
+  "body.breast_height": {
+   "quality": "direct",
+   "note": ""
+  },
+  "body.breast_projection": {
+   "quality": "approximate",
+   "note": "nipple-point projection, not volume"
+  },
+  "body.breast_sag": {
+   "quality": "direct",
+   "note": "inverse of MakeHuman firmness"
+  },
+  "face.face_width": {
+   "quality": "approximate",
+   "note": "whole head width, not the face only"
+  },
+  "face.face_length": {
+   "quality": "approximate",
+   "note": ""
+  },
+  "face.jaw_width": {
+   "quality": "approximate",
+   "note": "jaw bones (mandible width)"
+  },
+  "face.jaw_angle": {
+   "quality": "approximate",
+   "note": "whole-head square / oval shapes"
+  },
+  "face.chin_width": {
+   "quality": "direct",
+   "note": ""
+  },
+  "face.chin_length": {
+   "quality": "direct",
+   "note": ""
+  },
+  "face.chin_projection": {
+   "quality": "direct",
+   "note": ""
+  },
+  "face.cheekbone_width": {
+   "quality": "direct",
+   "note": ""
+  },
+  "face.cheekbone_height": {
+   "quality": "direct",
+   "note": ""
+  },
+  "face.cheek_fullness": {
+   "quality": "direct",
+   "note": ""
+  },
+  "face.asymmetry": {
+   "quality": "derived",
+   "note": "no MakeHuman asymmetry target: unequal left/right targets; one side only (default = minimum)"
+  },
+  "face.nose_length": {
+   "quality": "direct",
+   "note": ""
+  },
+  "face.nose_width": {
+   "quality": "direct",
+   "note": ""
+  },
+  "face.nose_bridge": {
+   "quality": "approximate",
+   "note": "Greek (straight high) bridge"
+  },
+  "face.nose_tip": {
+   "quality": "approximate",
+   "note": "tip width only"
+  },
+  "face.nose_upturn": {
+   "quality": "direct",
+   "note": ""
+  },
+  "face.brow_height": {
+   "quality": "direct",
+   "note": ""
+  },
+  "face.brow_prominence": {
+   "quality": "approximate",
+   "note": "moves the brow forward, no ridge shape"
+  },
+  "face.eye_size": {
+   "quality": "direct",
+   "note": ""
+  },
+  "face.eye_spacing": {
+   "quality": "direct",
+   "note": ""
+  },
+  "face.eye_tilt": {
+   "quality": "approximate",
+   "note": "one eye corner raised or lowered"
+  },
+  "face.lip_upper": {
+   "quality": "direct",
+   "note": ""
+  },
+  "face.lip_lower": {
+   "quality": "direct",
+   "note": ""
+  },
+  "face.mouth_width": {
+   "quality": "direct",
+   "note": ""
+  },
+  "face.ear_size": {
+   "quality": "direct",
+   "note": ""
+  },
+  "face.ear_protrusion": {
+   "quality": "approximate",
+   "note": "ear wing (cup) rather than rotation"
+  }
+ },
+ "preset_styling": {
+  "male": {
+   "outfit": [
+    "basic_top",
+    "basic_shorts"
+   ],
+   "skin_tone": 0.45
+  },
+  "female": {
+   "outfit": [
+    "basic_top",
+    "basic_shorts"
+   ],
+   "skin_tone": 0.3
+  }
+ }
+}

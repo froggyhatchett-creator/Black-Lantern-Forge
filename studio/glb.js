@@ -55,6 +55,7 @@ export function exportGLB(st) {
     if (!P.g.visible) continue;
     const n = P.cur.length / 3;
     const attrs = { POSITION: b.acc(P.cur, "VEC3", FLOAT, 3, { minmax: true }), NORMAL: b.acc(P.nrm, "VEC3", FLOAT, 3) };
+    if (P.uv && P.weld) attrs.TEXCOORD_0 = b.acc(P.uv, "VEC2", FLOAT, 2);  // v3 body: MakeHuman UVs, split at seams
     if (P.material === "skin" || P.material === "teeth") {
       const col = new Float32Array(n * 3), base = P.g.base;
       for (let i = 0; i < n * 3; i++) col[i] = Math.min(1, Math.max(0, (P.tint ? P.tint[i] : 1) * base[i % 3]));

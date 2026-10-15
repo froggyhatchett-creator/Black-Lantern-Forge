@@ -13,7 +13,7 @@ async function packBytes(url) {
   const res = await fetch(url).catch(() => null);
   if (res && res.ok) return res.body;
   // static hosts that serve only text: base64 chunks listed in studio_pack.parts.json
-  const idx = await fetch("studio_pack.parts.json");
+  const idx = await fetch(url.replace(/\.bin$/, ".parts.json"));
   if (!idx.ok) throw new Error(`could not load ${url} (${res ? res.status : "network error"})`);
   const { bytes, parts } = await idx.json(), out = new Uint8Array(bytes);
   let o = 0;
@@ -49,6 +49,14 @@ async function loadPack(url) {
   return { man, arr };
 }
 
+function sphereCenter(p) {  // least-squares sphere through points (x,y,z,...): solve [2x 2y 2z 1] s = |p|^2
+  const A = Array.from({ length: 4 }, () => new Float64Array(5));
+  for (let i = 0; i < p.length; i += 3) { const r = [2 * p[i], 2 * p[i + 1], 2 * p[i + 2], 1], b = p[i] * p[i] + p[i + 1] * p[i + 1] + p[i + 2] * p[i + 2];
+    for (let a = 0; a < 4; a++) { for (let c = 0; c < 4; c++) A[a][c] += r[a] * r[c]; A[a][4] += r[a] * b; } }
+  for (let c = 0; c < 4; c++) { let m = c; for (let r = c + 1; r < 4; r++) if (Math.abs(A[r][c]) > Math.abs(A[m][c])) m = r; [A[c], A[m]] = [A[m], A[c]];
+    for (let r = 0; r < 4; r++) if (r !== c) { const f = A[r][c] / A[c][c]; for (let k = c; k < 5; k++) A[r][k] -= f * A[c][k]; } }
+  return [A[0][4] / A[0][0], A[1][4] / A[1][1], A[2][4] / A[2][2]];
+}
 const SKIN = (meta) => meta.skin_srgb.map((c) => c.map(srgb2lin));
 function srgb2lin(c) { return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
 function hex2lin(h) { h = h.replace("#", ""); return [0, 2, 4].map((i) => srgb2lin(parseInt(h.slice(i, i + 2), 16) / 255)); }
@@ -170,7 +178,7 @@ class Studio {
     for (const [k, pe] of Object.entries(this.man.params)) params[k] = pe.default;
     return { params, locks: {}, preset: "neutral", name: "studio_character", age: 30,
       skin_tone: 0.3, undertone: 0.0, eye: "brown", hair_style: "long", hair_color: "#3b2416", hl_color: "#a47b52", hl_amount: 0,
-      outfit: ["tshirt", "shorts"], colors: {}, expr: {}, pose: "A-pose (rest)", clip: "idle" };
+      outfit: ["tshirt", "shorts"].filter((g) => this.meta.garments.includes(g)), colors: {}, expr: {}, pose: "A-pose (rest)", clip: "idle" };
   }
   buildPart(name, p) {
     const pos = this.arr(p.pos), idx = this.arr(p.idx);
@@ -182,7 +190,9 @@ class Studio {
     const mat = p.material.startsWith("cloth_") ? { kind: 1, double: true, rough: 0.85, spec: 0.08 } : (MATERIAL[p.material] || {});
     Object.assign(g, mat);
     this.parts[name] = { g, base: pos, idx, tint: col, cur: new Float32Array(pos.length), nrm: new Float32Array(pos.length), material: p.material,
-      jnt: this.arr(p.joints), wgt: this.arr(p.weights), sway: null, headSpace: p.frame === "head", hl };
+      jnt: this.arr(p.joints), wgt: this.arr(p.weights), sway: null, headSpace: p.frame === "head", hl,
+      weld: p.weld ? this.arr(p.weld) : null, uv, sphere: !!p.sphere };
+    if (p.iris_angle) g.irisA = p.iris_angle;
   }
   // -------------------------------------------------------------- geometry evaluation
   addDelta(target, enc, w) {
@@ -195,6 +205,7 @@ class Studio {
   weights() {  // piecewise-linear weights per (param, side)
     const out = [];
     for (const [k, pe] of Object.entries(this.man.params)) {
+      if (pe.mode === "uniform_scale") continue;  // applied exactly after evaluation (evaluate)
       const dv = this.state.params[k] - pe.default; if (Math.abs(dv) < 1e-9) continue;
       const side = dv > 0 ? "hi" : "lo", se = pe.sides[side]; if (!se) continue;
       out.push([se, dv / (se.at - pe.default)]);
@@ -226,20 +237,30 @@ class Studio {
       for (const [se, w] of ws) this.addDelta(cur, se.parts[name], w);
       if (pre && pre.parts) this.addDelta(cur, pre.parts[name], 1);
       if (name === "body") for (const e of this.man.expressions) this.addDelta(cur, e.body, this.state.expr[e.name] || 0);
-      this.normals(cur, P.idx, P.nrm);
+      this.normals(cur, P.idx, P.nrm, P.weld);
       this.renderer.update(P.g, "pos", cur); this.renderer.update(P.g, "nrm", P.nrm);
       if (P.material === "eye") {  // rest-pose eyeball center for the per-pixel eye shading
-        const c = [0, 0, 0]; for (let i = 0; i < cur.length; i += 3) { c[0] += cur[i]; c[1] += cur[i + 1]; c[2] += cur[i + 2]; }
-        P.g.eyeC = c.map((x) => x / (cur.length / 3));
+        if (P.sphere) P.g.eyeC = sphereCenter(cur);  // open shells (v3): least-squares sphere centre
+        else { const c = [0, 0, 0]; for (let i = 0; i < cur.length; i += 3) { c[0] += cur[i]; c[1] += cur[i + 1]; c[2] += cur[i + 2]; }
+          P.g.eyeC = c.map((x) => x / (cur.length / 3)); }
       }
       if (P.material === "cornea") P.g.eyeC = this.parts[`eye_${name.slice(-1)}`].g.eyeC;  // eyes evaluate first
+    }
+    const hs = Object.entries(this.man.params).find(([, pe]) => pe.mode === "uniform_scale");
+    if (hs) {  // exact height: scale the whole evaluated character (all parts and joints) about the floor origin
+      const k = this.state.params[hs[0]] / this.measureHeight();
+      for (const P of Object.values(this.parts)) { if (P.headSpace) continue;
+        for (let i = 0; i < P.cur.length; i++) P.cur[i] *= k; this.renderer.update(P.g, "pos", P.cur);
+        if (P.material === "eye") P.g.eyeC = P.g.eyeC.map((x) => x * k); }
+      for (let i = 0; i < rest.length; i++) rest[i] *= k;
+      for (const [name, P] of Object.entries(this.parts)) if (P.material === "cornea") P.g.eyeC = this.parts[`eye_${name.slice(-1)}`].g.eyeC;
     }
     this.heightNow = this.measureHeight();
     this.updateColors();
     $("#height-readout").textContent = `${this.heightNow.toFixed(2)} m`;
   }
   measureHeight() { const b = this.parts.body.cur; let lo = 1e9, hi = -1e9; for (let i = 1; i < b.length; i += 3) { lo = Math.min(lo, b[i]); hi = Math.max(hi, b[i]); } return hi - lo; }
-  normals(pos, idx, out) {
+  normals(pos, idx, out, weld) {
     out.fill(0);
     for (let t = 0; t < idx.length; t += 3) {
       const a = idx[t] * 3, b = idx[t + 1] * 3, c = idx[t + 2] * 3;
@@ -247,6 +268,10 @@ class Studio {
       const vx = pos[c] - pos[a], vy = pos[c + 1] - pos[a + 1], vz = pos[c + 2] - pos[a + 2];
       const nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx;
       for (const o of [a, b, c]) { out[o] += nx; out[o + 1] += ny; out[o + 2] += nz; }
+    }
+    if (weld) {  // UV-seam copies share one normal: accumulate on the first copy, then copy back
+      for (let v = 0; v < weld.length; v++) { const w = weld[v]; if (w !== v) { out[w * 3] += out[v * 3]; out[w * 3 + 1] += out[v * 3 + 1]; out[w * 3 + 2] += out[v * 3 + 2]; } }
+      for (let v = 0; v < weld.length; v++) { const w = weld[v]; if (w !== v) { out[v * 3] = out[w * 3]; out[v * 3 + 1] = out[w * 3 + 1]; out[v * 3 + 2] = out[w * 3 + 2]; } }
     }
     for (let i = 0; i < out.length; i += 3) { const l = Math.hypot(out[i], out[i + 1], out[i + 2]) || 1; out[i] /= l; out[i + 1] /= l; out[i + 2] /= l; }
   }
@@ -290,7 +315,7 @@ class Studio {
   enforceCoverage() {
     const covers = this.meta.covers, out = new Set(this.state.outfit), added = [];
     for (const reg of this.required()) {
-      if (![...out].some((g) => covers[reg].includes(g))) { const g = reg === "pelvis" ? "shorts" : "tshirt"; out.add(g); added.push(g); }
+      if (![...out].some((g) => covers[reg].includes(g))) { const g = (this.meta.coverage_defaults || { pelvis: "shorts", chest: "tshirt" })[reg]; out.add(g); added.push(g); }
     }
     this.state.outfit = [...out];
     const note = $("#coverage-note");
@@ -356,7 +381,8 @@ class Studio {
     const names = this.skel.names, par = this.skel.parents, rest = this.rest;
     const support = { 0: 1, 1: 1.15, 2: 1.9 }[this.phys.support] || 1;
     const outfit = new Set(this.state.outfit);
-    const breastSupport = outfit.has("bra") ? 1.9 : (outfit.has("tshirt") || outfit.has("robe") ? 1.15 : 1);
+    const sup = this.meta.breast_support || { bra: 1.9, tshirt: 1.15, robe: 1.15 };
+    const breastSupport = Math.max(1, ...[...outfit].map((g) => sup[g] || 1));
     const sub_ = 4, h = Math.min(dt, 1 / 20) / sub_;
     for (let s = 0; s < sub_; s++) {
       for (const ch of this.physicsChains()) {
@@ -504,8 +530,11 @@ class Studio {
     for (const [k, v] of Object.entries(vals)) if (!this.state.locks[k]) this.state.params[k] = v;
     this.state.preset = name;
     // presets set a starting look; styling and wardrobe are separate from anatomy and stay editable
-    if (name === "male") Object.assign(this.state, { hair_style: "short", hair_color: "#1f1712", hl_amount: 0, outfit: ["tshirt", "pants"], skin_tone: 0.45 });
-    if (name === "female") Object.assign(this.state, { hair_style: "long", hair_color: "#3b2416", hl_amount: 0.25, outfit: ["tshirt", "shorts"], skin_tone: 0.3 });
+    if (this.meta.preset_styling) { if (this.meta.preset_styling[name]) Object.assign(this.state, this.meta.preset_styling[name]); }
+    else {
+      if (name === "male") Object.assign(this.state, { hair_style: "short", hair_color: "#1f1712", hl_amount: 0, outfit: ["tshirt", "pants"], skin_tone: 0.45 });
+      if (name === "female") Object.assign(this.state, { hair_style: "long", hair_color: "#3b2416", hl_amount: 0.25, outfit: ["tshirt", "shorts"], skin_tone: 0.3 });
+    }
     this.enforceCoverage();
     if (record) this.commit();
     this._resetPhys = true;
@@ -549,7 +578,8 @@ class Studio {
     traits["wardrobe.outfit"] = tr([...s.outfit], [], "wardrobe.outfit");
     traits["wardrobe.colors"] = tr({ ...s.colors }, {}, "wardrobe.colors");
     return { schema: this.meta.dna.schema, version: this.meta.dna.version,
-      identity: { name: s.name || "studio_character", age_years: Math.max(18, +s.age || 30), preset: s.preset },
+      identity: { name: s.name || "studio_character", age_years: Math.max(18, +s.age || 30), preset: s.preset,
+        ...(this.man.generator ? { generator: { id: this.man.generator.id, version: this.man.generator.version } } : {}) },
       traits, sources: [], regions: {}, reconstruction: null,
       history: [{ op: "character_studio_export", note: "values edited interactively; regenerate exact geometry with the Python engine" }] };
   }
@@ -557,6 +587,9 @@ class Studio {
     if (dna.schema !== this.meta.dna.schema) throw new Error("This file is not Character DNA (forge.character-dna).");
     if (!(dna.identity && dna.identity.age_years >= 18)) throw new Error("Character DNA must describe an adult (age 18 or older).");
     this._before = this.snapshot();
+    const dg = dna.identity.generator, mine = this.man.generator;
+    const genNote = dg && mine && dg.version !== mine.version
+      ? ` Note: this DNA was made with generator v${dg.version}; it is shown on v${mine.version} geometry, which differs.` : "";
     const t = dna.traits, s = this.state, clamped = [];
     for (const k of Object.keys(this.man.params)) if (t[k]) {
       const pe = this.man.params[k], v = t[k].value;
@@ -565,7 +598,7 @@ class Studio {
     }
     const a = (k, d) => (t[`appearance.${k}`] ? t[`appearance.${k}`].value : d);
     s.skin_tone = a("skin_tone", s.skin_tone); s.undertone = a("undertone", s.undertone); s.eye = a("eye_color", s.eye);
-    s.hair_style = this.meta.hair_styles.includes(a("hair_style", s.hair_style)) ? a("hair_style", s.hair_style) : "short";
+    s.hair_style = this.meta.hair_styles.includes(a("hair_style", s.hair_style)) ? a("hair_style", s.hair_style) : (this.meta.hair_styles.includes("short") ? "short" : s.hair_style);
     s.hair_color = a("hair_color", s.hair_color);
     s.hl_color = a("hair_highlight_color", s.hl_color); s.hl_amount = a("hair_highlight_amount", 0);
     if (t["wardrobe.outfit"]) s.outfit = t["wardrobe.outfit"].value.filter((g) => this.meta.garments.includes(g));
@@ -575,7 +608,7 @@ class Studio {
     this.enforceCoverage(); this.commit(); this.syncUI(); this.dirtyGeo = true; this._resetPhys = true;
     const prov = {}; for (const v of Object.values(t)) prov[v.provenance] = (prov[v.provenance] || 0) + 1;
     setStatus(`Loaded ${s.name}: ${Object.entries(prov).map(([k, v]) => `${v} ${k}`).join(", ")}` +
-      (clamped.length ? `. ${clamped.length} value(s) were outside the studio range and were clamped.` : "."));
+      (clamped.length ? `. ${clamped.length} value(s) were outside the studio range and were clamped.` : ".") + genNote);
   }
   // -------------------------------------------------------------- UI
   buildUI() {
@@ -587,7 +620,9 @@ class Studio {
           const k = `${tab}.${n}`, pe = this.man.params[k]; if (!pe) continue;
           const row = document.createElement("div"); row.className = "slider";
           const step = (pe.max - pe.min) / 200;
-          row.innerHTML = `<label for="s-${k}">${LABELS[n] || n}</label><output id="o-${k}"></output>
+          const q = this.meta.controls && this.meta.controls[k];
+          const badge = q && q.quality !== "direct" ? ` <span class="q" title="${q.quality}: ${q.note}">${q.quality === "derived" ? "derived" : "approx."}</span>` : "";
+          row.innerHTML = `<label for="s-${k}">${LABELS[n] || n}${badge}</label><output id="o-${k}"></output>
             <button type="button" class="lock" id="l-${k}" aria-pressed="false" title="Lock: randomize and DNA regeneration keep this value">lock</button>
             <input type="range" id="s-${k}" min="${pe.min}" max="${pe.max}" step="${step}">`;
           fs.append(row);
@@ -621,6 +656,7 @@ class Studio {
     const eye = $("#eye"); for (const k of Object.keys(this.meta.eye_colors)) eye.append(new Option(k.replace("_", " "), k));
     bind("#eye", "eye", String, "change");
     const hs = $("#hairstyle"); for (const k of this.meta.hair_styles) hs.append(new Option(HAIR_LABELS[k] || k, k));
+    $("#hair-fs").hidden = !this.meta.hair_styles.length;
     bind("#hairstyle", "hair_style", String, "change"); bind("#haircolor", "hair_color", String, "change");
     bind("#hlcolor", "hl_color", String, "change"); bind("#hlamount", "hl_amount", Number);
     $("#hlamount").addEventListener("input", (e) => { $("#hlamount-o").textContent = (+e.target.value).toFixed(2); });
@@ -728,9 +764,14 @@ class Studio {
 (async () => {
   try {
     setStatus("Loading character data...");
-    const meta = await (await fetch("studio_meta.json")).json();
-    const pack = await loadPack("studio_pack.bin");
-    let clips = null; try { const r = await fetch("studio_clips.json"); if (r.ok) clips = await r.json(); } catch { /* use the pack's clips */ }
+    const v3 = location.hash === "#v3" || new URLSearchParams(location.search).get("gen") === "3";
+    const sel = $("#generator"); sel.value = v3 ? "v3" : "v2";
+    sel.addEventListener("change", () => { location.hash = sel.value === "v3" ? "v3" : ""; location.reload(); });
+    $("#generator-note").textContent = v3 ? "v3 Phase 1: one realistic adult body; v3-fitted basic garments only, no hair yet. Sliders marked approx. use the nearest MakeHuman targets." : "";
+    const meta = await (await fetch(v3 ? "studio_meta_v3.json" : "studio_meta.json")).json();
+    const pack = await loadPack(v3 ? "studio_pack_v3.bin" : "studio_pack.bin");
+    let clips = null;
+    if (!v3) try { const r = await fetch("studio_clips.json"); if (r.ok) clips = await r.json(); } catch { /* use the pack's clips */ }
     window.studio = new Studio(meta, pack, clips);
     setStatus("Drag to rotate · scroll or pinch to zoom · right-drag or shift-drag to pan · double-click a slider to reset it");
     document.body.dataset.ready = "1";
