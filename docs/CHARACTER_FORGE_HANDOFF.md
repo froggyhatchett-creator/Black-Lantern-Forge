@@ -77,6 +77,13 @@ adult character in the real studio before expanding. Finite credits: short visua
   aperture clips the iris; there are no visible lid-margin thickness or tear meniscus geometry; lashes are sparse cards.
   Remaining SHADING defects: no iris parallax or refraction; the browser GLB keeps the old UV iris.
 
+## Reference benchmarks (registered 2026-10-15)
+`examples/character_forge_aaa/benchmarks/benchmarks.json` lists byte-exact copies with SHA-256 hashes.
+- REF-001 Gothic Centaur, REF-002 Tavern Bovine: future creature-system tests only, not authorized for current work.
+- REF-003 Cyberpunk Mercy: ACTIVE reference for Project Humanity's first believable human. It is an anime-stylized
+  illustration in a seated pose under purple lighting, so a realistic result is an interpretation; never claim likeness.
+- Not reconstructed yet. No generation or bake jobs launched for them.
+
 ## Open problems / next actions
 1. Commit/push checkpoint; publish the studio artifact (multi-file; `downloads` capability; GLB offered zipped).
 2. Face realism (lips/eyes/brows) and anatomy fixes (hands, knees, feet) need a re-bake (~28 min) to reach the studio.
