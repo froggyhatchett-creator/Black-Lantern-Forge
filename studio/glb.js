@@ -111,7 +111,7 @@ export function exportGLB(st) {
   const gltf = {
     asset: { version: "2.0", generator: "Black Lantern Character Studio (browser export)", extras: { forge: {
       contract: { id: "forge.character-forge.glb", version: 1 }, profile: "public", units: "meters", up_axis: "+Y", front_axis: "+Z",
-      handedness: "right", joint_rest_orientation: "identity", dev_only_parts: [], coverage: st.coverage, exact: false,
+      handedness: "right", joint_rest_orientation: "identity", dev_only_parts: [], coverage: st.coverage, exact: false, generator: st.generator, fixed_topology_vertices: st.parts.body.cur.length / 3,
       geometry_source: "Character Studio linear morph basis over exact Python builds; regenerate exact geometry from the DNA",
       dna: st.dna } } },
     scene: 0, scenes: [{ name: "character", nodes: [nodes.length - 1] }], nodes, meshes, skins: [skin], materials, animations,

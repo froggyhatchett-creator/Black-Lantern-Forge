@@ -184,6 +184,14 @@ def _materials(ch, bin_: _Bin, images: list, textures: list):
                  "pbrMetallicRoughness": {"baseColorFactor": hair, "baseColorTexture": {"index": t_strand},
                                           "metallicFactor": 0.0, "roughnessFactor": 0.45}},
     }
+    # generic materials for attached assets built with forge_character_forge.kit (props, armor, weapons)
+    mats["kit_metal"] = {"name": "kit_metal", "pbrMetallicRoughness": {"baseColorFactor": [0.56, 0.57, 0.58, 1.0],
+                                                                       "metallicFactor": 1.0, "roughnessFactor": 0.35}}
+    mats["kit_glass"] = {"name": "kit_glass", "alphaMode": "BLEND", "pbrMetallicRoughness": {
+        "baseColorFactor": [1.0, 0.78, 0.35, 0.55], "metallicFactor": 0.0, "roughnessFactor": 0.1},
+        "emissiveFactor": [1.0, 0.62, 0.2]}
+    mats["kit_leather"] = {"name": "kit_leather", "pbrMetallicRoughness": {"baseColorFactor": [0.24, 0.14, 0.08, 1.0],
+                                                                           "metallicFactor": 0.0, "roughnessFactor": 0.7}}
     from forge_character_forge.clothing import COLORS
     for g in COLORS:
         c = ch.spec.garment_color(g)
@@ -294,6 +302,7 @@ def character_gltf(ch, clips: list[Clip] = (), extra_meta: dict | None = None) -
             samplers.append({"input": times, "output": b.acc(tr, "VEC3", target=None), "interpolation": "LINEAR"})
             channels.append({"sampler": len(samplers) - 1, "target": {"node": pel, "path": "translation"}})
         anims.append({"name": c.name, "samplers": samplers, "channels": channels})
+    from forge_character_forge.character import GENERATOR_ID, GENERATOR_VERSION  # lazy: character imports this module
     meta = {
         "contract": {"id": CONTRACT_ID, "version": CONTRACT_VERSION},
         "profile": ch.profile,
@@ -302,6 +311,7 @@ def character_gltf(ch, clips: list[Clip] = (), extra_meta: dict | None = None) -
         "dev_only_parts": [p.name for p in ch.parts if p.dev_only],
         "coverage": _jsonable(ch.coverage),
         "fixed_topology_vertices": int(len(ch.body.verts)),
+        "generator": {"id": GENERATOR_ID, "version": GENERATOR_VERSION},
         "physics_bones": [n for n in skel.names if n in PHYSICS_BONES],
         "geometry_source": "procedural SDF anatomy (Black Lantern Character Forge); no third-party mesh",
     }

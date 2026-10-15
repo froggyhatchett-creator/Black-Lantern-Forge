@@ -159,6 +159,7 @@ class Studio {
     this.phys = { on: true, state: new Map(), freq: 2.4, damp: 0.22, support: 1, intensity: 1, hair: null };
     this.dirtyGeo = true;
     this.buildUI();
+    $("#body-verts").textContent = this.man.parts.body.n.toLocaleString("en-US");
     this.applyPreset("female", false);
     this.focus("body");
     this.loop = this.loop.bind(this);
@@ -368,12 +369,15 @@ class Studio {
           const target = mv(Rp, tipL).map((v, k) => v + joint[k]);
           const L = len(tipL) || 1e-6;
           let st = this.phys.state.get(b);
-          if (!st || this._resetPhys) { st = { p: target.slice(), v: [0, 0, 0], prev: target.slice() }; this.phys.state.set(b, st); }
-          const vt = target.map((v, k) => (v - st.prev[k]) / h); st.prev = target.slice();
-          const acc = [0, 1, 2].map((k) => w * w * (target[k] - st.p[k]) - 2 * z * w * (st.v[k] - vt[k]) + (this.kick ? this.kick[k] : 0));
+          if (!st || this._resetPhys) { st = { p: target.slice(), v: [0, 0, 0], pf: target.slice() }; this.phys.state.set(b, st); }
+          // the driving motion happens once per frame: spread it evenly over the sub-steps
+          const frac = (s + 1) / sub_, tg = st.pf.map((v, k) => v + (target[k] - v) * frac);
+          const vt = target.map((v, k) => (v - st.pf[k]) / (h * sub_));
+          if (s === sub_ - 1) st.pf = target.slice();
+          const acc = [0, 1, 2].map((k) => w * w * (tg[k] - st.p[k]) - 2 * z * w * (st.v[k] - vt[k]) + (this.kick ? this.kick[k] : 0));
           st.v = st.v.map((v, k) => v + acc[k] * h);
           let pn = st.p.map((v, k) => v + st.v[k] * h);
-          let d = norm(sub(pn, joint)); const td = norm(sub(target, joint));
+          let d = norm(sub(pn, joint)); const td = norm(sub(tg, joint));
           const ang = Math.acos(Math.max(-1, Math.min(1, dot(d, td)))), maxA = ch.maxAng / (ch.kind === "breast" ? Math.sqrt(sup) : 1);
           if (ang > maxA) { const t = maxA / ang; d = norm(td.map((v, k) => v * (1 - t) + d[k] * t)); }
           pn = joint.map((v, k) => v + d[k] * L);
@@ -422,6 +426,7 @@ class Studio {
   }
   exportState() {
     return { skel: this.skel, J: this.J, rest: this.rest, parts: this.parts, u: this.heightNow / 1.75, name: this.state.name,
+      generator: this.man.generator || null,
       expressions: this.man.expressions, clips: Object.values(this.clips),
       coverage: { required: this.required(), covered_by: Object.fromEntries(this.required().map((r) => [r, this.state.outfit.filter((g) => this.meta.covers[r].includes(g))])), outfit: this.state.outfit },
       dna: this.toDNA(), decodeSparse: (enc, n) => this.decodeSparse(enc, n) };
@@ -447,17 +452,21 @@ class Studio {
     document.body.append(a); a.click(); a.remove(); setStatus(`Saved ${filename}.`);
   }
   // -------------------------------------------------------------- frame loop
-  loop(now) {
-    const dt = this.lastT ? Math.min((now - this.lastT) / 1000, 0.1) : 1 / 60; this.lastT = now;
+  step(dt, now = performance.now()) {  // advance animation, spin inertia and secondary motion by dt seconds
     if (this.dirtyGeo) { this.evaluate(); this.dirtyGeo = false; }
     if (this.playing) this.clipT += dt;
-    if ($("#turntable").checked) this.cam.yaw += dt * 0.35;
     this._dt = dt;
     if (!(this._lastSpin && now - this._lastSpin < 60)) { this.spin.yaw += this.spin.vel * dt; this.spin.vel *= Math.exp(-2.2 * dt); }
     let { rot, root } = this.poseRotations(this.clipT);
-    rot = this.simulate(rot, root, this.playing ? dt : 1 / 60);
+    rot = this.simulate(rot, root, dt);
     const G = this.fk(rot, root);
     this.hairSway(G, dt);
+    return { G, root };
+  }
+  loop(now) {
+    const dt = this.lastT ? Math.min((now - this.lastT) / 1000, 0.1) : 1 / 60; this.lastT = now;
+    if ($("#turntable").checked) this.cam.yaw += dt * 0.35;
+    const { G, root } = this.step(dt, now);
     if (root && this.followTarget !== false) {  // keep travelling clips in frame
       const pel = G[this.skel.names.indexOf("pelvis")];
       this.cam.target[0] += (pel[12] - this.cam.target[0]) * Math.min(1, dt * 4);

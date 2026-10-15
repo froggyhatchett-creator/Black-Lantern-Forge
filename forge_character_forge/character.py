@@ -26,7 +26,17 @@ from forge_character_forge.skeleton import DEV_BONES, Skeleton
 
 PROFILES = ("public", "developer")
 GENERATOR_ID = "forge.character-forge"
-GENERATOR_VERSION = 1
+GENERATOR_VERSION = 2
+# Incompatible geometry changes bump GENERATOR_VERSION.  Character DNA stores parameters only, so any DNA loads in any
+# version; the same DNA can produce different geometry across versions.  Rebuild an older version's exact geometry
+# from the commit listed here.
+GENERATOR_HISTORY = {
+    1: {"commit": "8ecaaad", "template_vertices": 62639,
+        "notes": "phase 1 anatomy + phase 2 checkpoint"},
+    2: {"commit": "(this change)", "template_vertices": 62550,
+        "notes": "face: two-lobed upper lip (cupid's bow), slimmer lips, smaller nose tip and alae, larger eye apertures "
+                 "with lids moved off the iris, less full cheeks and lower face; template re-meshed"},
+}
 
 
 class ProfileError(ValueError):

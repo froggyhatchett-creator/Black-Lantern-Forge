@@ -506,16 +506,75 @@ def _sample_colors(ref, mask, sil, regions) -> dict:
         frac = (below & hairlike).sum() / max(below.sum(), 1)
         out["hair_long"] = bool(frac > 0.10)
         out["hair_long_fraction"] = float(frac)
+        out.update(_hair_shape(img, mask, sil, hair, skin))
     if regions.get("chest") == "visible":
         chest = mask & (yy > top + 1.9 * hh) & (yy < top + 2.6 * hh) & (np.abs(xx - sil.cx) < 0.5 * hw)
         out["torso"] = _median_color(img, chest)
     if regions.get("thighs") == "visible":
         th = mask & (yy > top + 4.1 * hh) & (yy < top + 4.8 * hh) & (np.abs(xx - sil.cx) < 1.1 * hw)
         out["thigh"] = _median_color(img, th)
+    rows_any = np.nonzero(mask.any(1))[0]
+    bottom = int(rows_any.max()) if len(rows_any) else H
+    feet_in_frame = bottom < H - 3 and bottom - top > 5 * hh
     if regions.get("lower_legs") == "visible":
-        sh = mask & (yy > top + 6.0 * hh) & (yy < top + 6.8 * hh) & (np.abs(xx - sil.cx) < 1.1 * hw)
+        if feet_in_frame:  # anchor on the soles: head units drift when long hair hides the chin
+            span = bottom - top
+            sh = mask & (yy > bottom - 0.24 * span) & (yy < bottom - 0.10 * span) & (np.abs(xx - sil.cx) < 1.1 * hw)
+        else:
+            sh = mask & (yy > top + 6.0 * hh) & (yy < top + 6.8 * hh) & (np.abs(xx - sil.cx) < 1.1 * hw)
         out["shin"] = _median_color(img, sh)
+    if regions.get("thighs") == "visible":
+        # a skirt or robe closes the gap between the legs below the crotch (legs apart in a standing reference)
+        cx = int(round(sil.cx))
+        def joined(a):
+            r = int(top + a * hh)
+            return bool(r < H and mask[r, max(cx - 2, 0):cx + 3].all())
+        out["legs_joined_thigh"] = sum(joined(a) for a in (4.5, 4.8, 5.1)) / 3
+        out["legs_joined_shin"] = sum(joined(a) for a in (6.0, 6.3)) / 2 if regions.get("lower_legs") == "visible" else 0.0
     return {k: v for k, v in out.items() if v is not None}
+
+
+def _hair_shape(img, mask, sil, hair, skin=None) -> dict:
+    """Hair length (lowest hair-colored row beside the face/neck, in head units below the crown) and fringe
+    coverage of the forehead band (with left/right asymmetry).  Crops that cut the hair off are flagged."""
+    H, W = mask.shape
+    yy, xx = np.mgrid[0:H, 0:W]
+    hh, top, hw = sil.head_h, sil.top, sil.head_width_hu * sil.head_h
+    dh = np.linalg.norm(img - hair, axis=2)
+    hairlike = (dh < 0.22) & mask  # shaded hair varies a lot; closer to hair than to skin
+    if skin is not None:
+        hairlike &= dh < np.linalg.norm(img - skin, axis=2)
+    # only hair connected to the crown counts (dark clothing or shoes can share the hair color)
+    lab, _ = _components(_dilate(hairlike, 1) & mask & (np.abs(xx - sil.cx) < 1.3 * hw))
+    crown_labels = np.unique(lab[int(top):int(top + 0.12 * hh) + 1][hairlike[int(top):int(top + 0.12 * hh) + 1]])
+    hairlike = np.isin(lab, crown_labels[crown_labels > 0]) & hairlike
+    side = hairlike & (yy > top + 0.3 * hh) & (np.abs(xx - sil.cx) > 0.30 * hw)
+    rows = np.nonzero(side.sum(1) >= 3)[0]
+    low = int(rows.max()) if len(rows) else int(top)
+    # forehead between the natural hairline and the brows: hair here is a fringe
+    band = mask & (yy > top + 0.28 * hh) & (yy < top + 0.36 * hh) & (np.abs(xx - sil.cx) < 0.22 * hw)
+    left, right = band & (xx < sil.cx), band & (xx >= sil.cx)
+    fl = (hairlike & left).sum() / max(left.sum(), 1)
+    fr = (hairlike & right).sum() / max(right.sum(), 1)
+    return {"hair_extent_hu": float((low - top) / hh), "hair_cropped": bool(low >= H - 3),
+            "fringe": float((fl + fr) / 2), "fringe_asymmetry": float(abs(fl - fr))}
+
+
+def classify_hair(c: dict) -> tuple[str, float, str]:
+    """Map measured hair shape to a studio hairstyle: (style, confidence, note)."""
+    ext, fringe, asym = c.get("hair_extent_hu", 0.0), c.get("fringe", 0.0), c.get("fringe_asymmetry", 0.0)
+    if c.get("hair_cropped"):
+        return "long", 0.3, f"hair reaches the image edge ({ext:.2f} head units visible): length is a lower bound"
+    if ext >= HAIR_LONG_HU:
+        return "long", 0.45, f"hair extends {ext:.2f} head units below the crown"
+    if ext >= HAIR_BOB_HU:
+        if fringe > FRINGE_MIN:
+            return "bangs", 0.4, f"jaw-length hair ({ext:.2f} hu) with a fringe over the forehead (coverage {fringe:.2f}, " \
+                f"left/right difference {asym:.2f})"
+        return "bob", 0.4, f"hair ends near the jaw ({ext:.2f} head units below the crown)"
+    if fringe > FRINGE_MIN:
+        return "pixie", 0.35, f"short hair ({ext:.2f} hu) with forehead coverage {fringe:.2f}"
+    return "short", 0.4, f"short hair ({ext:.2f} head units below the crown)"
 
 
 # ---------------------------------------------------------------- fitting
@@ -535,6 +594,9 @@ _STEPS = {"body.shoulder_width": 0.06, "body.chest_width": 0.06, "body.waist_wid
 _BOUNDS = {"body.body_fat": (0.0, 1.0)}
 
 
+HAIR_BOB_HU = 0.55     # hair length thresholds (head units below the crown), calibrated on the generated references
+HAIR_LONG_HU = 1.0     # (front view: long hair behind the shoulders shows only beside the neck, so margins are small)
+FRINGE_MIN = 0.12      # hair coverage of the forehead band just above the brows
 GARMENT_EASE_HU = 0.06   # silhouette width added by garment thickness + ease, in head units (prior)
 
 
@@ -736,12 +798,12 @@ def reconstruct(refs: list[Reference], base_dna: dict | None = None, interpretat
         put("appearance.undertone", round(under, 3), "estimated", 0.35, "warm/cool from face-band chroma")
     if "hair" in c:
         put("appearance.hair_color", linear_to_hex(srgb_to_linear(c["hair"])), "observed", 0.6, "crown-band color")
-        put("appearance.hair_style", "long" if c.get("hair_long") else "short", "estimated", 0.45,
-            "hair-colored pixels beside the neck" if c.get("hair_long") else "no hair below the chin line")
+        style, conf, note = classify_hair(c)
+        put("appearance.hair_style", style, "estimated", conf, note)
     elif "skin" in c:
         put("appearance.hair_style", "buzz", "estimated", 0.3, "crown color matches skin: very short or no hair")
     put("appearance.eye_color", "brown", "invented", 0.1, "iris color is not measured")
-    outfit, colors = [], {}
+    outfit, colors, garment_notes = [], {}, {}
     skin = c.get("skin")
     if skin is not None:
         def differs(x):
@@ -750,11 +812,16 @@ def reconstruct(refs: list[Reference], base_dna: dict | None = None, interpretat
             outfit.append("tshirt")
             colors["tshirt"] = linear_to_hex(srgb_to_linear(c["torso"]))
         if differs(c.get("thigh")):
-            g = "pants" if differs(c.get("shin")) else "shorts"
+            if c.get("legs_joined_thigh", 0) >= 0.66 and obs.posture == "standing":
+                g = "robe" if c.get("legs_joined_shin", 0) >= 0.5 else "skirt"
+                garment_notes[g] = "no gap between the legs at thigh height" + (" or shin height" if g == "robe" else "")
+            else:
+                g = "pants" if differs(c.get("shin")) else "shorts"
             outfit.append(g)
             colors[g] = linear_to_hex(srgb_to_linear(c["thigh"]))
     if outfit:
-        put("wardrobe.outfit", outfit, "observed", 0.5, "garment colors differ from skin in torso/leg regions")
+        put("wardrobe.outfit", outfit, "observed", 0.5, "garment colors differ from skin in torso/leg regions"
+            + "".join(f"; {g}: {n}" for g, n in garment_notes.items()))
         put("wardrobe.colors", colors, "observed", 0.5, "median garment colors")
     else:
         put("wardrobe.outfit", ["tshirt", "shorts"], "invented", 0.3,
@@ -773,10 +840,29 @@ def reconstruct(refs: list[Reference], base_dna: dict | None = None, interpretat
         "segmentation": obs.seg, "fit_residual_head_units": round(resid, 4), "body_type_prior": pname,
         "fit_confidence": round(fit_conf, 3), "notes": obs.notes,
         "completion": "every region not marked 'visible' was generated from the preset prior (provenance invented)",
+        "likeness": "not claimed: the method fits body proportions to a silhouette and samples colors; facial identity "
+                    "and unseen anatomy are not reconstructed and must not be presented as a likeness",
+        "uncertainty": uncertainty_intervals(est),
     }
     report = {"observation": obs, "synthetic_silhouette": syn, "loss": loss, "estimates": est, "prior": pname,
               "waist_hip_ratio": whr}
     return dna, report
+
+
+def uncertainty_intervals(est: dict) -> dict:
+    """Heuristic plausible range per numeric estimate: the trait's regeneration window, shrunk by confidence.
+
+    ``[value - (1 - c) * w / 2, value + (1 - c) * w / 2]`` with ``w`` the DNA prior window (relative +/-15 % when
+    the trait has no explicit window).  It communicates how loosely each value is pinned down; it is not a
+    calibrated statistical interval."""
+    out = {}
+    for k, (v, prov, conf, _note) in est.items():
+        if isinstance(v, bool) or not isinstance(v, (int, float)):
+            continue
+        lo, hi = dnam._PRIOR.get(k, (v * dnam._DEFAULT_WINDOW[0], v * dnam._DEFAULT_WINDOW[1]))
+        half = (1.0 - conf) * abs(hi - lo) / 2
+        out[k] = [round(v - half, 4), round(v + half, 4)]
+    return out
 
 
 def overlay_image(obs: Observation, syn: Silhouette, syn_mask: np.ndarray) -> np.ndarray:

@@ -99,6 +99,20 @@ def build_parts(body: BodyParams, face: FaceParams, want_colors: bool = False) -
     return out
 
 
+def _generator_stamp() -> dict:
+    from forge_character_forge.character import GENERATOR_ID, GENERATOR_VERSION
+    return {"id": GENERATOR_ID, "version": GENERATOR_VERSION}
+
+
+def stamp_generator(path, template_vertices: int) -> dict:
+    """Record the generator version in an existing pack's manifest (the binary blob is left untouched)."""
+    man, blob = read_pack(path)
+    man["generator"] = dict(_generator_stamp(), template_vertices=int(template_vertices))
+    js = json.dumps(man, separators=(",", ":")).encode()
+    Path(path).write_bytes(gzip.compress(PACK_MAGIC + struct.pack("<I", len(js)) + js + blob, compresslevel=9, mtime=0))
+    return man["generator"]
+
+
 def _job(args):
     kind, name, value = args
     b, f = base_params()
@@ -183,7 +197,8 @@ def bake(out_path, workers: int = 4, log=print) -> dict:
                         "physics": [n for n in keep_names if n in PHYSICS_BONES], "marks": {
                             k: (float(v) if np.isscalar(v) else [float(x) for x in v])
                             for k, v in skel.marks.items() if np.isscalar(v) or (hasattr(v, "__len__") and len(v) == 3)}},
-           "parts": {}, "params": {}, "presets": {}, "clips": {}, "expressions": []}
+           "parts": {}, "params": {}, "presets": {}, "clips": {}, "expressions": [],
+           "generator": _generator_stamp()}
     remap = np.full(len(skel.names), 0, np.int64)
     for i, n in enumerate(keep_names):
         remap[skel.index(n)] = i

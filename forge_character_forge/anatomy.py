@@ -254,7 +254,7 @@ def _head(F: Field, skel: Skeleton, fp: FaceParams) -> None:
           R(0.024, 0.015, 0.024), tag="cheekbone")
         F.add(RoundCone("head", 0.018 * k, a=P(side * 0.05 * fp.cheekbone_width, 0.097, 0.045),
                         b=P(side * 0.066, 0.099, -0.002, False), ra=0.008 * k, rb=0.0065 * k, tag="zygomatic_arch"))
-        E("jaw", 0.018, P(side * 0.04 * a, 0.066, 0.06), R(0.022 * fp.cheek_fullness, 0.024, 0.022 * fp.cheek_fullness),
+        E("jaw", 0.016, P(side * 0.04 * a, 0.068, 0.058), R(0.019 * fp.cheek_fullness, 0.021, 0.019 * fp.cheek_fullness),
           tag="cheek")
         jw = fp.jaw_width
         gon = P(side * 0.051 * jw * a, 0.032 + 0.006 * (1.0 - fp.jaw_angle), -0.008)
@@ -262,25 +262,28 @@ def _head(F: Field, skel: Skeleton, fp: FaceParams) -> None:
                         ra=0.0095 * k * fp.jaw_angle ** 0.5, rb=0.009 * k, tag="ramus"))
         F.add(RoundCone("jaw", 0.022 * k, a=gon, b=P(side * 0.017 * fp.chin_width, 0.01, 0.08 * fp.chin_projection),
                         ra=0.0095 * k * fp.jaw_angle ** 0.5, rb=0.0105 * k, tag="mandible"))
-    E("jaw", 0.02, P(0, 0.045, 0.022), R(0.053 * fp.jaw_width, 0.042, 0.066), tag="lower_face")
+    E("jaw", 0.018, P(0, 0.045, 0.022), R(0.049 * fp.jaw_width, 0.042, 0.064), tag="lower_face")
     E("jaw", 0.012, P(0, 0.016 * (2.0 - fp.chin_length), 0.083 * fp.chin_projection),
       R(0.021 * fp.chin_width, 0.017 * fp.chin_length, 0.016), tag="chin")
     E("head", 0.016, P(0, 0.058, 0.073), R(0.031, 0.022, 0.027), tag="muzzle")
     # lips, slightly parted so the topology owns a real mouth opening
     mw = fp.mouth_width
-    E("head", 0.004, P(0, 0.0525, 0.0955), R(0.025 * mw, 0.0062 * fp.lip_upper, 0.0085 * fp.lip_upper), tag="lip_upper")
-    E("jaw", 0.004, P(0, 0.0405, 0.093), R(0.023 * mw, 0.0074 * fp.lip_lower, 0.0092 * fp.lip_lower), tag="lip_lower")
+    # upper lip: two lobes meeting at the philtrum (cupid's bow) instead of one sausage; corners taper
+    for side in (1.0, -1.0):
+        E("head", 0.0035, P(side * 0.0085 * mw, 0.0522, 0.0928), R(0.0135 * mw, 0.0052 * fp.lip_upper, 0.0068 * fp.lip_upper),
+          rot=rot_xyz(0, 0, side * 0.10), tag="lip_upper")
+    E("jaw", 0.0035, P(0, 0.0408, 0.0905), R(0.0195 * mw, 0.0064 * fp.lip_lower, 0.0076 * fp.lip_lower), tag="lip_lower")
     E("jaw", 0.002, P(0, 0.0468, 0.101), R(0.0205 * mw, 0.0021, 0.02), subtract=True, tag="mouth_slit")
     E("jaw", 0.004, P(0, 0.047, 0.062), R(0.0225, 0.013, 0.033), subtract=True, tag="oral_cavity")
     # nose
     nl, nw, nb, nt = fp.nose_length, fp.nose_width, fp.nose_bridge, fp.nose_tip
     tip_y = 0.119 - 0.044 * nl + 0.004 * fp.nose_upturn
-    tip = P(0, tip_y, 0.118 + 0.006 * (nl - 1.0))
+    tip = P(0, tip_y, 0.1155 + 0.006 * (nl - 1.0))
     F.add(RoundCone("head", 0.008 * k, a=P(0, 0.117, 0.088 + 0.004 * nb), b=tip, ra=0.0065 * k * nb,
                     rb=0.0085 * k, squash=(1.1 * nw, 1.0), hint=(0, 0, 1), tag="nose_bridge"))
-    E("head", 0.006, tip, R(0.0095 * nt * nw, 0.0088 * nt, 0.009 * nt), tag="nose_tip")
+    E("head", 0.005, tip, R(0.0082 * nt * nw, 0.0078 * nt, 0.0080 * nt), tag="nose_tip")
     for side in (1.0, -1.0):
-        E("head", 0.005, P(side * 0.0125 * nw, tip_y - 0.003, 0.104), R(0.0085 * nw, 0.0075, 0.0095), tag="ala")
+        E("head", 0.004, P(side * 0.0115 * nw, tip_y - 0.003, 0.102), R(0.0074 * nw, 0.0068, 0.0088), tag="ala")
         E("head", 0.002, P(side * 0.0066 * nw, tip_y - 0.0078, 0.109), R(0.0048 * nw, 0.0026, 0.0065),
           subtract=True, tag="nostril")
     # eyes: socket + almond aperture + lid rolls; the eyeball is a separate mesh in the socket
@@ -290,11 +293,11 @@ def _head(F: Field, skel: Skeleton, fp: FaceParams) -> None:
         es = fp.eye_size
         rot = rot_xyz(0, side * 0.08, side * 0.10 * fp.eye_tilt)
         F.add(Ellipsoid("head", 0.0015 * k, subtract=True, center=tuple(Ep + _v(-side * 0.0016 * k, 0, re * 0.95)),
-                        radii=(0.0146 * k * es, 0.0063 * k * es, 0.011 * k), rot=rot, tag="eye_aperture"))
+                        radii=(0.0150 * k * es, 0.0074 * k * es, 0.011 * k), rot=rot, tag="eye_aperture"))
         F.add(Ellipsoid("head", 0.003 * k, subtract=True, center=tuple(Ep), radii=(re * 1.06,) * 3, tag="eye_socket"))
-        F.add(Ellipsoid("head", 0.003 * k, center=tuple(Ep + _v(0, re * 0.62, re * 0.62)),
+        F.add(Ellipsoid("head", 0.003 * k, center=tuple(Ep + _v(0, re * 0.72, re * 0.58)),
                         radii=(0.0155 * k * es, 0.0048 * k, 0.0075 * k), rot=rot, tag="lid_upper"))
-        F.add(Ellipsoid("head", 0.003 * k, center=tuple(Ep + _v(0, -re * 0.66, re * 0.58)),
+        F.add(Ellipsoid("head", 0.003 * k, center=tuple(Ep + _v(0, -re * 0.74, re * 0.55)),
                         radii=(0.0145 * k * es, 0.004 * k, 0.0068 * k), rot=rot, tag="lid_lower"))
     # ears
     for side in (1.0, -1.0):

@@ -51,6 +51,23 @@ Files:
   validators (bangs, 184k -> 48k -> 22k tris, 112 s, ~270 MB RSS).
 - SwiftShader (software GL) runs the studio at ~1-2 fps; real GPUs are not measurable here.
 
+## Phase 2 status update (rasterizer fix, versioning)
+- Software rasterizer (`render.py`, preview images only): near-plane clipping, off-screen culling, viewport-clipped
+  boxes, 64 px tiles for large triangles. Old code gave a 4096x4096 test grid to any triangle with a 257-4096 px box
+  and dropped boxes over 4096 px. Demo F head close-ups: base 290.5 s -> 8.3 s, LOD1/LOD2 >300 s (killed) -> 8.6/7.1 s,
+  peak RSS 2.24 GB -> 0.93 GB. Images bit-identical in all 6 cases the old code could finish. Tests:
+  `tests/test_character_forge_render.py`. Baseline copy: scratchpad `render_baseline.py`.
+- Generator version 2 (`character.GENERATOR_VERSION`, `GENERATOR_HISTORY`): face changes re-meshed the template
+  62,639 -> 62,550 vertices. GLBs and the studio pack now record generator id/version; v1 = commit 8ecaaad.
+- Phase 2 demos: `python3 tools/run_phase2_demos.py [studio,sheets,H,F,G,kit]` (stages merge into summary.json).
+  First full run hit its 5000 s limit inside F (rasterizer); F, G and kit then ran on their own and passed.
+
+## Project Humanity (governing acceptance criteria, adopted)
+Priority P0 preservation -> P1 visual realism (face, eyes, skin, hair) -> P2 studio (Simple/Advanced creator) ->
+P3 anatomy fidelity + Developer Anatomy Lab -> P4 variety/optimization -> P5 reconstruction. Prove ONE excellent
+adult character in the real studio before expanding. Finite credits: short visual experiments before any bake
+(a full bake is ~31 min, 4 workers); never rebuild unchanged assets.
+
 ## Open problems / next actions
 1. Commit/push checkpoint; publish the studio artifact (multi-file; `downloads` capability; GLB offered zipped).
 2. Face realism (lips/eyes/brows) and anatomy fixes (hands, knees, feet) need a re-bake (~28 min) to reach the studio.

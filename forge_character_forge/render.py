@@ -78,46 +78,134 @@ def _normals(verts, tris):
     return n / np.maximum(np.linalg.norm(n, axis=1, keepdims=True), 1e-20)
 
 
+NEAR = 1e-3   # camera-space near plane (m) for perspective cameras
+TILE = 64     # largest per-unit pixel grid; bigger triangles are split into TILE x TILE tiles
+_BINS = (4, 8, 16, 32, 64)
+_CHUNK = 3_000_000
+
+
+def _clip_near(v, t, attrs, zc, near):
+    """Clip triangles against zc >= near (zc = distance in front of the camera). Returns new (v, t, attrs, zc)
+    with crossing triangles replaced by 1-2 triangles whose new vertices interpolate every attribute linearly."""
+    inside = zc[t] >= near
+    n_in = inside.sum(1)
+    keep = t[n_in == 3]
+    cross = np.nonzero((n_in > 0) & (n_in < 3))[0]
+    if not len(cross):
+        return v, keep, attrs, zc
+    vs, As, zs = [v], [[a] for a in attrs], [zc]
+    nv = len(v)
+    extra = []
+
+    def new_vertex(i, j):
+        nonlocal nv
+        s = (near - zc[i]) / (zc[j] - zc[i])
+        vs.append((v[i] + (v[j] - v[i]) * s)[None])
+        for k, a in enumerate(attrs):
+            As[k].append((a[i] + (a[j] - a[i]) * s)[None])
+        zs.append(np.array([near]))
+        nv += 1
+        return nv - 1
+
+    for f in cross:
+        idx = t[f]
+        ins = inside[f]
+        poly = []
+        for e in range(3):  # Sutherland-Hodgman on one plane, preserving winding
+            a, b = idx[e], idx[(e + 1) % 3]
+            ia, ib = ins[e], ins[(e + 1) % 3]
+            if ia:
+                poly.append(a)
+            if ia != ib:
+                poly.append(new_vertex(a, b))
+        for k in range(1, len(poly) - 1):
+            extra.append((poly[0], poly[k], poly[k + 1]))
+    v2 = np.concatenate(vs)
+    attrs2 = [np.concatenate(x) for x in As]
+    t2 = np.concatenate([keep, np.array(extra, np.int64).reshape(-1, 3)])
+    return v2, t2, attrs2, np.concatenate(zs)
+
+
 def rasterize(items: list[DrawItem], cam: Camera, W=800, H=1000, background=None, ground_y: float | None = 0.0,
               ssaa: int = 2):
-    """Returns an RGB uint8 image (H, W, 3)."""
+    """Returns an RGB uint8 image (H, W, 3).
+
+    Triangles are clipped against the near plane (perspective), culled when their screen box contains no pixel
+    center, and their boxes are clipped to the viewport.  Coverage is tested on bounded per-unit pixel grids:
+    triangles up to 64 px use size bins, larger ones are split into 64 x 64 tiles, so memory per chunk stays
+    bounded (about 3M samples) whatever the projected size.  Depth test, screen-space barycentric interpolation
+    and shading are unchanged."""
     W2, H2 = W * ssaa, H * ssaa
     zbuf = np.full(H2 * W2, np.inf)
     nbuf = np.zeros((H2 * W2, 3))
     cbuf = np.zeros((H2 * W2, 3))
-    mbuf = np.zeros((H2 * W2, 4))  # roughness, specular, sss, item id+1
+    mbuf = np.zeros((H2 * W2, 4))
     pbuf = np.zeros((H2 * W2, 3))
+    R, eye = cam.basis()
     for item_id, it in enumerate(items):
         v = np.asarray(it.verts, float)
         t = np.asarray(it.tris, np.int64)
         if not len(t):
             continue
         n = _normals(v, t)
-        col = np.broadcast_to(np.asarray(it.color, float), v.shape) if it.colors is None else np.asarray(it.colors)
-        scr, depth, R, eye = _project(v, cam, W2, H2)
+        col = np.broadcast_to(np.asarray(it.color, float), v.shape) if it.colors is None else np.asarray(it.colors, float)
+        pc = (v - eye) @ R.T
+        if cam.ortho_height:
+            s = H2 / cam.ortho_height
+            sx, sy, depth = W2 / 2 + pc[:, 0] * s, H2 / 2 - pc[:, 1] * s, -pc[:, 2]
+        else:
+            zc = -pc[:, 2]
+            if (zc[t] < NEAR).any():
+                v, t, (n, col, pc), zc = _clip_near(v, t, [n, np.array(col), pc], zc, NEAR)
+            f = (H2 / 2) / np.tan(np.radians(cam.fov_deg) / 2)
+            z = np.maximum(zc, 1e-12)
+            sx, sy, depth = W2 / 2 + pc[:, 0] * f / z, H2 / 2 - pc[:, 1] * f / z, z
+            if not len(t):
+                continue
+        scr = np.stack([sx, sy], 1)
         p0, p1, p2 = scr[t[:, 0]], scr[t[:, 1]], scr[t[:, 2]]
         area = (p1[:, 0] - p0[:, 0]) * (p2[:, 1] - p0[:, 1]) - (p1[:, 1] - p0[:, 1]) * (p2[:, 0] - p0[:, 0])
-        # screen y is down, so front faces (CCW in world) have negative area here
         front = area < 0 if not it.double_sided else np.abs(area) > 1e-12
-        keep = front & (np.abs(area) > 1e-9)
+        lo_x = np.minimum(np.minimum(p0[:, 0], p1[:, 0]), p2[:, 0])
+        hi_x = np.maximum(np.maximum(p0[:, 0], p1[:, 0]), p2[:, 0])
+        lo_y = np.minimum(np.minimum(p0[:, 1], p1[:, 1]), p2[:, 1])
+        hi_y = np.maximum(np.maximum(p0[:, 1], p1[:, 1]), p2[:, 1])
+        # a pixel (px, py) is sampled at its center (px + .5, py + .5) with 0 <= px < W2: no center can lie in a box
+        # that ends before 0.5 or starts after W2 - 0.5
+        vis = (hi_x >= 0.5 - 1e-6) & (lo_x <= W2 - 0.5 + 1e-6) & (hi_y >= 0.5 - 1e-6) & (lo_y <= H2 - 0.5 + 1e-6)
+        keep = front & (np.abs(area) > 1e-9) & vis
         t, p0, p1, p2, area = t[keep], p0[keep], p1[keep], p2[keep], area[keep]
         if not len(t):
             continue
-        xmin = np.floor(np.minimum(np.minimum(p0[:, 0], p1[:, 0]), p2[:, 0])).astype(int)
-        xmax = np.ceil(np.maximum(np.maximum(p0[:, 0], p1[:, 0]), p2[:, 0])).astype(int)
-        ymin = np.floor(np.minimum(np.minimum(p0[:, 1], p1[:, 1]), p2[:, 1])).astype(int)
-        ymax = np.ceil(np.maximum(np.maximum(p0[:, 1], p1[:, 1]), p2[:, 1])).astype(int)
-        size = np.maximum(xmax - xmin, ymax - ymin) + 1
-        for lo, hi in ((0, 4), (4, 8), (8, 16), (16, 32), (32, 64), (64, 256), (256, 4096)):
-            sel = np.where((size > lo) & (size <= hi))[0]
-            if not len(sel):
-                continue
-            k = hi
-            for start in range(0, len(sel), max(1, 3_000_000 // (k * k))):
-                s = sel[start:start + max(1, 3_000_000 // (k * k))]
-                ox, oy = np.meshgrid(np.arange(k), np.arange(k))
-                px = xmin[s, None] + ox.reshape(1, -1)
-                py = ymin[s, None] + oy.reshape(1, -1)
+        xmin = np.clip(np.floor(lo_x[keep]), 0, W2 - 1).astype(np.int64)
+        xmax = np.clip(np.ceil(hi_x[keep]), 0, W2 - 1).astype(np.int64)
+        ymin = np.clip(np.floor(lo_y[keep]), 0, H2 - 1).astype(np.int64)
+        ymax = np.clip(np.ceil(hi_y[keep]), 0, H2 - 1).astype(np.int64)
+        wx, wy = xmax - xmin + 1, ymax - ymin + 1
+        size = np.maximum(wx, wy)
+        # units: (triangle, origin x, origin y, grid k)
+        units = []
+        small = size <= TILE
+        for lo, hi in zip((0,) + _BINS[:-1], _BINS):
+            sel = np.nonzero(small & (size > lo) & (size <= hi))[0]
+            if len(sel):
+                units.append((sel, xmin[sel], ymin[sel], hi))
+        big = np.nonzero(~small)[0]
+        if len(big):
+            ntx, nty = -(-wx[big] // TILE), -(-wy[big] // TILE)
+            cnt = ntx * nty
+            tri_u = np.repeat(big, cnt)
+            k = np.arange(cnt.sum()) - np.repeat(np.cumsum(cnt) - cnt, cnt)
+            ntx_u = np.repeat(ntx, cnt)
+            units.append((tri_u, xmin[tri_u] + (k % ntx_u) * TILE, ymin[tri_u] + (k // ntx_u) * TILE, TILE))
+        for sel_all, ox_all, oy_all, k in units:
+            step = max(1, _CHUNK // (k * k))
+            gx, gy = np.meshgrid(np.arange(k), np.arange(k))
+            gx, gy = gx.reshape(1, -1), gy.reshape(1, -1)
+            for start in range(0, len(sel_all), step):
+                s = sel_all[start:start + step]
+                px = ox_all[start:start + step, None] + gx
+                py = oy_all[start:start + step, None] + gy
                 cx, cy = px + 0.5, py + 0.5
                 a0, a1, a2 = p0[s], p1[s], p2[s]
                 w0 = (a1[:, None, 0] - cx) * (a2[:, None, 1] - cy) - (a1[:, None, 1] - cy) * (a2[:, None, 0] - cx)

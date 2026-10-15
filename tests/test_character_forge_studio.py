@@ -101,6 +101,28 @@ class DnaLayerTests(unittest.TestCase):
         self.assertEqual(spec.appearance.hair_highlight_amount, 0.0)
 
 
+class GeneratorVersionTests(unittest.TestCase):
+    def test_v1_dna_files_load_and_exports_are_stamped(self):
+        from forge_character_forge.character import GENERATOR_HISTORY, GENERATOR_VERSION, build_character
+        from forge_character_forge.gltf import write_glb
+        from forge_character_forge.validate import read_glb
+        self.assertIn(GENERATOR_VERSION, GENERATOR_HISTORY)
+        self.assertGreater(GENERATOR_VERSION, 1, "the face/template change must be versioned")
+        files = sorted((ROOT / "examples" / "character_forge_aaa" / "dna").glob("*.dna.json"))
+        self.assertGreater(len(files), 3)
+        for f in files:  # written by generator v1: parameters only, so they must still validate and convert
+            d = json.loads(f.read_text())
+            D.validate_dna(d)
+            D.to_spec(d)
+        spec = D.to_spec(json.loads(files[0].read_text()))
+        ch = build_character(spec, "public", fast=True)
+        with tempfile.TemporaryDirectory() as td:
+            gltf, _ = read_glb(write_glb(ch, Path(td) / "v.glb"))
+        meta = gltf["asset"]["extras"]["forge"]
+        self.assertEqual(meta["generator"], {"id": "forge.character-forge", "version": GENERATOR_VERSION})
+        self.assertEqual(meta["fixed_topology_vertices"], GENERATOR_HISTORY[GENERATOR_VERSION]["template_vertices"])
+
+
 class PackTests(unittest.TestCase):
     def test_compaction_is_exactly_reversible(self):
         rng = np.random.default_rng(3)
@@ -138,6 +160,9 @@ class PackTests(unittest.TestCase):
         self.assertTrue({"male", "female", "neutral"} <= set(man["presets"]))
         self.assertTrue({"run", "turn", "sudden_stop"} <= set(man["clips"]))
         self.assertLess(PACK.stat().st_size, 15_000_000, "pack fits the artifact binary limit")
+        from forge_character_forge.character import GENERATOR_VERSION
+        self.assertEqual(man["generator"]["version"], GENERATOR_VERSION)
+        self.assertEqual(man["generator"]["template_vertices"], body["n"])
 
 
 class LodTests(unittest.TestCase):
@@ -203,6 +228,7 @@ class ServerTests(unittest.TestCase):
         with self.assertRaises(urllib.error.HTTPError) as cm:
             self.get("/../forge_character_forge/dna.py")
         self.assertEqual(cm.exception.code, 404)
+        cm.exception.close()
 
     def test_export_rejects_bad_dna(self):
         req = urllib.request.Request(self.base + "/api/export", data=json.dumps({"schema": "nope"}).encode(),
@@ -210,12 +236,64 @@ class ServerTests(unittest.TestCase):
         with self.assertRaises(urllib.error.HTTPError) as cm:
             urllib.request.urlopen(req, timeout=10)
         self.assertEqual(cm.exception.code, 400)
+        cm.exception.close()
         minor = D.new_dna("female")
         minor["identity"]["age_years"] = 16
         req = urllib.request.Request(self.base + "/api/export", data=json.dumps(minor).encode(), method="POST")
         with self.assertRaises(urllib.error.HTTPError) as cm:
             urllib.request.urlopen(req, timeout=10)
         self.assertIn("adult", json.loads(cm.exception.read())["error"])
+        cm.exception.close()
+
+
+class KitTests(unittest.TestCase):
+    def test_props_mesh_decimate_and_attach(self):
+        from forge_character_forge import kit
+        lt = kit.lantern()
+        v, t = lt["frame"]
+        self.assertLessEqual(len(t), 6000)
+        chain = kit.lod_chain(v, t, (0.5, 0.25))
+        self.assertEqual([len(x[1]) <= n for x, n in zip(chain, (6000, 3000, 1500))], [True] * 3)
+        b, f, _ = preset("male")
+        s = build_skeleton(b, f)
+        p = kit.attach(s, "kit_lantern_frame", v, t, "hand_r", "kit_metal")
+        self.assertTrue((p.joints[:, 0] == s.index("hand_r")).all())
+        np.testing.assert_allclose(p.weights[:, 0], 1.0)
+        self.assertLess(np.linalg.norm(p.verts.mean(0) - s["hand_r"]), 0.2)
+
+
+class ReconstructionPhase2Tests(unittest.TestCase):
+    """Hairstyle and lower-garment inference on generated references with known parameters.
+
+    The thresholds were calibrated on these same images, so this guards behavior; it is not an accuracy claim."""
+
+    REFS = ROOT / "examples" / "character_forge_aaa" / "references"
+
+    def run_ref(self, name):
+        from forge_character_forge.reconstruct import load_reference, reconstruct
+        dna, _ = reconstruct([load_reference(self.REFS / name, authorized=True)], log=lambda *a: None)
+        D.validate_dna(dna)
+        return dna
+
+    def test_hairstyles_and_skirt(self):
+        truth = json.loads((self.REFS / "ground_truth.json").read_text())
+        for name in ("ref_bob_skirt.png", "ref_bangs_portrait.png", "ref_long_male.png", "ref_full_front.png"):
+            dna = self.run_ref(name)
+            t = dna["traits"]
+            self.assertEqual(t["appearance.hair_style"]["value"], truth[name]["appearance"]["hair_style"], name)
+            self.assertEqual(t["appearance.hair_style"]["provenance"], "estimated")
+            self.assertLessEqual(t["appearance.hair_style"]["confidence"], 0.5)
+            rec = dna["reconstruction"]
+            self.assertIn("not claimed", rec["likeness"])
+            for k, (lo, hi) in rec["uncertainty"].items():
+                v = t[k]["value"]
+                self.assertLessEqual(lo, v + 1e-9, k)
+                self.assertGreaterEqual(hi, v - 1e-9, k)
+            if name == "ref_bob_skirt.png":
+                self.assertIn("skirt", t["wardrobe.outfit"]["value"])
+                self.assertIn("gap between the legs", t["wardrobe.outfit"]["note"])
+            if name == "ref_long_male.png":
+                self.assertIn("pants", t["wardrobe.outfit"]["value"])
 
 
 if __name__ == "__main__":

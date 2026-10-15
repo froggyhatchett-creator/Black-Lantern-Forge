@@ -1,0 +1,520 @@
+{
+ "stage_seconds": {},
+ "A": {
+  "checks": [
+   {
+    "name": "studio boots",
+    "pass": true,
+    "detail": "1.0 s"
+   },
+   {
+    "name": "character renders",
+    "pass": true,
+    "detail": "covered fraction 0.139"
+   },
+   {
+    "name": "male preset changes geometry",
+    "pass": true,
+    "detail": "height 1.657 -> 1.776 m"
+   },
+   {
+    "name": "shoulder slider moves vertices",
+    "pass": true,
+    "detail": "4984 coordinates changed"
+   },
+   {
+    "name": "height slider reaches requested height",
+    "pass": true,
+    "detail": "measured 2.047 m"
+   },
+   {
+    "name": "undo restores the previous value",
+    "pass": true,
+    "detail": "1.776 m"
+   },
+   {
+    "name": "mouse drag rotates",
+    "pass": true,
+    "detail": "yaw 0.35 -> -1.41"
+   },
+   {
+    "name": "wheel zooms",
+    "pass": true,
+    "detail": "distance 5.11 -> 2.49"
+   },
+   {
+    "name": "face sliders reshape the face",
+    "pass": true,
+    "detail": "9224 vertices moved > 0.5 mm"
+   },
+   {
+    "name": "public coverage is enforced",
+    "pass": true,
+    "detail": "outfit=tshirt,shorts note=\"Public characters stay clothed: added shorts.\""
+   },
+   {
+    "name": "garments swap when coverage remains",
+    "pass": true,
+    "detail": "tshirt,skirt"
+   },
+   {
+    "name": "animation advances",
+    "pass": true,
+    "detail": "clip time 0.00 -> 0.52 s"
+   },
+   {
+    "name": "live secondary physics runs",
+    "pass": true,
+    "detail": "breast_l,breast_r,cloth_front_01,cloth_front_02,cloth_front_03,cloth_back_01,cloth_back_02,cloth_back_03"
+   },
+   {
+    "name": "camera orbit causes no secondary motion",
+    "pass": true,
+    "detail": "breast particle speed 0.0000 m/s"
+   },
+   {
+    "name": "spinning the character moves soft tissue",
+    "pass": true,
+    "detail": "breast particle speed 1.692 m/s"
+   },
+   {
+    "name": "spin has inertia after release",
+    "pass": true,
+    "detail": "yaw 0.00 -> 5.52 -> 7.77"
+   },
+   {
+    "name": "motion settles (damping)",
+    "pass": true,
+    "detail": "0.0021 m/s after 3.5 s"
+   },
+   {
+    "name": "GLB exported from the studio",
+    "pass": true,
+    "detail": "8.3 MB"
+   },
+   {
+    "name": "DNA export produced",
+    "pass": true,
+    "detail": "76 traits"
+   },
+   {
+    "name": "DNA reload restores every parameter",
+    "pass": true,
+    "detail": "max difference 0.00e+0"
+   },
+   {
+    "name": "frame rate measured (software GL, informational)",
+    "pass": true,
+    "detail": "1.0 fps under SwiftShader"
+   },
+   {
+    "name": "no horizontal scroll at phone width",
+    "pass": true,
+    "detail": ""
+   },
+   {
+    "name": "no console errors",
+    "pass": true,
+    "detail": ""
+   }
+  ],
+  "passed": 23,
+  "total": 23,
+  "console_errors": [],
+  "reused": true
+ },
+ "H": {
+  "reload": {
+   "max_param_diff": 0,
+   "hair_style": "bangs",
+   "outfit": [
+    "tshirt",
+    "pants"
+   ]
+  },
+  "dna_valid": true,
+  "anatomy_hash": "7c620a196979e1b1",
+  "browser_glb": {
+   "validate_glb": true,
+   "stats": {
+    "meshes": 12,
+    "triangles": 202505,
+    "vertices": 101731,
+    "joints": 64,
+    "morph_targets": 7,
+    "animations": 7,
+    "materials": 9,
+    "images": 0,
+    "profile": "public"
+   },
+   "node_check": true
+  },
+  "server_export": {
+   "status": 200,
+   "path": "examples/character_forge_aaa/phase2/exports/demo_h.glb",
+   "bytes": 8775268,
+   "seconds": 64.4345,
+   "error": null,
+   "validate_glb": true,
+   "node_check": true
+  }
+ },
+ "F": {
+  "seconds": 34.54,
+  "files": [
+   {
+    "file": "demo_f.glb",
+    "bytes": 8775268,
+    "triangles": 202505,
+    "validate_glb": true,
+    "node_check": true,
+    "max_weight_sum_error": 4.6100467443466187e-08
+   },
+   {
+    "file": "demo_f_lod1.glb",
+    "bytes": 2607728,
+    "triangles": 52292,
+    "validate_glb": true,
+    "node_check": true,
+    "max_weight_sum_error": 4.470348358154297e-08
+   },
+   {
+    "file": "demo_f_lod2.glb",
+    "bytes": 1414028,
+    "triangles": 23081,
+    "validate_glb": true,
+    "node_check": true,
+    "max_weight_sum_error": 4.470348358154297e-08
+   }
+  ],
+  "profile_s": {
+   "build_character": 55.24,
+   "export_with_lods": 34.54,
+   "validate_demo_f": 0.27,
+   "character_lod_1.0": 0.0,
+   "render_full_1.0": 6.06,
+   "render_head_1.0": 8.81,
+   "validate_demo_f_lod1": 0.19,
+   "character_lod_0.25": 12.99,
+   "render_full_0.25": 5.84,
+   "render_head_0.25": 8.0,
+   "validate_demo_f_lod2": 0.18,
+   "character_lod_0.1": 15.84,
+   "render_full_0.1": 6.46,
+   "render_head_0.1": 7.81
+  },
+  "sha256": {
+   "demo_f.glb": "58b1a1a371db58079302f71984fe3fccb9d6f7759a4899c6e3183245a22c6e6f",
+   "demo_f_lod1.glb": "7d84e0574f2104db67732aac527f99f2077394e9f772338888c44e2125a823ce",
+   "demo_f_lod2.glb": "ef92a0eb28dde8823b01fadfe646197e8bbfe3d0dc84498e88bb02260b641b93"
+  }
+ },
+ "G": {
+  "ref_bob_skirt.png": {
+   "seconds": 228.7,
+   "provenance": {
+    "observed": 7,
+    "estimated": 11,
+    "invented": 32,
+    "user": 0,
+    "default": 26
+   },
+   "hair_style": [
+    "bob",
+    "bob",
+    0.4,
+    "hair ends near the jaw (0.90 head units below the crown)"
+   ],
+   "outfit": [
+    [
+     "tshirt",
+     "skirt"
+    ],
+    [
+     "tshirt",
+     "skirt"
+    ],
+    "garment colors differ from skin in torso/leg regions; skirt: no gap between the legs at thigh height"
+   ],
+   "regions": {
+    "head": "visible",
+    "neck": "visible",
+    "shoulders": "visible",
+    "chest": "visible",
+    "arms_upper": "visible",
+    "waist": "visible",
+    "hips_pelvis": "visible",
+    "hands": "visible",
+    "thighs": "visible",
+    "knees": "visible",
+    "lower_legs": "visible",
+    "feet": "visible",
+    "back": "unobservable"
+   },
+   "likeness": "not claimed: the method fits body proportions to a silhouette and samples colors; facial identity and unseen anatomy are not reconstructed and must not be presented as a likeness",
+   "uncertainty_examples": {
+    "body.shoulder_width": [
+     0.811,
+     1.069
+    ],
+    "body.chest_width": [
+     0.7161,
+     0.9439
+    ],
+    "body.waist_width": [
+     0.8886,
+     1.1714
+    ],
+    "body.hip_width": [
+     0.8973,
+     1.1827
+    ]
+   }
+  },
+  "ref_bangs_portrait.png": {
+   "seconds": 143.0,
+   "provenance": {
+    "observed": 2,
+    "estimated": 5,
+    "invented": 42,
+    "user": 0,
+    "default": 27
+   },
+   "hair_style": [
+    "bangs",
+    "bangs",
+    0.4,
+    "jaw-length hair (0.63 hu) with a fringe over the forehead (coverage 0.30, left/right difference 0.17)"
+   ],
+   "outfit": [
+    [
+     "tshirt",
+     "shorts"
+    ],
+    [
+     "tshirt",
+     "pants"
+    ],
+    "no garments observed (or regions not visible); clothed default for public use"
+   ],
+   "regions": {
+    "head": "visible",
+    "neck": "visible",
+    "shoulders": "cropped",
+    "chest": "cropped",
+    "arms_upper": "cropped",
+    "waist": "cropped",
+    "hips_pelvis": "cropped",
+    "hands": "cropped",
+    "thighs": "cropped",
+    "knees": "cropped",
+    "lower_legs": "cropped",
+    "feet": "cropped",
+    "back": "unobservable"
+   },
+   "likeness": "not claimed: the method fits body proportions to a silhouette and samples colors; facial identity and unseen anatomy are not reconstructed and must not be presented as a likeness",
+   "uncertainty_examples": {
+    "face.face_width": [
+     0.8176,
+     1.0824
+    ],
+    "body.body_fat": [
+     0.175,
+     0.525
+    ],
+    "body.femininity": [
+     0.4325,
+     0.5675
+    ],
+    "body.breast_size": [
+     -0.6,
+     0.6
+    ]
+   }
+  },
+  "ref_long_male.png": {
+   "seconds": 216.8,
+   "provenance": {
+    "observed": 7,
+    "estimated": 11,
+    "invented": 32,
+    "user": 0,
+    "default": 26
+   },
+   "hair_style": [
+    "long",
+    "long",
+    0.45,
+    "hair extends 1.03 head units below the crown"
+   ],
+   "outfit": [
+    [
+     "tshirt",
+     "pants"
+    ],
+    [
+     "tshirt",
+     "pants"
+    ],
+    "garment colors differ from skin in torso/leg regions"
+   ],
+   "regions": {
+    "head": "visible",
+    "neck": "visible",
+    "shoulders": "visible",
+    "chest": "visible",
+    "arms_upper": "visible",
+    "waist": "visible",
+    "hips_pelvis": "visible",
+    "hands": "visible",
+    "thighs": "visible",
+    "knees": "visible",
+    "lower_legs": "visible",
+    "feet": "cropped",
+    "back": "unobservable"
+   },
+   "likeness": "not claimed: the method fits body proportions to a silhouette and samples colors; facial identity and unseen anatomy are not reconstructed and must not be presented as a likeness",
+   "uncertainty_examples": {
+    "body.shoulder_width": [
+     0.88,
+     1.16
+    ],
+    "body.chest_width": [
+     0.6557,
+     0.8643
+    ],
+    "body.waist_width": [
+     0.8628,
+     1.1372
+    ],
+    "body.hip_width": [
+     0.88,
+     1.16
+    ]
+   }
+  },
+  "ref_waist_up.png": {
+   "seconds": 170.8,
+   "provenance": {
+    "observed": 4,
+    "estimated": 8,
+    "invented": 38,
+    "user": 0,
+    "default": 26
+   },
+   "hair_style": [
+    "long",
+    "long",
+    0.45,
+    "hair extends 1.24 head units below the crown"
+   ],
+   "outfit": [
+    [
+     "tshirt"
+    ],
+    [
+     "tshirt",
+     "shorts"
+    ],
+    "garment colors differ from skin in torso/leg regions"
+   ],
+   "regions": {
+    "head": "visible",
+    "neck": "visible",
+    "shoulders": "visible",
+    "chest": "visible",
+    "arms_upper": "visible",
+    "waist": "visible",
+    "hips_pelvis": "cropped",
+    "hands": "cropped",
+    "thighs": "cropped",
+    "knees": "cropped",
+    "lower_legs": "cropped",
+    "feet": "cropped",
+    "back": "unobservable"
+   },
+   "likeness": "not claimed: the method fits body proportions to a silhouette and samples colors; facial identity and unseen anatomy are not reconstructed and must not be presented as a likeness",
+   "uncertainty_examples": {
+    "body.shoulder_width": [
+     0.7075,
+     0.9325
+    ],
+    "body.chest_width": [
+     0.8628,
+     1.1372
+    ],
+    "body.waist_width": [
+     0.7592,
+     1.0008
+    ],
+    "face.face_width": [
+     0.8607,
+     1.1393
+    ]
+   }
+  }
+ },
+ "kit": {
+  "seconds": 80.1,
+  "validate_glb": true,
+  "node_check": true,
+  "parts": {
+   "kit_lantern_frame": {
+    "vertices": 2994,
+    "triangles": 6000,
+    "indexInRange": true,
+    "morphTargets": 0,
+    "posedBBoxMin": [
+     -0.5773,
+     2.1057,
+     0.0239
+    ],
+    "posedBBoxMax": [
+     -0.3676,
+     2.2791,
+     0.1445
+    ],
+    "verticesMovedBySkinning": 2994
+   },
+   "kit_lantern_glass": {
+    "vertices": 1252,
+    "triangles": 2500,
+    "indexInRange": true,
+    "morphTargets": 0,
+    "posedBBoxMin": [
+     -0.5317,
+     2.14,
+     0.0454
+    ],
+    "posedBBoxMax": [
+     -0.4123,
+     2.2375,
+     0.1159
+    ],
+    "verticesMovedBySkinning": 1252
+   },
+   "kit_pauldron": {
+    "vertices": 2493,
+    "triangles": 5000,
+    "indexInRange": true,
+    "morphTargets": 0,
+    "posedBBoxMin": [
+     0.1503,
+     1.4529,
+     -0.0916
+    ],
+    "posedBBoxMax": [
+     0.2839,
+     1.5884,
+     0.0697
+    ],
+    "verticesMovedBySkinning": 2493
+   }
+  },
+  "lantern_frame_lod_triangles": [
+   6000,
+   3000,
+   1500
+  ]
+ }
+}

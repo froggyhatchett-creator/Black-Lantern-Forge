@@ -1,0 +1,120 @@
+{
+ "checks": [
+  {
+   "name": "studio boots",
+   "pass": true,
+   "detail": "1.0 s"
+  },
+  {
+   "name": "character renders",
+   "pass": true,
+   "detail": "covered fraction 0.139"
+  },
+  {
+   "name": "male preset changes geometry",
+   "pass": true,
+   "detail": "height 1.657 -> 1.776 m"
+  },
+  {
+   "name": "shoulder slider moves vertices",
+   "pass": true,
+   "detail": "4984 coordinates changed"
+  },
+  {
+   "name": "height slider reaches requested height",
+   "pass": true,
+   "detail": "measured 2.047 m"
+  },
+  {
+   "name": "undo restores the previous value",
+   "pass": true,
+   "detail": "1.776 m"
+  },
+  {
+   "name": "mouse drag rotates",
+   "pass": true,
+   "detail": "yaw 0.35 -> -1.41"
+  },
+  {
+   "name": "wheel zooms",
+   "pass": true,
+   "detail": "distance 5.11 -> 2.49"
+  },
+  {
+   "name": "face sliders reshape the face",
+   "pass": true,
+   "detail": "9224 vertices moved > 0.5 mm"
+  },
+  {
+   "name": "public coverage is enforced",
+   "pass": true,
+   "detail": "outfit=tshirt,shorts note=\"Public characters stay clothed: added shorts.\""
+  },
+  {
+   "name": "garments swap when coverage remains",
+   "pass": true,
+   "detail": "tshirt,skirt"
+  },
+  {
+   "name": "animation advances",
+   "pass": true,
+   "detail": "clip time 0.00 -> 0.52 s"
+  },
+  {
+   "name": "live secondary physics runs",
+   "pass": true,
+   "detail": "breast_l,breast_r,cloth_front_01,cloth_front_02,cloth_front_03,cloth_back_01,cloth_back_02,cloth_back_03"
+  },
+  {
+   "name": "camera orbit causes no secondary motion",
+   "pass": true,
+   "detail": "breast particle speed 0.0000 m/s"
+  },
+  {
+   "name": "spinning the character moves soft tissue",
+   "pass": true,
+   "detail": "breast particle speed 1.692 m/s"
+  },
+  {
+   "name": "spin has inertia after release",
+   "pass": true,
+   "detail": "yaw 0.00 -> 5.52 -> 7.77"
+  },
+  {
+   "name": "motion settles (damping)",
+   "pass": true,
+   "detail": "0.0021 m/s after 3.5 s"
+  },
+  {
+   "name": "GLB exported from the studio",
+   "pass": true,
+   "detail": "8.3 MB"
+  },
+  {
+   "name": "DNA export produced",
+   "pass": true,
+   "detail": "76 traits"
+  },
+  {
+   "name": "DNA reload restores every parameter",
+   "pass": true,
+   "detail": "max difference 0.00e+0"
+  },
+  {
+   "name": "frame rate measured (software GL, informational)",
+   "pass": true,
+   "detail": "1.0 fps under SwiftShader"
+  },
+  {
+   "name": "no horizontal scroll at phone width",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "no console errors",
+   "pass": true,
+   "detail": ""
+  }
+ ],
+ "errors": []
+}

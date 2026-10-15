@@ -1,0 +1,3 @@
+H: {"reload": {"max_param_diff": 0, "hair_style": "bangs", "outfit": ["tshirt", "pants"]}, "dna_valid": true, "anatomy_hash": "7c620a196979e1b1", "browser_glb": {"validate_glb": true, "stats": {"meshes": 12, "triangles": 202505, "vertices": 101731, "joints": 64, "morph_targets": 7, "animations": 7, "materials": 9, "images": 0, "profile": "public"}, "node_check": true}, "server_export": {"status": 200, "path": "examples/character_forge_aaa/phase2/exports/demo_h.glb", "bytes": 8775268, "seconds": 64.4345, "error": null, "validate_glb": true, "node_check": true}}
+== G: reconstruction
+== Kit: lantern + pauldron attached to a character

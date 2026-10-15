@@ -16,3 +16,10 @@ output/*
 *.dev.glb
 examples/character_forge_aaa/glb/recon_ref_full_front.glb
 examples/character_forge_aaa/glb/bram.glb
+# Character Forge phase 2 demos: raw frames and exported GLBs are reproducible (tools/run_phase2_demos.py);
+# their hashes and validation results are recorded in examples/character_forge_aaa/phase2/summary.json
+examples/character_forge_aaa/phase2/exports/
+examples/character_forge_aaa/phase2/frames/*.png
+examples/character_forge_aaa/phase2/frames/*.glb
+examples/character_forge_aaa/phase2/smoke/*.png
+examples/character_forge_aaa/phase2/smoke/*.glb
