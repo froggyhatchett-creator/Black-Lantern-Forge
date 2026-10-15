@@ -1,0 +1,159 @@
+{
+ "identity_parameters": {
+  "eye": {
+   "tilt_deg": 7.0,
+   "width": 1.12,
+   "height": 0.9,
+   "shift_lateral_mm": 1.0
+  },
+  "nose": {
+   "width": 0.82,
+   "length": 0.9,
+   "projection": 0.82,
+   "tip_upturn_deg": 5.0
+  },
+  "mouth": {
+   "width": 0.86,
+   "lip_height": 1.06,
+   "lip_projection": 1.05
+  },
+  "cheekbone": {
+   "lift_mm": [
+    1.5,
+    2.5,
+    1.0
+   ]
+  },
+  "jaw": {
+   "taper_at_chin": 0.14
+  },
+  "chin": {
+   "width": 0.82,
+   "shift_mm": [
+    0.0,
+    -2.5,
+    1.5
+   ]
+  }
+ },
+ "displacement_mm": {
+  "head_mean": 0.84,
+  "head_p95": 2.98,
+  "max": 14.52,
+  "vertices_moved_gt_1mm": 1963
+ },
+ "landmark_shift_mm": {
+  "outer_canthus": 1.48,
+  "inner_canthus": 1.2,
+  "upper_lid_mid": 0.42,
+  "lower_lid_mid": 1.14,
+  "nose_tip": 2.41,
+  "alar": 0.01,
+  "upper_lip_mid": 0.32,
+  "lower_lip_mid": 0.19,
+  "mouth_corner": 0.31,
+  "pogonion": 2.03,
+  "chin_side": 2.84,
+  "gonion": 8.28,
+  "cheekbone": 3.08
+ },
+ "quality_vs_original": {
+  "face_triangles": 8470,
+  "flipped": 0,
+  "min_angle_deg_p1": 6.91,
+  "degenerate_lt_2deg": 0,
+  "max_area_change_ratio": 1.57
+ },
+ "smoothness_mean_laplacian_mm": {
+  "original": 1.3602,
+  "modified": 1.3629
+ },
+ "topology_uv": "unchanged (vertex positions only)",
+ "eyelid_animation": {
+  "original": {
+   "closing_factor_refit": 1.19,
+   "closing_angle_deg": 39.53,
+   "fixed_pose_unit_angle_deg": 33.23,
+   "open": {
+    "eye_exposure": 1.0,
+    "lid_vertices_inside_eyeball": 140,
+    "flipped": 0,
+    "min_angle_deg_p1": 6.96,
+    "max_area_change": 1.0
+   },
+   "half-lidded": {
+    "eye_exposure": 0.465,
+    "lid_vertices_inside_eyeball": 152,
+    "flipped": 8,
+    "min_angle_deg_p1": 7.53,
+    "max_area_change": 4.92
+   },
+   "blink 50%": {
+    "eye_exposure": 0.411,
+    "lid_vertices_inside_eyeball": 152,
+    "flipped": 10,
+    "min_angle_deg_p1": 7.42,
+    "max_area_change": 4.28
+   },
+   "closed": {
+    "eye_exposure": 0.093,
+    "lid_vertices_inside_eyeball": 142,
+    "flipped": 50,
+    "min_angle_deg_p1": 6.99,
+    "max_area_change": 101.25
+   },
+   "neutral again": {
+    "eye_exposure": 1.0,
+    "lid_vertices_inside_eyeball": 140,
+    "flipped": 0,
+    "min_angle_deg_p1": 6.96,
+    "max_area_change": 1.0
+   },
+   "neutral_return_max_error_mm": 0.0,
+   "closed_with_fixed_angle_exposure": 0.047
+  },
+  "modified": {
+   "closing_factor_refit": 1.132,
+   "closing_angle_deg": 37.61,
+   "fixed_pose_unit_angle_deg": 33.23,
+   "open": {
+    "eye_exposure": 1.0,
+    "lid_vertices_inside_eyeball": 140,
+    "flipped": 0,
+    "min_angle_deg_p1": 6.91,
+    "max_area_change": 1.0
+   },
+   "half-lidded": {
+    "eye_exposure": 0.453,
+    "lid_vertices_inside_eyeball": 150,
+    "flipped": 8,
+    "min_angle_deg_p1": 7.22,
+    "max_area_change": 3.61
+   },
+   "blink 50%": {
+    "eye_exposure": 0.387,
+    "lid_vertices_inside_eyeball": 152,
+    "flipped": 10,
+    "min_angle_deg_p1": 7.22,
+    "max_area_change": 5.01
+   },
+   "closed": {
+    "eye_exposure": 0.053,
+    "lid_vertices_inside_eyeball": 140,
+    "flipped": 60,
+    "min_angle_deg_p1": 6.92,
+    "max_area_change": 27.18
+   },
+   "neutral again": {
+    "eye_exposure": 1.0,
+    "lid_vertices_inside_eyeball": 140,
+    "flipped": 0,
+    "min_angle_deg_p1": 6.91,
+    "max_area_change": 1.0
+   },
+   "neutral_return_max_error_mm": 0.0,
+   "closed_with_fixed_angle_exposure": 0.008
+  }
+ },
+ "seconds": 24.4
+}

@@ -70,3 +70,46 @@ Run: 20.8 s, no downloads. Evidence: `out_warp/identity_warp.png`, `out_warp/war
    system, not two.
 4. Hair, makeup, lashes and liner, iris colour, accessories and the smiling half-lidded expression carry most of
    REF-001's recognizability and were deliberately excluded. Geometry alone cannot yield likeness here.
+
+# Final facial identity experiment: coherent regional transforms + eyelid refit (identity_regions.py)
+
+Runs: v1 24.4 s (falloff bug; kept in `out_regions_v1_falloff_bug/`), v2 about 25 s (plateau falloff, same identity
+values). Evidence: `out_regions/identity_regions.png`, `out_regions/eyelids.png`, `out_regions/regions_report.json`.
+
+| Measure | v1 | v2 |
+|---|---|---|
+| Head displacement mean / p95 / max (mm) | 0.84 / 2.98 / 14.5 | 1.28 / 3.96 / 14.5 |
+| Nose tip / chin side / jaw angle / outer eye corner (mm) | 2.4 / 2.8 / 8.3 / 1.5 | 4.6 / 4.6 / 8.3 / 2.3 |
+| Nostril wing / mouth corner landmark (mm) | 0.01 / 0.31 | 0.06 / 0.31 (landmark finder places these outside the feature regions) |
+| Flipped triangles (of 8,470) / p1 min angle / max area change | 0 / 6.91° / 1.57 | 0 / 6.62° / 2.16 |
+| Mean Laplacian (surface noise), original 1.360 mm | 1.363 | 1.380 |
+
+**Eyelids (v2, front-view eyeball exposure relative to open):**
+
+| Pose | original | modified |
+|---|---|---|
+| half-lidded (0.45) | 0.465 | 0.461 |
+| 50 % blink | 0.411 | 0.391 |
+| closed, refit rule | 0.093 | 0.029 |
+| closed, fixed 33.2° pose-unit angle | 0.047 | **0.002** |
+| neutral return error | 0 mm | 0 mm |
+
+Lid vertices within the eyeball sphere: 140 when open on both heads (an existing property of MakeHuman's lid and socket
+geometry), at most +12 during motion, identical on both. Flips while closed: 50 (original), 60 (modified); the bone-only
+MakeHuman lid crumples (area change up to 101× original, 10× modified) without corrective shapes.
+
+**Verdict: does not meet "visibly and substantially different".** The modified head reads as the same person with edits.
+Anatomy stays coherent from all angles except one new defect: **faint crease lines under the eyes** where the
+eyeball-distance constraint ends (hard 1.6× eye-radius boundary). The metrics did not catch it.
+
+**Causes**
+1. The artist-guided changes (10–18 % proportional) amount to 2–5 mm on a realistic head: an edit, not a new identity.
+   The strongest identity difference measured so far is MakeHuman's own female/male macro (about 5 mm mean). Distinct
+   identities need many correlated changes across the whole face, not six regions.
+2. Region placement from geometric landmarks is unreliable (nostril wings and mouth corners missed). MakeHuman's CC0
+   detail targets define their regions exactly (the vertex set of each `nose-*` or `mouth-*` target), which gives
+   data-driven region masks instead of guessed landmarks.
+3. The eye constraint needs a smooth blend, not a hard cutoff (the crease defect).
+4. The eyelid-refit rule (upper-lid midpoint meets lower lid) is worse than the fixed pose-unit angle. A correct refit
+   should minimize exposure under a penetration limit. Preserving the lids on the eyeball sphere is what made the
+   blink work (0.2 % exposure vs 18.5 % in the point-warp experiment).
