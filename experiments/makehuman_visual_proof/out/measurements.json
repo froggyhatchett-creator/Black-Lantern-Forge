@@ -1,0 +1,106 @@
+{
+ "makehuman": {
+  "topology": {
+   "vertices": 13380,
+   "faces": 13378,
+   "quad_share": 1.0,
+   "valence_irregular_share": 0.024,
+   "head_vertices": 4082,
+   "head_edge_mean_mm": 5.05,
+   "eye_region_edge_mean_mm": 2.7,
+   "eye_region_vertices_within_22mm": 1116
+  },
+  "uv_coords": 21334,
+  "bones": 163,
+  "weighted_bones": 139,
+  "face_bones": [
+   "eye.L",
+   "eye.R",
+   "jaw",
+   "levator02.L",
+   "levator02.R",
+   "levator03.L",
+   "levator03.R",
+   "levator04.L",
+   "levator04.R",
+   "levator05.L",
+   "levator05.R",
+   "levator06.L",
+   "levator06.R",
+   "orbicularis03.L",
+   "orbicularis03.R",
+   "orbicularis04.L",
+   "orbicularis04.R",
+   "oris01",
+   "oris02",
+   "oris03.L",
+   "oris03.R",
+   "oris04.L",
+   "oris04.R",
+   "oris05",
+   "oris06",
+   "oris06.L",
+   "oris06.R",
+   "oris07.L",
+   "oris07.R",
+   "risorius02.L",
+   "risorius02.R",
+   "risorius03.L",
+   "risorius03.R",
+   "temporalis01.L",
+   "temporalis01.R",
+   "temporalis02.L",
+   "temporalis02.R",
+   "tongue00",
+   "tongue01",
+   "tongue02",
+   "tongue03",
+   "tongue04",
+   "tongue05.L",
+   "tongue05.R",
+   "tongue06.L",
+   "tongue06.R",
+   "tongue07.L",
+   "tongue07.R"
+  ],
+  "lid_closed_rotations_deg": {
+   "orbicularis03.L": [
+    33.22731,
+    0.0,
+    -1e-06
+   ],
+   "orbicularis03.R": [
+    33.22731,
+    -4e-06,
+    1e-06
+   ]
+  },
+  "blink": {
+   "open_eye_pixels": 3878,
+   "closed_eye_pixels": 54,
+   "sign_used": 1,
+   "visible_fraction_closed": 0.014
+  }
+ },
+ "forge_v2": {
+  "topology": {
+   "vertices": 62550,
+   "faces": 125104,
+   "quad_share": 0.0,
+   "valence_irregular_share": 0.36,
+   "head_vertices": 24295,
+   "head_edge_mean_mm": 2.58,
+   "eye_region_edge_mean_mm": 2.64,
+   "eye_region_vertices_within_22mm": 987,
+   "valence_note": "triangle mesh: irregular = valence != 6 (measured on the cached v2 template); the script's quad-based figure (0.968) is not meaningful for triangles"
+  },
+  "uv": "automatic cylindrical layout",
+  "bones": 64,
+  "blink": {
+   "open_eye_pixels": 4368,
+   "closed_eye_pixels": 5586,
+   "visible_fraction_closed": 1.279
+  }
+ },
+ "seconds": 103.9
+}

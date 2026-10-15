@@ -1,0 +1,73 @@
+{
+ "experiment": "MakeHuman/MPFB2 visual proof (owner-approved 2026-10-15); NOT integrated into any Forge generator",
+ "source": "official repository makehumancommunity/makehuman, branch master, raw.githubusercontent.com; commit SHA not recorded (GitHub API blocked by the container proxy, HTTP 403)",
+ "license": {
+  "assets": "CC0 1.0 Universal (LICENSE section C: base mesh, proxies, targets, modifiers, textures, clothes, poses, expressions)",
+  "code": "AGPL-3.0 (MakeHuman), GPL-3.0 (MPFB2): NOT used; all parsing code here is new",
+  "files": [
+   "makehuman_LICENSE.md",
+   "makehuman_LICENSE.ASSETS.md"
+  ],
+  "mpfb2_cross_check": "MPFB2 LICENSE.md: same split, assets CC0, code GPLv3"
+ },
+ "excluded": "third-party/community repository assets (rights not covered by the bundled-asset licence); all MakeHuman/MPFB code",
+ "files": [
+  {
+   "file": "assets/data/3dobjs/base.obj",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/3dobjs/base.obj",
+   "bytes": 1749303,
+   "sha256": "8e761e6624b8f54536409135d1636da63b32486a90d4897f84e121d144f6fb4c"
+  },
+  {
+   "file": "assets/data/eyes/high-poly/high-poly.mhclo",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/eyes/high-poly/high-poly.mhclo",
+   "bytes": 72490,
+   "sha256": "b183cfe37120ab726f9b3f2ea6cd3a64c44ce7b4bd91a77c841cf70c04f83a0d"
+  },
+  {
+   "file": "assets/data/eyes/high-poly/high-poly.obj",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/eyes/high-poly/high-poly.obj",
+   "bytes": 100882,
+   "sha256": "da2493215b708a344c33dc72f2a9a5b8fa985dcc5a70ad3b208995cf871da8e1"
+  },
+  {
+   "file": "assets/data/poseunits/face-poseunits.bvh",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/poseunits/face-poseunits.bvh",
+   "bytes": 310826,
+   "sha256": "42a8e69692e30010371ee6993a6e5d3b468d35065559ec0953c936e31b8d903f"
+  },
+  {
+   "file": "assets/data/poseunits/face-poseunits.json",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/poseunits/face-poseunits.json",
+   "bytes": 1590,
+   "sha256": "e7224f76e9610049b79e5f9e8ac2985d1e9a367333395c07537919258cb42cc3"
+  },
+  {
+   "file": "assets/data/rigs/default.mhskel",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/rigs/default.mhskel",
+   "bytes": 117790,
+   "sha256": "99f179bce0aa850b45d4191a1d0d234c5851f881c057439470ded3bddf729a24"
+  },
+  {
+   "file": "assets/data/rigs/default_weights.mhw",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/rigs/default_weights.mhw",
+   "bytes": 897521,
+   "sha256": "0f3641d651ae3d00ad6b4ccee43142edb109d3bd909d27d9e4139ef1beed8625"
+  },
+  {
+   "file": "assets/data/targets/macrodetails/universal-female-young-averagemuscle-averageweight.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/macrodetails/universal-female-young-averagemuscle-averageweight.target",
+   "bytes": 604,
+   "sha256": "4ba5396ddabda448ece15650a566fbebfbb10239256ccb201e8f883429e12249"
+  },
+  {
+   "file": "assets/data/targets/macrodetails/universal-male-young-averagemuscle-averageweight.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/macrodetails/universal-male-young-averagemuscle-averageweight.target",
+   "bytes": 604,
+   "sha256": "4ba5396ddabda448ece15650a566fbebfbb10239256ccb201e8f883429e12249"
+  }
+ ],
+ "notes": [
+  "macrodetails .target files in both repositories carry only the CC0 header (universal-female/male-young-average targets are empty, original size 0); the macro morph data was not located, so the proof uses the base mesh shape"
+ ]
+}
