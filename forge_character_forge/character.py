@@ -42,6 +42,7 @@ class CharacterSpec:
     outfit: tuple = clothing.DEFAULT_PUBLIC_OUTFIT
     age_years: float = 30.0
     name: str = "character"
+    outfit_colors: tuple = ()      # ((garment, "#rrggbb"), ...) overrides
 
     def __post_init__(self):
         if not isinstance(self.age_years, (int, float)) or not 18.0 <= float(self.age_years) <= 120.0:
@@ -49,6 +50,18 @@ class CharacterSpec:
         for g in self.outfit:
             if g not in clothing.GARMENTS:
                 raise ParameterError(f"unknown garment {g!r}")
+        from forge_character_forge.appearance import hex_to_linear
+        for g, c in self.outfit_colors:
+            if g not in clothing.GARMENTS:
+                raise ParameterError(f"unknown garment {g!r} in outfit_colors")
+            hex_to_linear(c)
+
+    def garment_color(self, garment: str):
+        from forge_character_forge.appearance import hex_to_linear
+        for g, c in self.outfit_colors:
+            if g == garment:
+                return tuple(float(x) for x in hex_to_linear(c))
+        return clothing.COLORS[garment]
 
 
 @dataclass

@@ -387,6 +387,7 @@ def repair(verts: np.ndarray, tris: np.ndarray, max_rounds: int = 6) -> tuple[np
             except RuntimeError:
                 loops = None
             if loops == []:
+                verts, tris = compact(verts, tris)
                 return verts, tris, repaired
         if bad:
             repaired += len(bad)

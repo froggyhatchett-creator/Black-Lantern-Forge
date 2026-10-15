@@ -63,6 +63,23 @@ class _Bin:
         return len(self.accessors) - 1
 
 
+    def sparse_vec3(self, delta: np.ndarray, eps: float = 1e-7) -> int:
+        """Sparse accessor for a morph target: zero base, only displaced vertices stored."""
+        d = np.asarray(delta, np.float32)
+        idx = np.nonzero(np.abs(d).max(1) > eps)[0].astype("<u4")
+        acc = {"componentType": FLOAT, "count": int(len(d)), "type": "VEC3",
+               "min": [float(x) for x in d.min(0)], "max": [float(x) for x in d.max(0)]}
+        if len(idx):
+            acc["sparse"] = {"count": int(len(idx)),
+                             "indices": {"bufferView": self.view(idx.tobytes()), "componentType": UINT},
+                             "values": {"bufferView": self.view(np.ascontiguousarray(d[idx]).astype("<f4").tobytes())}}
+        else:
+            acc["min"] = [0.0, 0.0, 0.0]
+            acc["max"] = [0.0, 0.0, 0.0]
+        self.accessors.append(acc)
+        return len(self.accessors) - 1
+
+
 # ---------------------------------------------------------------- body UVs
 
 def body_uv_layout(tpl, scale: float = 10.0):
@@ -159,7 +176,8 @@ def _materials(ch, bin_: _Bin, images: list, textures: list):
                                           "metallicFactor": 0.0, "roughnessFactor": 0.45}},
     }
     from forge_character_forge.clothing import COLORS
-    for g, c in COLORS.items():
+    for g in COLORS:
+        c = ch.spec.garment_color(g)
         mats[f"cloth_{g}"] = {"name": f"cloth_{g}", "doubleSided": True,
                               "normalTexture": {"index": t_fabric, "scale": 0.6},
                               "pbrMetallicRoughness": {"baseColorFactor": list(c) + [1.0], "metallicFactor": 0.0,
@@ -233,7 +251,7 @@ def character_gltf(ch, clips: list[Clip] = (), extra_meta: dict | None = None) -
         mesh = {"name": part.name, "primitives": [prim]}
         if morphs:
             names = sorted(morphs)
-            prim["targets"] = [{"POSITION": b.acc(morphs[n], "VEC3", minmax=True)} for n in names]
+            prim["targets"] = [{"POSITION": b.sparse_vec3(morphs[n])} for n in names]
             mesh["weights"] = [0.0] * len(names)
             mesh["extras"] = {"targetNames": names}
         meshes.append(mesh)
@@ -331,3 +349,21 @@ def write_glb(ch, path, clips=(), extra_meta=None) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(pack_glb(gltf, data))
     return path
+
+
+def pose_check_data(ch, c: Clip, frame: int, count: int = 600) -> dict:
+    """Body vertex positions (exported vertex order) for clip frame, computed by the Python pipeline."""
+    from forge_character_forge.rig import forward_kinematics, lbs, skinning_matrices
+
+    pose = {j: q[frame] for j, q in c.rotations.items() if j in ch.skeleton.names}
+    G = forward_kinematics(ch.skeleton, pose, local_trans={"pelvis": c.root_translation[frame]})
+    S = skinning_matrices(ch.skeleton, G)
+    src, _, _ = body_uv_layout(ch.template)
+    body = ch.body
+    v = body.verts[src].astype(np.float32).astype(np.float64)
+    w = np.asarray(body.weights[src], np.float32).astype(np.float64)
+    w /= w.sum(1, keepdims=True)
+    posed = lbs(v, body.joints[src], w, S)
+    idx = np.linspace(0, len(v) - 1, count).astype(int)
+    return {"clip": c.name, "frame": frame, "indices": idx.tolist(), "positions": posed[idx].tolist(),
+            "rest_positions": v[idx].tolist()}

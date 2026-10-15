@@ -60,7 +60,7 @@ def draw_items(ch, posed) -> list[DrawItem]:
         elif p.material == "lash":
             color = (0.02, 0.015, 0.012)
         elif p.material.startswith("cloth_"):
-            color = COLORS[p.material[6:]]
+            color = ch.spec.garment_color(p.material[6:])
         items.append(DrawItem(v, p.tris, colors=colors, color=color, double_sided=p.double_sided, **kw))
     return items
 
