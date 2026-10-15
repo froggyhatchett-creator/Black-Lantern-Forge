@@ -68,6 +68,15 @@ P3 anatomy fidelity + Developer Anatomy Lab -> P4 variety/optimization -> P5 rec
 adult character in the real studio before expanding. Finite credits: short visual experiments before any bake
 (a full bake is ~31 min, 4 workers); never rebuild unchanged assets.
 
+## Project Humanity P1 eye experiment (commit 9706334)
+- Per-pixel eye shading (studio/gl.js kind 3/4, uniform uEyeC); socket tint fixed in appearance.py, and only the
+  pack's body colour array was regenerated. Evidence and captures: examples/character_forge_aaa/humanity/p1_eyes,
+  reproduced with `node tools/studio_eye_shots.mjs <url> <out>`.
+- Clear improvement in close-ups (no red ring, round natural iris, no cornea rim); subtle at full-face framing.
+- Remaining ANATOMICAL defects: blink morph closes the lids only ~7.7 mm (eyes stay open); the polygonal lid
+  aperture clips the iris; there are no visible lid-margin thickness or tear meniscus geometry; lashes are sparse cards.
+  Remaining SHADING defects: no iris parallax or refraction; the browser GLB keeps the old UV iris.
+
 ## Open problems / next actions
 1. Commit/push checkpoint; publish the studio artifact (multi-file; `downloads` capability; GLB offered zipped).
 2. Face realism (lips/eyes/brows) and anatomy fixes (hands, knees, feet) need a re-bake (~28 min) to reach the studio.
