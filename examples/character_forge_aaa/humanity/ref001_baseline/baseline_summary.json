@@ -1,0 +1,268 @@
+{
+ "reference": {
+  "id": "REF-001",
+  "file": "examples/character_forge_aaa/benchmarks/REF-001_mercy.webp",
+  "sha256": "281655f00f67851737a6102585c793df2437df92a80889074480493576728811"
+ },
+ "reconstruct_seconds": 135.7,
+ "overlay_seconds": 82.1,
+ "peak_rss_mb": 5526.8,
+ "posture": "standing",
+ "style": "realistic",
+ "segmentation": {
+  "method": "border_color_model+otsu",
+  "quality": 0.9,
+  "foreground_fraction": 0.1041,
+  "hair_excluded_from_measurement": true
+ },
+ "regions": {
+  "head": "visible",
+  "neck": "visible",
+  "shoulders": "visible",
+  "chest": "visible",
+  "arms_upper": "visible",
+  "waist": "visible",
+  "hips_pelvis": "visible",
+  "hands": "visible",
+  "thighs": "visible",
+  "knees": "visible",
+  "lower_legs": "visible",
+  "feet": "visible",
+  "back": "unobservable"
+ },
+ "notes": [],
+ "body_type_prior": "male",
+ "waist_hip_ratio": 1.0677290836653386,
+ "fit_residual_hu": 1.0008,
+ "fit_confidence": 0.144,
+ "provenance_counts": {
+  "estimated": 11,
+  "default": 26,
+  "invented": 32,
+  "observed": 7
+ },
+ "observed": {
+  "body.leg_length": 1.55,
+  "body.calf_thickness": 1.0,
+  "body.head_size": 0.95,
+  "appearance.skin_tone": 0.18,
+  "appearance.hair_color": "#623568",
+  "wardrobe.outfit": [
+   "tshirt",
+   "robe"
+  ],
+  "wardrobe.colors": {
+   "tshirt": "#f7daee",
+   "robe": "#ad7592"
+  }
+ },
+ "estimated": {
+  "body.height_m": [
+   1.78,
+   0.2,
+   "absolute scale is not observable in a single image; population prior for the chosen body type"
+  ],
+  "body.femininity": [
+   0.0,
+   0.6,
+   "waist/hip width ratio 1.068 (male preset 0.776, female preset 0.608)"
+  ],
+  "body.body_fat": [
+   1.0,
+   0.3,
+   "from fitted waist and thigh girth"
+  ],
+  "body.shoulder_width": [
+   1.08,
+   0.086,
+   "silhouette fit through clothing (garment ease prior 0.06 hu removed)"
+  ],
+  "body.chest_width": [
+   1.54,
+   0.086,
+   "silhouette fit through clothing (garment ease prior 0.06 hu removed)"
+  ],
+  "body.waist_width": [
+   1.54,
+   0.086,
+   "silhouette fit through clothing (garment ease prior 0.06 hu removed)"
+  ],
+  "body.hip_width": [
+   0.96,
+   0.086,
+   "silhouette fit through clothing (garment ease prior 0.06 hu removed)"
+  ],
+  "body.thigh_thickness": [
+   1.55,
+   0.086,
+   "silhouette fit through clothing (garment ease prior 0.06 hu removed)"
+  ],
+  "face.face_width": [
+   1.04,
+   0.072,
+   "head silhouette width; hair and ears bias it"
+  ],
+  "appearance.undertone": [
+   -1.0,
+   0.35,
+   "warm/cool from face-band chroma"
+  ],
+  "appearance.hair_style": [
+   "long",
+   0.45,
+   "hair extends 2.12 head units below the crown"
+  ]
+ },
+ "appearance_and_wardrobe": {
+  "appearance.skin_tone": [
+   0.18,
+   "observed",
+   0.55,
+   "median lit face-band color (lighting-dependent)"
+  ],
+  "appearance.undertone": [
+   -1.0,
+   "estimated",
+   0.35,
+   "warm/cool from face-band chroma"
+  ],
+  "appearance.flush": [
+   0.5,
+   "default",
+   1.0,
+   ""
+  ],
+  "appearance.eye_color": [
+   "brown",
+   "invented",
+   0.1,
+   "iris color is not measured"
+  ],
+  "appearance.hair_style": [
+   "long",
+   "estimated",
+   0.45,
+   "hair extends 2.12 head units below the crown"
+  ],
+  "appearance.hair_color": [
+   "#623568",
+   "observed",
+   0.6,
+   "crown-band color"
+  ],
+  "appearance.hair_highlight_color": [
+   "#a47b52",
+   "default",
+   1.0,
+   ""
+  ],
+  "appearance.hair_highlight_amount": [
+   0.0,
+   "default",
+   1.0,
+   ""
+  ],
+  "appearance.brow_color": [
+   "",
+   "default",
+   1.0,
+   ""
+  ],
+  "appearance.lip_tint": [
+   0.5,
+   "default",
+   1.0,
+   ""
+  ],
+  "appearance.skin_roughness": [
+   0.5,
+   "default",
+   1.0,
+   ""
+  ],
+  "wardrobe.outfit": [
+   [
+    "tshirt",
+    "robe"
+   ],
+   "observed",
+   0.5,
+   "garment colors differ from skin in torso/leg regions; robe: no gap between the legs at thigh height or shin height"
+  ],
+  "wardrobe.colors": [
+   {
+    "tshirt": "#f7daee",
+    "robe": "#ad7592"
+   },
+   "observed",
+   0.5,
+   "median garment colors"
+  ]
+ },
+ "colors_sampled": {
+  "skin": [
+   0.808,
+   0.494,
+   0.761
+  ],
+  "hair": [
+   0.384,
+   0.208,
+   0.408
+  ],
+  "hair_long": false,
+  "hair_long_fraction": 0.04619805481874448,
+  "hair_extent_hu": 2.12,
+  "hair_cropped": false,
+  "fringe": 0.7611111111111111,
+  "fringe_asymmetry": 0.47777777777777775,
+  "torso": [
+   0.969,
+   0.855,
+   0.933
+  ],
+  "thigh": [
+   0.678,
+   0.459,
+   0.573
+  ],
+  "shin": [
+   0.592,
+   0.404,
+   0.624
+  ],
+  "legs_joined_thigh": 0.6666666666666666,
+  "legs_joined_shin": 1.0
+ },
+ "likeness": "not claimed: the method fits body proportions to a silhouette and samples colors; facial identity and unseen anatomy are not reconstructed and must not be presented as a likeness",
+ "log": [
+  "  segmentation: {'method': 'border_color_model+otsu', 'quality': 0.9, 'foreground_fraction': 0.1041, 'hair_excluded_from_measurement': True}; posture=standing; style=realistic",
+  "  visible rows: 11.49 head units; regions: {'head': 'visible', 'neck': 'visible', 'shoulders': 'visible', 'chest': 'visible', 'arms_upper': 'visible', 'waist': 'visible', 'hips_pelvis': 'visible', 'hands': 'visible', 'thighs': 'visible', 'knees': 'visible', 'lower_legs': 'visible', 'feet': 'visible', 'back': 'unobservable'}",
+  "  body-type cue: waist/hip width ratio 1.068 (male preset 0.776, female preset 0.608) -> femininity 0.00, prior 'male'; fitting ['body.shoulder_width', 'body.chest_width', 'body.waist_width', 'body.hip_width', 'body.thigh_thickness', 'body.leg_length', 'body.calf_thickness', 'face.face_width', 'body.head_size']",
+  "    fit loss 1.00158"
+ ],
+ "timings_s": {
+  "reconstruct": 135.7,
+  "diagnostic_overlay": 82.1,
+  "studio_capture_6_views": 158,
+  "exact_glb_export": 53.9
+ },
+ "studio_load": {
+  "status": "Loaded REF-001_mercy: 26 default, 32 invented, 7 observed, 11 estimated. 4 value(s) were outside the studio range and were clamped.",
+  "max_param_diff_vs_dna": 0.3500000000000001,
+  "hair_style": "long",
+  "hair_color": "#623568",
+  "outfit": [
+   "tshirt",
+   "robe"
+  ],
+  "colors": {
+   "robe": "#ad7592",
+   "tshirt": "#f7daee"
+  },
+  "skin_tone": 0.18,
+  "eye": "brown",
+  "height_m": 1.7767194848274812,
+  "errors": []
+ }
+}

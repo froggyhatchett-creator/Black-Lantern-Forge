@@ -1,0 +1,18 @@
+{
+ "status": "Loaded REF-001_mercy: 26 default, 32 invented, 7 observed, 11 estimated. 4 value(s) were outside the studio range and were clamped.",
+ "max_param_diff_vs_dna": 0.3500000000000001,
+ "hair_style": "long",
+ "hair_color": "#623568",
+ "outfit": [
+  "tshirt",
+  "robe"
+ ],
+ "colors": {
+  "robe": "#ad7592",
+  "tshirt": "#f7daee"
+ },
+ "skin_tone": 0.18,
+ "eye": "brown",
+ "height_m": 1.7767194848274812,
+ "errors": []
+}

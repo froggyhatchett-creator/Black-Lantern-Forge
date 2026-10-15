@@ -23,3 +23,4 @@ examples/character_forge_aaa/phase2/frames/*.png
 examples/character_forge_aaa/phase2/frames/*.glb
 examples/character_forge_aaa/phase2/smoke/*.png
 examples/character_forge_aaa/phase2/smoke/*.glb
+examples/character_forge_aaa/humanity/ref001_baseline/*.glb
