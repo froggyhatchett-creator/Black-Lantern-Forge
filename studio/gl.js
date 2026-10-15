@@ -25,7 +25,7 @@ precision highp float;
 in vec3 vPos; in vec3 vNrm; in vec3 vCol; in vec2 vUV; in vec3 vObj;
 uniform vec3 uEye; uniform vec3 uBase; uniform float uRough; uniform float uSpec; uniform float uSSS;
 uniform int uKind;   // 0 skin 1 cloth 2 hair 3 eye 4 cornea 5 card 6 teeth 7 ground
-uniform float uAlpha; uniform vec3 uIris; uniform float uDetail;
+uniform float uAlpha; uniform vec3 uIris; uniform float uDetail; uniform vec3 uEyeC;
 out vec4 o;
 float h3(vec3 p){ p = fract(p * 0.3183099 + 0.1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }
 float noise(vec3 x){ vec3 i = floor(x), f = fract(x); f = f*f*(3.0-2.0*f);
@@ -53,16 +53,25 @@ void main() {
     rough *= 0.9 + 0.2 * noise(vObj * 180.0);
     base *= 0.97 + 0.06 * noise(vObj * 40.0);
   }
-  if (uKind == 3) {  // eye: sclera / iris / pupil from the polar UV
-    float r = length(vUV - 0.5) * 2.0;
-    float ang = atan(vUV.y - 0.5, vUV.x - 0.5);
-    float fib = 0.75 + 0.25 * sin(ang * 61.0) * sin(ang * 23.0 + r * 30.0);
-    vec3 sclera = vec3(0.86, 0.82, 0.78);
-    vec3 iris = uIris * fib * (1.25 - 0.6 * r / 0.92) * (1.0 + 0.5 * exp(-pow((r - 0.45) / 0.1, 2.0)));
-    base = r < 0.92 ? iris : sclera;
-    base *= 1.0 - 0.75 * exp(-pow((r - 0.92) / 0.05, 2.0));
-    if (r < 0.34) base = vec3(0.01);
-    rough = 0.15; spec = 0.6;
+  float eyeAO = 1.0;
+  if (uKind == 3) {  // eyeball: exact per-pixel angle from the optical axis (rest +z) instead of the faceted UV disk
+    vec3 d = normalize(vObj - uEyeC);
+    float s = acos(clamp(d.z, -1.0, 1.0)) / 0.5432;          // 1.0 at the iris edge (asin(6.2 mm / 12 mm))
+    float ang = atan(d.y, d.x);
+    float pr = 0.36;                                          // pupil radius as a fraction of the iris
+    float fib = noise(vec3(ang * 38.0, s * 4.0, 1.7)) * 0.6 + noise(vec3(ang * 90.0, s * 9.0, 4.1)) * 0.4;
+    vec3 iris = uIris * (0.62 + 0.75 * fib);
+    iris *= mix(1.35, 0.7, smoothstep(pr, 0.95, s));          // lighter around the pupil, darker toward the rim
+    iris += uIris * 0.55 * exp(-pow((s - 0.56) / 0.07, 2.0)) * (0.6 + 0.4 * fib);   // collarette
+    iris *= 1.0 - 0.6 * smoothstep(0.80, 0.97, s);            // limbal ring
+    float pupil = smoothstep(pr + 0.035, pr - 0.015, s);
+    iris = mix(iris, vec3(0.012, 0.010, 0.010), pupil);
+    vec3 sclera = mix(vec3(0.80, 0.77, 0.73), vec3(0.70, 0.58, 0.54), smoothstep(1.4, 3.0, s));
+    sclera *= 0.97 + 0.06 * noise(vObj * 900.0);
+    base = mix(iris, sclera, smoothstep(0.97, 1.10, s));
+    // occlusion: corners sit deep under the lids; the upper lid shades the top of the eye
+    eyeAO = mix(1.0, 0.42, smoothstep(1.5, 2.9, s)) * mix(1.0, 0.45, smoothstep(0.0, 0.45, n.y));
+    rough = mix(0.35, 0.22, step(1.0, s)); spec = 0.25;
   }
   if (uKind == 5) {  // brow / lash cards: soft slanted strands with varied density, blended (not cut out)
     float along = vUV.x * 150.0 + vUV.y * 2.5;
@@ -89,7 +98,7 @@ void main() {
     float wrap = sss * 0.5;
     float diff = clamp((ndl + wrap) / (1.0 + wrap), 0.0, 1.0);
     vec3 tint = mix(vec3(1.0), vec3(1.0, 0.6, 0.5), sss * clamp(wrap - ndl, 0.0, 1.0));
-    col += base * diff * C[i] * tint * 0.32;
+    col += base * diff * C[i] * tint * 0.32 * eyeAO;
     vec3 h = normalize(L[i] + v);
     float sp;
     if (uKind == 2) {  // Kajiya-Kay style highlight along the hair flow (roughly vertical)
@@ -102,12 +111,17 @@ void main() {
     col += C[i] * spec * sp * step(0.0, ndl) * 0.25;
   }
   float hemi = 0.5 + 0.5 * n.y;
-  col += base * (vec3(0.32, 0.34, 0.40) * hemi + vec3(0.16, 0.13, 0.11) * (1.0 - hemi)) * 0.85;
+  col += base * (vec3(0.32, 0.34, 0.40) * hemi + vec3(0.16, 0.13, 0.11) * (1.0 - hemi)) * 0.85 * eyeAO;
   float fres = pow(1.0 - clamp(dot(n, v), 0.0, 1.0), 4.0);
   if (uKind == 0) col += base * vec3(0.9, 0.35, 0.25) * sss * pow(1.0 - clamp(dot(n, v), 0.0, 1.0), 3.0) * 0.25;
   if (uKind == 1) col += base * fres * 0.35;  // cloth sheen
-  if (uKind == 4) { col = vec3(1.0) * (fres * 0.6 + 0.04); alpha = 0.08 + 0.6 * fres;
-    vec3 h = normalize(L[0] + v); col += C[0] * pow(max(dot(n, h), 0.0), 900.0) * 0.6; alpha = max(alpha, min(1.0, col.r)); }
+  if (uKind == 4) {  // clear cornea: faint sky reflection, no white rim; sharp key + fill catchlights
+    float f5 = pow(1.0 - clamp(dot(n, v), 0.0, 1.0), 5.0);
+    float rim = 1.0 - smoothstep(1.0, 1.28, acos(clamp(normalize(vObj - uEyeC).z, -1.0, 1.0)) / 0.5432);  // no seam at the cap edge
+    col = vec3(0.55, 0.62, 0.72) * (0.03 + 0.5 * f5); alpha = (0.04 + 0.25 * f5) * rim;
+    vec3 h = normalize(L[0] + v); col += C[0] * pow(max(dot(n, h), 0.0), 1400.0) * 1.4;
+    vec3 h2 = normalize(L[2] + v); col += C[2] * pow(max(dot(n, h2), 0.0), 900.0) * 0.45;
+    alpha = max(alpha, min(1.0, max(col.r, col.b))); }
   col = aces(col * 1.05);
   o = vec4(pow(col, vec3(1.0 / 2.2)), alpha);
 }`;
@@ -119,7 +133,7 @@ export class Renderer {
     this.gl = gl; this.canvas = canvas;
     this.prog = this._program(VS, FS);
     this.u = {};
-    for (const n of ["uJ", "uVP", "uEye", "uBase", "uRough", "uSpec", "uSSS", "uKind", "uAlpha", "uIris", "uDetail"])
+    for (const n of ["uJ", "uVP", "uEye", "uBase", "uRough", "uSpec", "uSSS", "uKind", "uAlpha", "uIris", "uDetail", "uEyeC"])
       this.u[n] = gl.getUniformLocation(this.prog, n);
     this.meshes = [];
     this.ground = this._groundMesh();
@@ -187,6 +201,7 @@ export class Renderer {
       gl.uniform3fv(this.u.uBase, g.base); gl.uniform1f(this.u.uRough, g.rough); gl.uniform1f(this.u.uSpec, g.spec);
       gl.uniform1f(this.u.uSSS, g.sss); gl.uniform1i(this.u.uKind, g.kind); gl.uniform1f(this.u.uAlpha, g.alpha);
       gl.uniform3fv(this.u.uIris, g.iris || [0.2, 0.1, 0.05]); gl.uniform1f(this.u.uDetail, g.detail || 0);
+      gl.uniform3fv(this.u.uEyeC, g.eyeC || [0, 0, 0]);
       if (g.double) gl.disable(gl.CULL_FACE); else { gl.enable(gl.CULL_FACE); gl.cullFace(gl.BACK); }
       gl.bindVertexArray(g.vao);
       gl.drawElements(gl.TRIANGLES, g.count, gl.UNSIGNED_INT, 0);

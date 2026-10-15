@@ -166,8 +166,10 @@ def skin_vertex_colors(verts, normals, tags, tag_names, joints, weights, skel, a
     mouth = T("oral_cavity", "mouth_slit") & (np.abs(verts[:, 0] - O_[0]) < 0.021 * skel.marks["head_h"] / 0.23)
     col[mouth] = np.array([0.22, 0.04, 0.04])
     col[T("nostril")] = base * 0.25
-    col[T("eye_socket")] = base * np.array([0.7, 0.35, 0.35])
-    col[T("eye_aperture")] = col[T("eye_aperture")] * np.array([1.0, 0.8, 0.78])
+    # the strip of socket visible between eyeball and lids is shadowed, faintly warm tissue (it read as a red ring at
+    # 0.7/0.35/0.35); the lid margin keeps a slight moist warmth
+    col[T("eye_socket")] = base * np.array([0.42, 0.33, 0.31])
+    col[T("eye_aperture")] = col[T("eye_aperture")] * np.array([0.97, 0.9, 0.88])
     # areola / nipple (developer detail; public bodies are rebuilt with nipple_size 0 but keep pigment off)
     for lab in ("l", "r"):
         c = skel.marks.get(f"nipple_{lab}")

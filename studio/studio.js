@@ -228,6 +228,11 @@ class Studio {
       if (name === "body") for (const e of this.man.expressions) this.addDelta(cur, e.body, this.state.expr[e.name] || 0);
       this.normals(cur, P.idx, P.nrm);
       this.renderer.update(P.g, "pos", cur); this.renderer.update(P.g, "nrm", P.nrm);
+      if (P.material === "eye") {  // rest-pose eyeball center for the per-pixel eye shading
+        const c = [0, 0, 0]; for (let i = 0; i < cur.length; i += 3) { c[0] += cur[i]; c[1] += cur[i + 1]; c[2] += cur[i + 2]; }
+        P.g.eyeC = c.map((x) => x / (cur.length / 3));
+      }
+      if (P.material === "cornea") P.g.eyeC = this.parts[`eye_${name.slice(-1)}`].g.eyeC;  // eyes evaluate first
     }
     this.heightNow = this.measureHeight();
     this.updateColors();

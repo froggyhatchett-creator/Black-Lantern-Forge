@@ -35,7 +35,8 @@ GENERATOR_HISTORY = {
         "notes": "phase 1 anatomy + phase 2 checkpoint"},
     2: {"commit": "(this change)", "template_vertices": 62550,
         "notes": "face: two-lobed upper lip (cupid's bow), slimmer lips, smaller nose tip and alae, larger eye apertures "
-                 "with lids moved off the iris, less full cheeks and lower face; template re-meshed"},
+                 "with lids moved off the iris, less full cheeks and lower face; template re-meshed. Later, appearance only (same "
+                 "geometry): eye-socket skin tint changed from red (0.7, 0.35, 0.35) to shadowed (0.42, 0.33, 0.31)"},
 }
 
 
