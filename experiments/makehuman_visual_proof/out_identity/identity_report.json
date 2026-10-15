@@ -1,0 +1,82 @@
+{
+ "variants": {
+  "A female (default)": {
+   "height_m": 1.637,
+   "quality": {
+    "head_triangles": 3702,
+    "flipped_vs_reference": 2,
+    "min_angle_deg_p1": 7.4,
+    "degenerate_lt_2deg": 0
+   }
+  },
+  "B stylized adult (Mercy-direction)": {
+   "height_m": 1.637,
+   "quality": {
+    "head_triangles": 3702,
+    "flipped_vs_reference": 2,
+    "min_angle_deg_p1": 6.9,
+    "degenerate_lt_2deg": 0
+   }
+  },
+  "C athletic female": {
+   "height_m": 1.637,
+   "quality": {
+    "head_triangles": 3702,
+    "flipped_vs_reference": 2,
+    "min_angle_deg_p1": 7.4,
+    "degenerate_lt_2deg": 0
+   }
+  },
+  "D heavy male": {
+   "height_m": 1.786,
+   "quality": {
+    "head_triangles": 3702,
+    "flipped_vs_reference": 4,
+    "min_angle_deg_p1": 7.84,
+    "degenerate_lt_2deg": 2
+   }
+  },
+  "E lean female, oval face": {
+   "height_m": 1.649,
+   "quality": {
+    "head_triangles": 3702,
+    "flipped_vs_reference": 2,
+    "min_angle_deg_p1": 6.99,
+    "degenerate_lt_2deg": 0
+   }
+  }
+ },
+ "stress": {
+  "style x1": {
+   "head_triangles": 3702,
+   "flipped_vs_reference": 0,
+   "min_angle_deg_p1": 6.9,
+   "degenerate_lt_2deg": 0
+  },
+  "style x2": {
+   "head_triangles": 3702,
+   "flipped_vs_reference": 1,
+   "min_angle_deg_p1": 6.64,
+   "degenerate_lt_2deg": 0
+  },
+  "style x3": {
+   "head_triangles": 3702,
+   "flipped_vs_reference": 11,
+   "min_angle_deg_p1": 5.32,
+   "degenerate_lt_2deg": 2
+  }
+ },
+ "diversity_mm": {
+  "A-B": 1.17,
+  "A-C": 0.0,
+  "A-D": 5.18,
+  "A-E": 2.34,
+  "B-C": 1.17,
+  "B-D": 5.45,
+  "B-E": 2.82,
+  "C-D": 5.18,
+  "C-E": 2.34,
+  "D-E": 5.66
+ },
+ "seconds": 33.2
+}

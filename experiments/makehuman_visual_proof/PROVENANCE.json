@@ -209,6 +209,134 @@
    "sha256": "9d0ac9eec39a14d51d7db50e48292b3db67aed9b91e654b379f4dbe348644684",
    "cc0_header_in_file": true,
    "experiment": "morph discovery"
+  },
+  {
+   "file": "assets/data/targets/chin/chin-prominent-incr.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/chin/chin-prominent-incr.target",
+   "bytes": 2338,
+   "sha256": "d2493ca5f69aabeb8557d77a56c49cfcf2062ff90c0cad03073d87990d11448b",
+   "cc0_header_in_file": true,
+   "experiment": "identity range"
+  },
+  {
+   "file": "assets/data/targets/chin/chin-width-decr.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/chin/chin-width-decr.target",
+   "bytes": 2853,
+   "sha256": "ac081bd1652c203fc8973f20988a868a423a49f1fe6449cb974727fd46c26af1",
+   "cc0_header_in_file": true,
+   "experiment": "identity range"
+  },
+  {
+   "file": "assets/data/targets/eyes/l-eye-corner1-up.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/eyes/l-eye-corner1-up.target",
+   "bytes": 3934,
+   "sha256": "bfb3b7440addb68bbbb825b8de709db58900bf9ea7b3a93e60ab36c774f4cb55",
+   "cc0_header_in_file": true,
+   "experiment": "identity range"
+  },
+  {
+   "file": "assets/data/targets/eyes/l-eye-height2-incr.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/eyes/l-eye-height2-incr.target",
+   "bytes": 6758,
+   "sha256": "8521b63c1bf07af06194e96e14eb522dce43615ef1139b8117f104f5132fbc69",
+   "cc0_header_in_file": true,
+   "experiment": "identity range"
+  },
+  {
+   "file": "assets/data/targets/eyes/l-eye-trans-out.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/eyes/l-eye-trans-out.target",
+   "bytes": 12444,
+   "sha256": "ca961a4637517aeb689fa351e9d36abb3c04108a2870b26220f3c8cda027bdee",
+   "cc0_header_in_file": true,
+   "experiment": "identity range"
+  },
+  {
+   "file": "assets/data/targets/eyes/r-eye-corner1-up.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/eyes/r-eye-corner1-up.target",
+   "bytes": 3444,
+   "sha256": "f1bedac16f1b9e493fc06fa0ebc3edf73836bde385d3ab03ae8bb91dbbeec56f",
+   "cc0_header_in_file": true,
+   "experiment": "identity range"
+  },
+  {
+   "file": "assets/data/targets/eyes/r-eye-height2-incr.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/eyes/r-eye-height2-incr.target",
+   "bytes": 5514,
+   "sha256": "35e1f070ab8a77dc103aab81c478f04136f6afec378a7003d8834e49ff02d916",
+   "cc0_header_in_file": true,
+   "experiment": "identity range"
+  },
+  {
+   "file": "assets/data/targets/eyes/r-eye-trans-out.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/eyes/r-eye-trans-out.target",
+   "bytes": 12783,
+   "sha256": "02143e686611f18d36915ee70082234e37db3d38a791cb8e1a46c0c56c4be43c",
+   "cc0_header_in_file": true,
+   "experiment": "identity range"
+  },
+  {
+   "file": "assets/data/targets/head/head-invertedtriangular.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/head/head-invertedtriangular.target",
+   "bytes": 32815,
+   "sha256": "d236302afe23f2f2d6d753e4b73f91c1220d17dca24417931fe477a232f18116",
+   "cc0_header_in_file": true,
+   "experiment": "identity range"
+  },
+  {
+   "file": "assets/data/targets/head/head-oval.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/head/head-oval.target",
+   "bytes": 36452,
+   "sha256": "a17cd3a600588a344babe520fbd4d4edcb096db3328051fe692dfb997a1a678d",
+   "cc0_header_in_file": true,
+   "experiment": "identity range"
+  },
+  {
+   "file": "assets/data/targets/macrodetails/universal-female-young-averagemuscle-minweight.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/macrodetails/universal-female-young-averagemuscle-minweight.target",
+   "bytes": 147131,
+   "sha256": "e53a4afc87ac2703460a59e8290b1111478aeee5c02ece6735328c1f8c62eb63",
+   "cc0_header_in_file": true,
+   "experiment": "identity range"
+  },
+  {
+   "file": "assets/data/targets/macrodetails/universal-male-young-averagemuscle-maxweight.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/macrodetails/universal-male-young-averagemuscle-maxweight.target",
+   "bytes": 155861,
+   "sha256": "3e77ff5a07a9b870db5226507e1cf8a295f0e09c109fb72142770f5f50427b5e",
+   "cc0_header_in_file": true,
+   "experiment": "identity range"
+  },
+  {
+   "file": "assets/data/targets/mouth/mouth-scale-horiz-decr.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/mouth/mouth-scale-horiz-decr.target",
+   "bytes": 12644,
+   "sha256": "07a9ef160755467a470bd0a1df035143d83ebddbc12e4612e69e93a64644405c",
+   "cc0_header_in_file": true,
+   "experiment": "identity range"
+  },
+  {
+   "file": "assets/data/targets/nose/nose-point-width-decr.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/nose/nose-point-width-decr.target",
+   "bytes": 1796,
+   "sha256": "b9abb0a0fa7acf3208acee76ab9e329c89b4e7b6c83fcf8429ffd004aae1a4cc",
+   "cc0_header_in_file": true,
+   "experiment": "identity range"
+  },
+  {
+   "file": "assets/data/targets/nose/nose-scale-horiz-decr.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/nose/nose-scale-horiz-decr.target",
+   "bytes": 5074,
+   "sha256": "1227e6f513d202585e40045fe4234778597bb591ac492e7f9313347cd9a9f2ec",
+   "cc0_header_in_file": true,
+   "experiment": "identity range"
+  },
+  {
+   "file": "assets/data/targets/nose/nose-scale-vert-decr.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/nose/nose-scale-vert-decr.target",
+   "bytes": 5431,
+   "sha256": "a154747135740f63f60df812024fcde24df2a6713effa3c6f27797aeee7d3311",
+   "cc0_header_in_file": true,
+   "experiment": "identity range"
   }
  ],
  "notes": [
