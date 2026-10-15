@@ -1,0 +1,276 @@
+{
+ "neutral": {
+  "v3_studio_blink": {
+   "closed_exposure": 0.0,
+   "half_exposure": 0.467,
+   "triangles": 2170,
+   "flipped": 4,
+   "max_area_ratio": 13.72,
+   "p99_area_ratio": 3.46
+  },
+  "makehuman_bone_skinning": {
+   "closed_exposure": 0.0,
+   "half_exposure": 0.357,
+   "triangles": 2170,
+   "flipped": 46,
+   "max_area_ratio": 5.81,
+   "p99_area_ratio": 3.69
+  }
+ },
+ "control_ends_fitted_at_bake": {
+  "neutral": {
+   "factor": 1.2,
+   "lower": 0.0,
+   "exposure": 0.0,
+   "flipped": 4
+  },
+  "body.femininity:hi": {
+   "factor": 1.1,
+   "lower": 0.5,
+   "exposure": 0.0028,
+   "flipped": 16
+  },
+  "body.femininity:lo": {
+   "factor": 1.0,
+   "lower": 0.5,
+   "exposure": 0.0,
+   "flipped": 6
+  },
+  "body.head_size:hi": {
+   "factor": 1.3,
+   "lower": 0.5,
+   "exposure": 0.0,
+   "flipped": 8
+  },
+  "body.head_size:lo": {
+   "factor": 1.0,
+   "lower": 0.0,
+   "exposure": 0.0,
+   "flipped": 2
+  },
+  "face.face_width:hi": {
+   "factor": 1.2,
+   "lower": 0.0,
+   "exposure": 0.0,
+   "flipped": 4
+  },
+  "face.face_width:lo": {
+   "factor": 1.0,
+   "lower": 0.5,
+   "exposure": 0.0,
+   "flipped": 4
+  },
+  "face.face_length:hi": {
+   "factor": 1.3,
+   "lower": 0.0,
+   "exposure": 0.0015,
+   "flipped": 4
+  },
+  "face.face_length:lo": {
+   "factor": 1.1,
+   "lower": 0.0,
+   "exposure": 0.0,
+   "flipped": 4
+  },
+  "face.jaw_angle:hi": {
+   "factor": 1.2,
+   "lower": 0.0,
+   "exposure": 0.0,
+   "flipped": 4
+  },
+  "face.jaw_angle:lo": {
+   "factor": 1.2,
+   "lower": 0.0,
+   "exposure": 0.0,
+   "flipped": 4
+  },
+  "face.cheekbone_width:hi": {
+   "factor": 1.2,
+   "lower": 0.0,
+   "exposure": 0.0,
+   "flipped": 4
+  },
+  "face.cheekbone_width:lo": {
+   "factor": 1.2,
+   "lower": 0.0,
+   "exposure": 0.0,
+   "flipped": 4
+  },
+  "face.cheekbone_height:hi": {
+   "factor": 1.2,
+   "lower": 0.0,
+   "exposure": 0.0,
+   "flipped": 4
+  },
+  "face.cheekbone_height:lo": {
+   "factor": 1.2,
+   "lower": 0.0,
+   "exposure": 0.0,
+   "flipped": 4
+  },
+  "face.cheek_fullness:hi": {
+   "factor": 1.2,
+   "lower": 0.0,
+   "exposure": 0.0,
+   "flipped": 4
+  },
+  "face.cheek_fullness:lo": {
+   "factor": 1.2,
+   "lower": 0.0,
+   "exposure": 0.0,
+   "flipped": 4
+  },
+  "face.nose_length:hi": {
+   "factor": 1.2,
+   "lower": 0.0,
+   "exposure": 0.0,
+   "flipped": 4
+  },
+  "face.nose_length:lo": {
+   "factor": 1.2,
+   "lower": 0.0,
+   "exposure": 0.0,
+   "flipped": 4
+  },
+  "face.nose_width:hi": {
+   "factor": 1.2,
+   "lower": 0.0,
+   "exposure": 0.0,
+   "flipped": 4
+  },
+  "face.nose_width:lo": {
+   "factor": 1.2,
+   "lower": 0.0,
+   "exposure": 0.0,
+   "flipped": 4
+  },
+  "face.nose_bridge:hi": {
+   "factor": 1.2,
+   "lower": 0.0,
+   "exposure": 0.0,
+   "flipped": 4
+  },
+  "face.nose_bridge:lo": {
+   "factor": 1.2,
+   "lower": 0.0,
+   "exposure": 0.0,
+   "flipped": 4
+  },
+  "face.brow_height:hi": {
+   "factor": 1.2,
+   "lower": 0.0,
+   "exposure": 0.0,
+   "flipped": 4
+  },
+  "face.brow_height:lo": {
+   "factor": 1.2,
+   "lower": 0.0,
+   "exposure": 0.0033,
+   "flipped": 8
+  },
+  "face.brow_prominence:hi": {
+   "factor": 1.2,
+   "lower": 0.0,
+   "exposure": 0.0,
+   "flipped": 4
+  },
+  "face.brow_prominence:lo": {
+   "factor": 1.2,
+   "lower": 0.0,
+   "exposure": 0.0,
+   "flipped": 4
+  },
+  "face.eye_size:hi": {
+   "factor": 1.2,
+   "lower": 0.5,
+   "exposure": 0.0,
+   "flipped": 7
+  },
+  "face.eye_size:lo": {
+   "factor": 1.1,
+   "lower": 0.0,
+   "exposure": 0.0023,
+   "flipped": 32
+  },
+  "face.eye_spacing:hi": {
+   "factor": 1.0,
+   "lower": 0.5,
+   "exposure": 0.0,
+   "flipped": 4
+  },
+  "face.eye_spacing:lo": {
+   "factor": 1.2,
+   "lower": 0.0,
+   "exposure": 0.0,
+   "flipped": 4
+  },
+  "face.eye_tilt:hi": {
+   "factor": 1.0,
+   "lower": 0.5,
+   "exposure": 0.0,
+   "flipped": 6
+  },
+  "face.eye_tilt:lo": {
+   "factor": 1.2,
+   "lower": 0.0,
+   "exposure": 0.0,
+   "flipped": 4
+  },
+  "face.ear_size:hi": {
+   "factor": 1.2,
+   "lower": 0.0,
+   "exposure": 0.0,
+   "flipped": 4
+  },
+  "face.ear_size:lo": {
+   "factor": 1.2,
+   "lower": 0.0,
+   "exposure": 0.0,
+   "flipped": 4
+  },
+  "face.asymmetry:hi": {
+   "factor": 1.2,
+   "lower": 0.0,
+   "exposure": 0.0,
+   "flipped": 4
+  }
+ },
+ "presets": {
+  "female": {
+   "with_correctives": {
+    "closed_exposure": 0.0,
+    "half_exposure": 0.454,
+    "triangles": 2170,
+    "flipped": 15,
+    "max_area_ratio": 14.6,
+    "p99_area_ratio": 4.4
+   },
+   "without_correctives": {
+    "closed_exposure": 0.0447,
+    "half_exposure": 0.51,
+    "triangles": 2170,
+    "flipped": 4,
+    "max_area_ratio": 15.27,
+    "p99_area_ratio": 4.27
+   }
+  },
+  "male": {
+   "with_correctives": {
+    "closed_exposure": 0.0,
+    "half_exposure": 0.468,
+    "triangles": 2170,
+    "flipped": 14,
+    "max_area_ratio": 17.77,
+    "p99_area_ratio": 3.32
+   },
+   "without_correctives": {
+    "closed_exposure": 0.0,
+    "half_exposure": 0.425,
+    "triangles": 2170,
+    "flipped": 10,
+    "max_area_ratio": 6.48,
+    "p99_area_ratio": 3.65
+   }
+  }
+ }
+}

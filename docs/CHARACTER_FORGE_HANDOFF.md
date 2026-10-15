@@ -92,6 +92,17 @@ adult character in the real studio before expanding. Finite credits: short visua
   `docs/CHARACTER_FORGE_FOUNDATION_ASSESSMENT.md`, awaiting review. Open defects D-001..D-005 are in
   `docs/CHARACTER_FORGE_DEFECTS.md`.
 
+## Generator v3 Phase 1 (authorized; milestone reached, stopped for review)
+- Plan: `docs/CHARACTER_FORGE_V3_PLAN.md`; milestone report with numbers and limitations: `docs/CHARACTER_FORGE_V3_PHASE1.md`.
+- Code `forge_character_forge/v3/` (CC0 MakeHuman hm08 assets + provenance, 62-joint rig mapping all 163 bones,
+  53 labelled controls 36/16/1, fitted blink corrective with per-control correctives, plane-clipped basic garments,
+  pack bake ~2 min). Pack `examples/character_forge_aaa/studio/studio_pack_v3.bin`, meta `studio/studio_meta_v3.json`.
+- Studio: generator selector (`?gen=3` / `#v3`); v2 stays the default and unchanged (v2 smoke 23/23).
+- Tests `tests/test_character_forge_v3.py` (17, ~2.5 min incl. a full re-bake); browser check
+  `tools/studio_v3_check.mjs`; evidence `examples/character_forge_aaa/humanity/v3_phase1/`.
+- Next (needs owner approval): brows/lashes/hair and skin maps on v3 (biggest realism gap), more expressions,
+  draped garments, the Forge identity layer on v3, Python exact export for v3.
+
 ## Open problems / next actions
 1. Commit/push checkpoint; publish the studio artifact (multi-file; `downloads` capability; GLB offered zipped).
 2. Face realism (lips/eyes/brows) and anatomy fixes (hands, knees, feet) need a re-bake (~28 min) to reach the studio.

@@ -236,7 +236,11 @@ class Studio {
       cur.set(P.base);
       for (const [se, w] of ws) this.addDelta(cur, se.parts[name], w);
       if (pre && pre.parts) this.addDelta(cur, pre.parts[name], 1);
-      if (name === "body") for (const e of this.man.expressions) this.addDelta(cur, e.body, this.state.expr[e.name] || 0);
+      if (name === "body") for (const e of this.man.expressions) {
+        const we = this.state.expr[e.name] || 0; if (!we) continue;
+        this.addDelta(cur, e.body, we);
+        for (const [se, wp] of ws) if (se.expr && se.expr[e.name]) this.addDelta(cur, se.expr[e.name], we * wp);  // v3 blink correctives
+      }
       this.normals(cur, P.idx, P.nrm, P.weld);
       this.renderer.update(P.g, "pos", cur); this.renderer.update(P.g, "nrm", P.nrm);
       if (P.material === "eye") {  // rest-pose eyeball center for the per-pixel eye shading
@@ -460,7 +464,16 @@ class Studio {
       generator: this.man.generator || null,
       expressions: this.man.expressions, clips: Object.values(this.clips),
       coverage: { required: this.required(), covered_by: Object.fromEntries(this.required().map((r) => [r, this.state.outfit.filter((g) => this.meta.covers[r].includes(g))])), outfit: this.state.outfit },
-      dna: this.toDNA(), decodeSparse: (enc, n) => this.decodeSparse(enc, n) };
+      dna: this.toDNA(), decodeSparse: (enc, n) => this.decodeSparse(enc, n), expressionDelta: (e, n) => this.expressionDelta(e, n) };
+  }
+  expressionDelta(e, n) {  // the morph target for this character: base delta plus any per-control correctives (v3)
+    const ws = this.weights().filter(([se]) => se.expr && se.expr[e.name]);
+    if (!ws.length) return this.decodeSparse(e.body, n);
+    const d = new Float32Array(n * 3); this.addDelta(d, e.body, 1);
+    for (const [se, wp] of ws) this.addDelta(d, se.expr[e.name], wp);
+    const idx = []; for (let v = 0; v < n; v++) if (d[v * 3] || d[v * 3 + 1] || d[v * 3 + 2]) idx.push(v);
+    const val = new Float32Array(idx.length * 3); idx.forEach((v, k) => { for (let c = 0; c < 3; c++) val[k * 3 + c] = d[v * 3 + c]; });
+    return { idx: Uint32Array.from(idx), val };
   }
   decodeSparse(enc, n) {
     if (enc.dense) { const d = this.arr(enc.dense), idx = []; for (let v = 0; v < n; v++) if (d[v * 3] || d[v * 3 + 1] || d[v * 3 + 2]) idx.push(v);

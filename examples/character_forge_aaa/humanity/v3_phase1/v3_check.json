@@ -1,0 +1,898 @@
+{
+ "checks": [
+  {
+   "name": "v3 studio boots",
+   "pass": true,
+   "detail": "0.8 s"
+  },
+  {
+   "name": "generator v3 loaded",
+   "pass": true,
+   "detail": "{\"id\":\"forge.character-forge\",\"version\":3,\"template_vertices\":13380,\"foundation\":\"makehuman-hm08-cc0\",\"template\":\"human-adult\"}"
+  },
+  {
+   "name": "all 53 controls move the body at each used end",
+   "pass": true,
+   "detail": "53/53"
+  },
+  {
+   "name": "height control is exact",
+   "pass": true,
+   "detail": "1.45 / 2.1 m"
+  },
+  {
+   "name": "public coverage re-adds v3 garments",
+   "pass": true,
+   "detail": "basic_shorts,basic_top"
+  },
+  {
+   "name": "GLB exported from the v3 studio",
+   "pass": true,
+   "detail": "1.68 MB"
+  },
+  {
+   "name": "DNA records generator v3",
+   "pass": true,
+   "detail": "{\"id\":\"forge.character-forge\",\"version\":3}"
+  },
+  {
+   "name": "no page errors",
+   "pass": true,
+   "detail": ""
+  }
+ ],
+ "errors": [],
+ "controls": {
+  "neutral_height": 1.75,
+  "controls": {
+   "body.height_m": {
+    "quality": "direct",
+    "min": {
+     "value": 1.45,
+     "moved_vertices": 14517,
+     "max_displacement_mm": 300.16,
+     "height_m": 1.45
+    },
+    "max": {
+     "value": 2.1,
+     "moved_vertices": 14517,
+     "max_displacement_mm": 350.19,
+     "height_m": 2.1
+    },
+    "at_default": 1.75
+   },
+   "body.femininity": {
+    "quality": "direct",
+    "min": {
+     "value": 0,
+     "moved_vertices": 14517,
+     "max_displacement_mm": 49.2,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1,
+     "moved_vertices": 14517,
+     "max_displacement_mm": 52.58,
+     "height_m": 1.75
+    },
+    "at_default": 0.5
+   },
+   "body.body_fat": {
+    "quality": "approximate",
+    "min": {
+     "value": 0,
+     "moved_vertices": 4458,
+     "max_displacement_mm": 21.01,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1,
+     "moved_vertices": 4179,
+     "max_displacement_mm": 22.57,
+     "height_m": 1.75
+    },
+    "at_default": 0.35
+   },
+   "body.muscle": {
+    "quality": "direct",
+    "min": {
+     "value": 0,
+     "moved_vertices": 3732,
+     "max_displacement_mm": 28.56,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1,
+     "moved_vertices": 4359,
+     "max_displacement_mm": 24.03,
+     "height_m": 1.75
+    },
+    "at_default": 0.45
+   },
+   "body.shoulder_width": {
+    "quality": "approximate",
+    "min": {
+     "value": 0.8,
+     "moved_vertices": 5554,
+     "max_displacement_mm": 27.88,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.25,
+     "moved_vertices": 5524,
+     "max_displacement_mm": 27.88,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "body.chest_width": {
+    "quality": "approximate",
+    "min": {
+     "value": 0.8,
+     "moved_vertices": 6390,
+     "max_displacement_mm": 35.29,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.25,
+     "moved_vertices": 6038,
+     "max_displacement_mm": 35.71,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "body.chest_depth": {
+    "quality": "approximate",
+    "min": {
+     "value": 0.8,
+     "moved_vertices": 1753,
+     "max_displacement_mm": 18.17,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.25,
+     "moved_vertices": 1651,
+     "max_displacement_mm": 35.08,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "body.waist_width": {
+    "quality": "approximate",
+    "min": {
+     "value": 0.8,
+     "moved_vertices": 6370,
+     "max_displacement_mm": 17.65,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.3,
+     "moved_vertices": 6030,
+     "max_displacement_mm": 17.85,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "body.hip_width": {
+    "quality": "direct",
+    "min": {
+     "value": 0.8,
+     "moved_vertices": 1110,
+     "max_displacement_mm": 38.95,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.3,
+     "moved_vertices": 1110,
+     "max_displacement_mm": 38.95,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "body.glute_size": {
+    "quality": "direct",
+    "min": {
+     "value": 0.6,
+     "moved_vertices": 204,
+     "max_displacement_mm": 20.75,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.6,
+     "moved_vertices": 510,
+     "max_displacement_mm": 22.45,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "body.belly": {
+    "quality": "approximate",
+    "min": {
+     "value": 0,
+     "moved_vertices": 0,
+     "max_displacement_mm": 0,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1,
+     "moved_vertices": 346,
+     "max_displacement_mm": 102.36,
+     "height_m": 1.75
+    },
+    "at_default": 0
+   },
+   "body.torso_length": {
+    "quality": "direct",
+    "min": {
+     "value": 0.85,
+     "moved_vertices": 14517,
+     "max_displacement_mm": 35.13,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.2,
+     "moved_vertices": 14517,
+     "max_displacement_mm": 61.51,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "body.neck_length": {
+    "quality": "direct",
+    "min": {
+     "value": 0.8,
+     "moved_vertices": 14517,
+     "max_displacement_mm": 25.39,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.3,
+     "moved_vertices": 14517,
+     "max_displacement_mm": 46.44,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "body.neck_thickness": {
+    "quality": "direct",
+    "min": {
+     "value": 0.8,
+     "moved_vertices": 740,
+     "max_displacement_mm": 13.6,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.3,
+     "moved_vertices": 742,
+     "max_displacement_mm": 14.2,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "body.arm_length": {
+    "quality": "direct",
+    "min": {
+     "value": 0.85,
+     "moved_vertices": 1046,
+     "max_displacement_mm": 15.96,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.2,
+     "moved_vertices": 1046,
+     "max_displacement_mm": 15.96,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "body.arm_thickness": {
+    "quality": "direct",
+    "min": {
+     "value": 0.75,
+     "moved_vertices": 4660,
+     "max_displacement_mm": 90,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.4,
+     "moved_vertices": 4660,
+     "max_displacement_mm": 131.56,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "body.leg_length": {
+    "quality": "direct",
+    "min": {
+     "value": 0.85,
+     "moved_vertices": 14517,
+     "max_displacement_mm": 37.32,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.2,
+     "moved_vertices": 14517,
+     "max_displacement_mm": 48.77,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "body.thigh_thickness": {
+    "quality": "direct",
+    "min": {
+     "value": 0.75,
+     "moved_vertices": 586,
+     "max_displacement_mm": 26.1,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.4,
+     "moved_vertices": 682,
+     "max_displacement_mm": 31.52,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "body.calf_thickness": {
+    "quality": "direct",
+    "min": {
+     "value": 0.75,
+     "moved_vertices": 834,
+     "max_displacement_mm": 24.47,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.4,
+     "moved_vertices": 896,
+     "max_displacement_mm": 22.44,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "body.hand_size": {
+    "quality": "direct",
+    "min": {
+     "value": 0.8,
+     "moved_vertices": 3844,
+     "max_displacement_mm": 40.74,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.25,
+     "moved_vertices": 3844,
+     "max_displacement_mm": 62.14,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "body.foot_size": {
+    "quality": "direct",
+    "min": {
+     "value": 0.8,
+     "moved_vertices": 14491,
+     "max_displacement_mm": 41.15,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.25,
+     "moved_vertices": 2700,
+     "max_displacement_mm": 60.32,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "body.head_size": {
+    "quality": "direct",
+    "min": {
+     "value": 0.85,
+     "moved_vertices": 14517,
+     "max_displacement_mm": 43.52,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.25,
+     "moved_vertices": 14517,
+     "max_displacement_mm": 42.99,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "body.breast_size": {
+    "quality": "direct",
+    "min": {
+     "value": 0,
+     "moved_vertices": 0,
+     "max_displacement_mm": 0,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 2.5,
+     "moved_vertices": 404,
+     "max_displacement_mm": 96.51,
+     "height_m": 1.75
+    },
+    "at_default": 0
+   },
+   "body.breast_spacing": {
+    "quality": "direct",
+    "min": {
+     "value": 0.8,
+     "moved_vertices": 294,
+     "max_displacement_mm": 34.53,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.25,
+     "moved_vertices": 290,
+     "max_displacement_mm": 25.47,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "body.breast_height": {
+    "quality": "direct",
+    "min": {
+     "value": 0.85,
+     "moved_vertices": 583,
+     "max_displacement_mm": 34.46,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.15,
+     "moved_vertices": 579,
+     "max_displacement_mm": 18.59,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "body.breast_projection": {
+    "quality": "approximate",
+    "min": {
+     "value": 0.6,
+     "moved_vertices": 278,
+     "max_displacement_mm": 9.25,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.6,
+     "moved_vertices": 200,
+     "max_displacement_mm": 24.8,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "body.breast_sag": {
+    "quality": "direct",
+    "min": {
+     "value": 0,
+     "moved_vertices": 280,
+     "max_displacement_mm": 8.54,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1,
+     "moved_vertices": 250,
+     "max_displacement_mm": 17.25,
+     "height_m": 1.75
+    },
+    "at_default": 0.3
+   },
+   "face.face_width": {
+    "quality": "approximate",
+    "min": {
+     "value": 0.75,
+     "moved_vertices": 4308,
+     "max_displacement_mm": 10.65,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.3,
+     "moved_vertices": 4308,
+     "max_displacement_mm": 10.65,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "face.face_length": {
+    "quality": "approximate",
+    "min": {
+     "value": 0.75,
+     "moved_vertices": 14517,
+     "max_displacement_mm": 31.75,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.3,
+     "moved_vertices": 14517,
+     "max_displacement_mm": 42.21,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "face.jaw_width": {
+    "quality": "approximate",
+    "min": {
+     "value": 0.75,
+     "moved_vertices": 200,
+     "max_displacement_mm": 8.89,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.3,
+     "moved_vertices": 597,
+     "max_displacement_mm": 14.6,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "face.jaw_angle": {
+    "quality": "approximate",
+    "min": {
+     "value": 0.75,
+     "moved_vertices": 14517,
+     "max_displacement_mm": 15.25,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.3,
+     "moved_vertices": 14517,
+     "max_displacement_mm": 16.59,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "face.chin_width": {
+    "quality": "direct",
+    "min": {
+     "value": 0.75,
+     "moved_vertices": 142,
+     "max_displacement_mm": 5.33,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.3,
+     "moved_vertices": 198,
+     "max_displacement_mm": 12.43,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "face.chin_length": {
+    "quality": "direct",
+    "min": {
+     "value": 0.75,
+     "moved_vertices": 278,
+     "max_displacement_mm": 10.34,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.3,
+     "moved_vertices": 533,
+     "max_displacement_mm": 21.4,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "face.chin_projection": {
+    "quality": "direct",
+    "min": {
+     "value": 0.75,
+     "moved_vertices": 182,
+     "max_displacement_mm": 9.5,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.3,
+     "moved_vertices": 108,
+     "max_displacement_mm": 12.43,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "face.cheekbone_width": {
+    "quality": "direct",
+    "min": {
+     "value": 0.75,
+     "moved_vertices": 168,
+     "max_displacement_mm": 2.69,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.3,
+     "moved_vertices": 118,
+     "max_displacement_mm": 8.46,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "face.cheekbone_height": {
+    "quality": "direct",
+    "min": {
+     "value": 0.75,
+     "moved_vertices": 344,
+     "max_displacement_mm": 6.89,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.3,
+     "moved_vertices": 160,
+     "max_displacement_mm": 8.01,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "face.cheek_fullness": {
+    "quality": "direct",
+    "min": {
+     "value": 0.75,
+     "moved_vertices": 310,
+     "max_displacement_mm": 7.22,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.3,
+     "moved_vertices": 424,
+     "max_displacement_mm": 9.88,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "face.nose_length": {
+    "quality": "direct",
+    "min": {
+     "value": 0.75,
+     "moved_vertices": 335,
+     "max_displacement_mm": 8.04,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.3,
+     "moved_vertices": 397,
+     "max_displacement_mm": 5.74,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "face.nose_width": {
+    "quality": "direct",
+    "min": {
+     "value": 0.75,
+     "moved_vertices": 312,
+     "max_displacement_mm": 4.8,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.3,
+     "moved_vertices": 448,
+     "max_displacement_mm": 3.55,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "face.nose_bridge": {
+    "quality": "approximate",
+    "min": {
+     "value": 0.75,
+     "moved_vertices": 27,
+     "max_displacement_mm": 3.76,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.3,
+     "moved_vertices": 45,
+     "max_displacement_mm": 3.55,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "face.nose_tip": {
+    "quality": "approximate",
+    "min": {
+     "value": 0.75,
+     "moved_vertices": 64,
+     "max_displacement_mm": 2.51,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.3,
+     "moved_vertices": 42,
+     "max_displacement_mm": 1.6,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "face.nose_upturn": {
+    "quality": "direct",
+    "min": {
+     "value": -1,
+     "moved_vertices": 100,
+     "max_displacement_mm": 16.07,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1,
+     "moved_vertices": 77,
+     "max_displacement_mm": 4.8,
+     "height_m": 1.75
+    },
+    "at_default": 0
+   },
+   "face.brow_height": {
+    "quality": "direct",
+    "min": {
+     "value": 0.75,
+     "moved_vertices": 380,
+     "max_displacement_mm": 8.77,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.3,
+     "moved_vertices": 449,
+     "max_displacement_mm": 7.45,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "face.brow_prominence": {
+    "quality": "approximate",
+    "min": {
+     "value": 0.75,
+     "moved_vertices": 177,
+     "max_displacement_mm": 4.71,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.3,
+     "moved_vertices": 292,
+     "max_displacement_mm": 17.13,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "face.eye_size": {
+    "quality": "direct",
+    "min": {
+     "value": 0.8,
+     "moved_vertices": 980,
+     "max_displacement_mm": 3.95,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.25,
+     "moved_vertices": 986,
+     "max_displacement_mm": 2.51,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "face.eye_spacing": {
+    "quality": "direct",
+    "min": {
+     "value": 0.85,
+     "moved_vertices": 979,
+     "max_displacement_mm": 3.55,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.2,
+     "moved_vertices": 1238,
+     "max_displacement_mm": 4.8,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "face.eye_tilt": {
+    "quality": "approximate",
+    "min": {
+     "value": -1,
+     "moved_vertices": 297,
+     "max_displacement_mm": 2.2,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1,
+     "moved_vertices": 264,
+     "max_displacement_mm": 1.91,
+     "height_m": 1.75
+    },
+    "at_default": 0
+   },
+   "face.lip_upper": {
+    "quality": "direct",
+    "min": {
+     "value": 0.75,
+     "moved_vertices": 95,
+     "max_displacement_mm": 2.41,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.3,
+     "moved_vertices": 145,
+     "max_displacement_mm": 3.1,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "face.lip_lower": {
+    "quality": "direct",
+    "min": {
+     "value": 0.75,
+     "moved_vertices": 64,
+     "max_displacement_mm": 2.42,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.3,
+     "moved_vertices": 135,
+     "max_displacement_mm": 5,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "face.mouth_width": {
+    "quality": "direct",
+    "min": {
+     "value": 0.75,
+     "moved_vertices": 746,
+     "max_displacement_mm": 5.74,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.3,
+     "moved_vertices": 870,
+     "max_displacement_mm": 5.23,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "face.ear_size": {
+    "quality": "direct",
+    "min": {
+     "value": 0.75,
+     "moved_vertices": 1022,
+     "max_displacement_mm": 10.98,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.3,
+     "moved_vertices": 1028,
+     "max_displacement_mm": 11.33,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "face.ear_protrusion": {
+    "quality": "approximate",
+    "min": {
+     "value": 0.75,
+     "moved_vertices": 724,
+     "max_displacement_mm": 12.54,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1.3,
+     "moved_vertices": 662,
+     "max_displacement_mm": 13.78,
+     "height_m": 1.75
+    },
+    "at_default": 1
+   },
+   "face.asymmetry": {
+    "quality": "derived",
+    "min": {
+     "value": 0,
+     "moved_vertices": 0,
+     "max_displacement_mm": 0,
+     "height_m": 1.75
+    },
+    "max": {
+     "value": 1,
+     "moved_vertices": 711,
+     "max_displacement_mm": 3.4,
+     "height_m": 1.75
+    },
+    "at_default": 0
+   }
+  }
+ }
+}

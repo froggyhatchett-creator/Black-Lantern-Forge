@@ -86,7 +86,8 @@ _c("body.breast_height", "direct", _pair("breast/breast-trans", hi="up", lo="dow
 _c("body.breast_projection", "approximate", _pair("breast/breast-point"), "nipple-point projection, not volume")
 _c("body.breast_sag", "direct", ([(FIRM.format("min"), 1.0)], [(FIRM.format("max"), 1.0)]), "inverse of MakeHuman firmness")
 _c("face.face_width", "approximate", _pair("head/head-scale-horiz", w=0.6), "whole head width, not the face only")
-_c("face.face_length", "approximate", _merge(_pair("chin/chin-height"), _pair("head/head-scale-vert", w=0.5)))
+_c("face.face_length", "approximate", _merge(_pair("chin/chin-height"), _pair("head/head-scale-vert", w=0.5)),
+   "chin height plus half the head height (lengthens the cranium too)")
 _c("face.jaw_width", "approximate", _pair("chin/chin-bones"), "jaw bones (mandible width)")
 _c("face.jaw_angle", "approximate", ([("head/head-square.target", 1.0)], [("head/head-oval.target", 1.0)]),
    "whole-head square / oval shapes")

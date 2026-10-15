@@ -23,6 +23,7 @@ from forge_character_forge.studio_bake import (BODY_RANGES, FACE_RANGES, PACK_MA
                                                base_params, compact_pack)
 from forge_character_forge.v3 import GENERATOR, controls, garments, mh, model, rig
 
+BLINK_RESHAPE_M = 0.0003  # a control side whose lid-region shape changes by more than this gets a blink corrective
 IRIS_RADIUS_M = 0.006  # anatomical iris radius; with the fitted eyeball radius it gives the shader's iris angle
 
 
@@ -119,11 +120,14 @@ def bake(out_path, log=print) -> dict:
             entry["sphere"] = True  # eyeball centre = sphere fit (the shells are open at the back)
             entry["iris_angle"] = float(np.arcsin(min(IRIS_RADIUS_M / r, 0.9)))
         man["parts"][name] = entry
-    # expressions: the corrected blink
+    # expressions: the corrected blink, fitted to the neutral eye shape
+    bsrc = parts["body"]["src"]
+    lid = np.concatenate([model.lid_region(s, model.CORRECTIVE_RINGS) for s in "lr"])
+    _, fit0 = model.fit_blink(v)
+    blink0 = {s: model.blink_delta(v, s, fit0["factor"], lower=fit0["lower"]) for s in "lr"}
     for s in "lr":
-        d = model.blink_delta(v, s)
-        enc = _encode_delta(blob, d[parts["body"]["src"]])
-        man["expressions"].append({"name": f"blink_{s}", "body": enc})
+        man["expressions"].append({"name": f"blink_{s}", "body": _encode_delta(blob, blink0[s][bsrc])})
+    blink_fits = {"neutral": fit0}
     # control basis
     b, f = base_params()
     defaults = {"body": b, "face": f}
@@ -145,6 +149,17 @@ def bake(out_path, log=print) -> dict:
                     enc = _encode_delta(blob, _part_delta(p, d, ed))
                     if enc:
                         se["parts"][name] = enc
+                # blink corrective: where a control reshapes the lids, the blink is refitted at this end and the
+                # difference is stored; the studio adds it scaled by (blink weight x control weight)
+                dl = d[lid] - d[lid].mean(0)
+                if np.abs(dl).max() > BLINK_RESHAPE_M and controls.CONTROLS[key][1] != "scale":  # height: post-scale
+                    _, fit = model.fit_blink(v + d)
+                    blink_fits[f"{key}:{side}"] = fit
+                    for s in "lr":
+                        corr = model.blink_delta(v + d, s, fit["factor"], lower=fit["lower"]) - blink0[s]
+                        enc = _encode_delta(blob, corr[bsrc])
+                        if enc and np.abs(corr).max() > 1e-4:
+                            se.setdefault("expr", {})[f"blink_{s}"] = enc
                 pe["sides"][side] = se
             if quality == "direct" and controls.CONTROLS[key][1] == "scale":
                 pe["mode"] = "uniform_scale"  # the studio scales the evaluated character to exactly this height
@@ -158,6 +173,7 @@ def bake(out_path, log=print) -> dict:
         rot = {jn: blob.add(np.asarray(q, "<f4")) for jn, q in c.rotations.items() if jn in rig.NAMES}
         man["clips"][cname] = {"frames": int(len(c.times)), "fps": 30, "loop": bool(c.loop), "rot": rot,
                                "root": blob.add(np.asarray(c.root_translation, "<f4"))}
+    man["blink_fits"] = blink_fits
     man["rig"] = {**rig.merge_report(), "skin": skin_report, "renderer_joint_limit": 80, "export_joint_limit": 64}
     man["controls"] = controls.summary()
     man["unstable_topology"] = []

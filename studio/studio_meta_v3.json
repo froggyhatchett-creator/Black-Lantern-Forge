@@ -740,7 +740,7 @@
   },
   "face.face_length": {
    "quality": "approximate",
-   "note": ""
+   "note": "chin height plus half the head height (lengthens the cranium too)"
   },
   "face.jaw_width": {
    "quality": "approximate",

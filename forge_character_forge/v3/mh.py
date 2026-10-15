@@ -20,7 +20,9 @@ DM = 0.1  # decimetres -> metres
 def base_obj():
     """hm08 base mesh: (verts incl. helpers (V,3), body quads (F,4) vertex ids, body quads uv ids, uvs (T,2), groups)."""
     verts, uvs, groups, cur = [], [], {}, None
-    for line in open(ASSETS / "3dobjs" / "base.obj"):
+    with open(ASSETS / "3dobjs" / "base.obj") as fh:
+        lines = fh.readlines()
+    for line in lines:
         if line.startswith("v "):
             verts.append([float(x) for x in line.split()[1:4]])
         elif line.startswith("vt "):
@@ -42,12 +44,13 @@ def base_obj():
 def target(rel: str) -> tuple[np.ndarray, np.ndarray]:
     """A MakeHuman .target: (vertex ids, deltas in metres)."""
     idx, d = [], []
-    for line in open(ASSETS / "targets" / rel):
-        if line.startswith("#") or not line.strip():
-            continue
-        i, x, y, z = line.split()
-        idx.append(int(i))
-        d.append((float(x), float(y), float(z)))
+    with open(ASSETS / "targets" / rel) as fh:
+        for line in fh:
+            if line.startswith("#") or not line.strip():
+                continue
+            i, x, y, z = line.split()
+            idx.append(int(i))
+            d.append((float(x), float(y), float(z)))
     return np.array(idx, np.int64), np.array(d).reshape(-1, 3) * DM
 
 
@@ -62,7 +65,8 @@ def target_sum(n: int, weighted) -> np.ndarray:
 @lru_cache(maxsize=None)
 def eye_proxy():
     """High-poly eyes: mhclo references (idx (E,3), weights (E,3), offsets (E,3)), scale refs, triangles."""
-    lines = [l.split() for l in open(ASSETS / "eyes" / "high-poly" / "high-poly.mhclo") if l.strip() and not l.startswith("#")]
+    with open(ASSETS / "eyes" / "high-poly" / "high-poly.mhclo") as fh:
+        lines = [l.split() for l in fh if l.strip() and not l.startswith("#")]
     scale = {}
     for l in lines:
         if l[0] in ("x_scale", "y_scale", "z_scale"):
@@ -75,7 +79,9 @@ def eye_proxy():
         refs.append([float(x) for x in l])
     r = np.array(refs)
     faces = []
-    for line in open(ASSETS / "eyes" / "high-poly" / "high-poly.obj"):
+    with open(ASSETS / "eyes" / "high-poly" / "high-poly.obj") as fh:
+        obj = fh.readlines()
+    for line in obj:
         if line.startswith("f "):
             faces.append([int(t.split("/")[0]) - 1 for t in line.split()[1:]])
     tris = np.array([(f[0], f[k], f[k + 1]) for f in faces for k in range(1, len(f) - 1)], np.int64)
@@ -91,13 +97,13 @@ def fit_eyes(verts: np.ndarray) -> np.ndarray:
 
 @lru_cache(maxsize=None)
 def skeleton():
-    d = json.load(open(ASSETS / "rigs" / "default.mhskel"))
+    d = json.loads((ASSETS / "rigs" / "default.mhskel").read_text())
     return d["bones"], d["joints"]
 
 
 @lru_cache(maxsize=None)
 def skin_weights() -> dict:
-    return json.load(open(ASSETS / "rigs" / "default_weights.mhw"))["weights"]
+    return json.loads((ASSETS / "rigs" / "default_weights.mhw").read_text())["weights"]
 
 
 def joint_positions(verts: np.ndarray) -> dict[str, np.ndarray]:
@@ -113,7 +119,7 @@ def bone_head(bone: str, jp: dict) -> np.ndarray:
 
 def bvh_pose_unit(unit: str) -> dict[str, tuple[float, float, float]]:
     """Per-bone (X, Y, Z) rotation in degrees of one named frame of the face pose-unit BVH."""
-    lines = open(ASSETS / "poseunits" / "face-poseunits.bvh").read().split("\n")
+    lines = (ASSETS / "poseunits" / "face-poseunits.bvh").read_text().split("\n")
     order, chans = [], []
     for l in lines:
         tok = l.split()
@@ -123,7 +129,7 @@ def bvh_pose_unit(unit: str) -> dict[str, tuple[float, float, float]]:
             chans.append(tok[2:])
     m = next(k for k, l in enumerate(lines) if l.startswith("MOTION"))
     frames = [list(map(float, l.split())) for l in lines[m + 3:] if l.strip()]
-    fi = json.load(open(ASSETS / "poseunits" / "face-poseunits.json"))["framemapping"].index(unit)
+    fi = json.loads((ASSETS / "poseunits" / "face-poseunits.json").read_text())["framemapping"].index(unit)
     vals, out, k = frames[fi], {}, 0
     for name, ch in zip(order, chans):
         rot = {c[0]: vals[k + j] for j, c in enumerate(ch) if c.endswith("rotation")}

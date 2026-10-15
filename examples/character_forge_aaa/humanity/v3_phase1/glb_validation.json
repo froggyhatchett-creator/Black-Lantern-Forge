@@ -1,0 +1,16 @@
+{
+ "ok": true,
+ "errors": [],
+ "warnings": [],
+ "stats": {
+  "meshes": 7,
+  "triangles": 33596,
+  "vertices": 18211,
+  "joints": 62,
+  "morph_targets": 2,
+  "animations": 7,
+  "materials": 5,
+  "images": 0,
+  "profile": "public"
+ }
+}

@@ -81,7 +81,7 @@ export function exportGLB(st) {
     const mesh = { name, primitives: [prim] };
     if (name === "body" && st.expressions.length) {
       prim.targets = []; const tn = [];
-      for (const e of st.expressions) { const { idx, val } = st.decodeSparse(e.body, n); prim.targets.push({ POSITION: b.sparse(n, idx, val) }); tn.push(e.name); }
+      for (const e of st.expressions) { const { idx, val } = st.expressionDelta ? st.expressionDelta(e, n) : st.decodeSparse(e.body, n); prim.targets.push({ POSITION: b.sparse(n, idx, val) }); tn.push(e.name); }
       mesh.weights = tn.map(() => 0); mesh.extras = { targetNames: tn };
     }
     meshes.push(mesh);

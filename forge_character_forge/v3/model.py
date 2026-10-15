@@ -177,11 +177,19 @@ def lid_pose(v: np.ndarray, side: str, k: float = 1.0, mode: str = "angle", lowe
     return out
 
 
-def lid_region(side: str) -> np.ndarray:
+CORRECTIVE_RINGS = 2  # the blink corrective may also move this many vertex rings around the lid bones' region
+
+
+def lid_region(side: str, rings: int = 0) -> np.ndarray:
+    """Skin vertices weighted to one eye's lid bones, optionally grown by ``rings`` edge rings."""
     W = mh.skin_weights()
     S = side.upper()
     ids = [np.asarray(W[b], float)[:, 0].astype(np.int64) for b in ("orbicularis03." + S, "orbicularis04." + S) if b in W]
-    return np.intersect1d(np.concatenate(ids), body_vertex_ids())  # skin only (helpers are not rendered)
+    region = np.intersect1d(np.concatenate(ids), body_vertex_ids())  # skin only (helpers are not rendered)
+    nb = _neighbours()
+    for _ in range(rings):
+        region = np.unique(np.concatenate([region] + [np.fromiter(nb[int(i)], np.int64) for i in region]))
+    return region
 
 
 @lru_cache(maxsize=None)
@@ -242,7 +250,7 @@ def blink_delta(v: np.ndarray, side: str, k: float = BLINK_K, corrected: bool = 
     """
     if not corrected:
         return lid_pose(v, side, k, mode="lbs") - v
-    region = lid_region(side)
+    region = lid_region(side, CORRECTIVE_RINGS)
     d = lid_pose(v, side, k, mode="angle", lower=lower) - v
     d = _keep_off_cornea(v, relax(d, region), region, side)
     nb = _neighbours()
@@ -252,6 +260,29 @@ def blink_delta(v: np.ndarray, side: str, k: float = BLINK_K, corrected: bool = 
             break
         ring = np.unique(np.concatenate([bad] + [np.fromiter(nb[int(i)], np.int64) for i in bad]))
         ring = np.intersect1d(ring, region)
-        d = relax(d, np.unique(np.concatenate([ring] + [np.fromiter(nb[int(i)], np.int64) for i in ring])), iters=2)
+        grow = np.intersect1d(np.concatenate([ring] + [np.fromiter(nb[int(i)], np.int64) for i in ring]), region)
+        d = relax(d, grow, iters=2)  # only lid vertices move
         d = _keep_off_cornea(v, d, region, side)
     return d
+
+
+BLINK_GRID = [(k, lower) for lower in (0.0, 0.5) for k in (1.0, 1.1, 1.2, 1.3, 1.4, 1.5)]
+
+
+def fit_blink(v: np.ndarray, target: float = 0.005):
+    """Corrected blink fitted to the eye shape of ``v`` (a fixed angle under-closes large eyes and over-closes small
+    ones). Grid over the upper-lid closing factor and a lower-lid raise; the choice closes the eye (front-view
+    eyeball exposure <= ``target``) with the fewest folded lid triangles, else the smallest exposure.
+    Returns (delta, {"factor", "lower", "exposure", "flipped"})."""
+    from forge_character_forge.v3 import metrics
+    open_px = max(metrics.eye_exposure_pixels(v), 1)
+    region = np.concatenate([lid_region(s, CORRECTIVE_RINGS) for s in "lr"])
+    best = None
+    for k, lower in BLINK_GRID:
+        d = blink_delta(v, "l", k, lower=lower) + blink_delta(v, "r", k, lower=lower)
+        e = metrics.eye_exposure_pixels(v + d) / open_px
+        f = metrics.tri_quality(v, v + d, region)["flipped"]
+        score = (e > target, f if e <= target else e, k)
+        if best is None or score < best[0]:
+            best = (score, d, {"factor": k, "lower": lower, "exposure": round(e, 4), "flipped": f})
+    return best[1], best[2]
