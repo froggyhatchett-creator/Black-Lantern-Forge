@@ -86,6 +86,12 @@ adult character in the real studio before expanding. Finite credits: short visua
   records the old-to-new mapping).
 - Not reconstructed yet. No generation or bake jobs launched for them.
 
+## Post-baseline priority (REF-001 failed; P5 paused, kept long-term)
+- REF-001 baseline is preserved as evidence (`humanity/ref001_baseline/`, commit ad4635c). Do not overwrite it.
+- Back to P1. The foundation question (improve the SDF mesh, or adopt a licensed base mesh as generator v3) is in
+  `docs/CHARACTER_FORGE_FOUNDATION_ASSESSMENT.md`, awaiting review. Open defects D-001..D-005 are in
+  `docs/CHARACTER_FORGE_DEFECTS.md`.
+
 ## Open problems / next actions
 1. Commit/push checkpoint; publish the studio artifact (multi-file; `downloads` capability; GLB offered zipped).
 2. Face realism (lips/eyes/brows) and anatomy fixes (hands, knees, feet) need a re-bake (~28 min) to reach the studio.
