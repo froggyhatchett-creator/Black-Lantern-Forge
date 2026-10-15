@@ -79,9 +79,11 @@ adult character in the real studio before expanding. Finite credits: short visua
 
 ## Reference benchmarks (registered 2026-10-15)
 `examples/character_forge_aaa/benchmarks/benchmarks.json` lists byte-exact copies with SHA-256 hashes.
-- REF-001 Gothic Centaur, REF-002 Tavern Bovine: future creature-system tests only, not authorized for current work.
-- REF-003 Cyberpunk Mercy: ACTIVE reference for Project Humanity's first believable human. It is an anime-stylized
+- REF-001 Mercy: ACTIVE reference for Project Humanity's first believable human. It is an anime-stylized
   illustration in a seated pose under purple lighting, so a realistic result is an interpretation; never claim likeness.
+- REF-002 Gothic Centaur, REF-003 Tavern Cowgirl: future creature-system tests only, not authorized for current work.
+- Numbering follows attachment order (renumbered the same day; commit ad589fc used the old IDs, and the registry
+  records the old-to-new mapping).
 - Not reconstructed yet. No generation or bake jobs launched for them.
 
 ## Open problems / next actions
