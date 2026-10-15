@@ -65,9 +65,154 @@
    "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/macrodetails/universal-male-young-averagemuscle-averageweight.target",
    "bytes": 604,
    "sha256": "4ba5396ddabda448ece15650a566fbebfbb10239256ccb201e8f883429e12249"
+  },
+  {
+   "file": "assets/data/modifiers/measurement_modifiers.json",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/modifiers/measurement_modifiers.json",
+   "bytes": 1506,
+   "sha256": "99dc2b46dbf1dc95a22c20ec3f88687130eb7b66d07f21e6e20e2c7b707e39db",
+   "cc0_header_in_file": null,
+   "experiment": "morph discovery"
+  },
+  {
+   "file": "assets/data/modifiers/modeling_modifiers.json",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/modifiers/modeling_modifiers.json",
+   "bytes": 17484,
+   "sha256": "c96aaca3f7a6d838d4946a02a1510247acbd75678cfdb0d99e4daf53bb036a11",
+   "cc0_header_in_file": null,
+   "experiment": "morph discovery"
+  },
+  {
+   "file": "assets/data/targets/breast/female-young-averagemuscle-averageweight-maxcup-averagefirmness.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/breast/female-young-averagemuscle-averageweight-maxcup-averagefirmness.target",
+   "bytes": 15334,
+   "sha256": "b5aaa1595cf4efcee69022fc60034d93ab6f6fc473e6f8e162e5526803b074bf",
+   "cc0_header_in_file": true,
+   "experiment": "morph discovery"
+  },
+  {
+   "file": "assets/data/targets/buttocks/buttocks-volume-incr.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/buttocks/buttocks-volume-incr.target",
+   "bytes": 22351,
+   "sha256": "1ba81c82932e21420ff20bc8f35489061f2f3d79d4b3130b61fe872602156b01",
+   "cc0_header_in_file": true,
+   "experiment": "morph discovery"
+  },
+  {
+   "file": "assets/data/targets/cheek/l-cheek-bones-incr.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/cheek/l-cheek-bones-incr.target",
+   "bytes": 1519,
+   "sha256": "244ffa39d2d2db94ff15130719346b4cae2236bf2a309c5682eac352da06be50",
+   "cc0_header_in_file": true,
+   "experiment": "morph discovery"
+  },
+  {
+   "file": "assets/data/targets/cheek/r-cheek-bones-incr.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/cheek/r-cheek-bones-incr.target",
+   "bytes": 1514,
+   "sha256": "a393f67acce21568ab832091daadab267685d464492647cb0c4e8cb5af58c4c9",
+   "cc0_header_in_file": true,
+   "experiment": "morph discovery"
+  },
+  {
+   "file": "assets/data/targets/chin/chin-width-incr.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/chin/chin-width-incr.target",
+   "bytes": 3706,
+   "sha256": "deef506bfe1883d9d4c38667332c9970785226566efbae4724fd3d60c02efcf4",
+   "cc0_header_in_file": true,
+   "experiment": "morph discovery"
+  },
+  {
+   "file": "assets/data/targets/eyes/l-eye-scale-incr.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/eyes/l-eye-scale-incr.target",
+   "bytes": 13397,
+   "sha256": "f35550dc3170ca1c0aacae0b598ca139e4f1f913f2ccea146ec6ea5b4e050dbb",
+   "cc0_header_in_file": true,
+   "experiment": "morph discovery"
+  },
+  {
+   "file": "assets/data/targets/eyes/r-eye-scale-incr.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/eyes/r-eye-scale-incr.target",
+   "bytes": 12192,
+   "sha256": "e1f4cb48575b60a46589635b99a8b87587ba82d7524a8ac1445ace0ba002e918",
+   "cc0_header_in_file": true,
+   "experiment": "morph discovery"
+  },
+  {
+   "file": "assets/data/targets/hip/hip-scale-horiz-incr.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/hip/hip-scale-horiz-incr.target",
+   "bytes": 32914,
+   "sha256": "2863ee4478f548cd2cdd932037fcd21e6b364b9a2d86911d3b603be18f598da7",
+   "cc0_header_in_file": true,
+   "experiment": "morph discovery"
+  },
+  {
+   "file": "assets/data/targets/macrodetails/caucasian-female-young.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/macrodetails/caucasian-female-young.target",
+   "bytes": 420559,
+   "sha256": "118379f6e8ba9266247fdb8788a20e1df40a239f97ced0b9905bcbcc74f6e820",
+   "cc0_header_in_file": true,
+   "experiment": "morph discovery"
+  },
+  {
+   "file": "assets/data/targets/macrodetails/caucasian-male-young.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/macrodetails/caucasian-male-young.target",
+   "bytes": 396479,
+   "sha256": "70e228ba7164737dae664454394536fc5935fa48d333c1a97d77e2dc6eacc5f5",
+   "cc0_header_in_file": true,
+   "experiment": "morph discovery"
+  },
+  {
+   "file": "assets/data/targets/macrodetails/universal-female-young-averagemuscle-maxweight.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/macrodetails/universal-female-young-averagemuscle-maxweight.target",
+   "bytes": 124481,
+   "sha256": "3648e7f9b34d947726161b563b90ba92b29860bac4c4f82aea3cec37bad2bb4e",
+   "cc0_header_in_file": true,
+   "experiment": "morph discovery"
+  },
+  {
+   "file": "assets/data/targets/macrodetails/universal-female-young-maxmuscle-averageweight.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/macrodetails/universal-female-young-maxmuscle-averageweight.target",
+   "bytes": 138225,
+   "sha256": "2e56b09b44a8497b927585447fdaac5ea7293521d1f3a3df1059495873c53f4e",
+   "cc0_header_in_file": true,
+   "experiment": "morph discovery"
+  },
+  {
+   "file": "assets/data/targets/macrodetails/universal-male-young-maxmuscle-averageweight.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/macrodetails/universal-male-young-maxmuscle-averageweight.target",
+   "bytes": 147110,
+   "sha256": "c171ff9cc95e96273beb3e3b1969a01988c2d4982ebc6fe04bf81cf72ee3b295",
+   "cc0_header_in_file": true,
+   "experiment": "morph discovery"
+  },
+  {
+   "file": "assets/data/targets/mouth/mouth-upperlip-volume-incr.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/mouth/mouth-upperlip-volume-incr.target",
+   "bytes": 3600,
+   "sha256": "b124cbd9b9be318264f61a143da603b42e0357ed92b4b6afd1b31a83daaf8568",
+   "cc0_header_in_file": true,
+   "experiment": "morph discovery"
+  },
+  {
+   "file": "assets/data/targets/nose/nose-scale-horiz-incr.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/nose/nose-scale-horiz-incr.target",
+   "bytes": 7568,
+   "sha256": "cc319e3ddb0523fa2b563dcfc840cf2f915a890abe5612009a0becebecd3c5ae",
+   "cc0_header_in_file": true,
+   "experiment": "morph discovery"
+  },
+  {
+   "file": "assets/data/targets/torso/torso-vshape-incr.target",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/torso/torso-vshape-incr.target",
+   "bytes": 95207,
+   "sha256": "9d0ac9eec39a14d51d7db50e48292b3db67aed9b91e654b379f4dbe348644684",
+   "cc0_header_in_file": true,
+   "experiment": "morph discovery"
   }
  ],
  "notes": [
-  "macrodetails .target files in both repositories carry only the CC0 header (universal-female/male-young-average targets are empty, original size 0); the macro morph data was not located, so the proof uses the base mesh shape"
+  "The universal-*-averagemuscle-averageweight targets are legitimately empty (zero deviation by definition). Gender/age shapes live in the per-ethnicity macro targets (caucasian-female-young etc.); muscle/weight in universal-*-max* targets. All downloaded .target files carry the CC0 release header.",
+  "modifiers/*.json (modifier definitions) are covered by the bundled-asset licence ('targets and modifiers')."
  ]
 }
