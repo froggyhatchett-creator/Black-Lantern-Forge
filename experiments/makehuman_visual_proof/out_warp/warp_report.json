@@ -1,0 +1,90 @@
+{
+ "landmarks_vertex_index": {
+  "outer_canthus": 14797,
+  "inner_canthus": 6854,
+  "upper_lid_mid": 14846,
+  "lower_lid_mid": 14857,
+  "nose_tip": 297,
+  "alar": 11936,
+  "upper_lip_mid": 454,
+  "lower_lip_mid": 455,
+  "mouth_corner": 11895,
+  "pogonion": 733,
+  "chin_side": 11772,
+  "gonion": 18823,
+  "cheekbone": 18802
+ },
+ "landmark_displacement_mm": {
+  "outer_canthus.L": 3.94,
+  "outer_canthus.R": 3.94,
+  "inner_canthus.L": 0.85,
+  "inner_canthus.R": 0.85,
+  "upper_lid_mid.L": 1.6,
+  "upper_lid_mid.R": 1.6,
+  "lower_lid_mid.L": 0.6,
+  "lower_lid_mid.R": 0.6,
+  "nose_tip": 2.77,
+  "alar.L": 2.36,
+  "alar.R": 2.36,
+  "upper_lip_mid": 0.6,
+  "lower_lip_mid": 1.04,
+  "mouth_corner.L": 2.86,
+  "mouth_corner.R": 2.86,
+  "pogonion": 2.69,
+  "chin_side.L": 2.6,
+  "chin_side.R": 2.6,
+  "gonion.L": 6.96,
+  "gonion.R": 6.96,
+  "cheekbone.L": 2.74,
+  "cheekbone.R": 2.74
+ },
+ "requested_offset_mm": {
+  "outer_canthus": 3.94,
+  "inner_canthus": 0.85,
+  "upper_lid_mid": 1.6,
+  "lower_lid_mid": 0.6,
+  "nose_tip": 2.77,
+  "alar": 2.36,
+  "mouth_corner": 2.86,
+  "upper_lip_mid": 0.6,
+  "lower_lip_mid": 1.04,
+  "cheekbone": 2.74,
+  "gonion": 6.96,
+  "chin_side": 2.6,
+  "pogonion": 2.69
+ },
+ "head_displacement_mm": {
+  "mean": 0.64,
+  "p95": 2.74,
+  "max": 6.96,
+  "vertices_moved_gt_0_5mm": 2289
+ },
+ "quality_vs_female": {
+  "face_triangles": 8470,
+  "flipped": 0,
+  "min_angle_deg_p1": 6.53,
+  "degenerate_lt_2deg": 0,
+  "max_area_change_ratio": 1.39
+ },
+ "topology_uv": "unchanged (vertex positions only; same faces and UV indices)",
+ "blink": {
+  "female": {
+   "open_eye_pixels": 3002,
+   "closed_eye_pixels": 142,
+   "visible_fraction_closed": 0.047
+  },
+  "warped": {
+   "open_eye_pixels": 2868,
+   "closed_eye_pixels": 530,
+   "visible_fraction_closed": 0.185
+  }
+ },
+ "quality_blink_warped": {
+  "face_triangles": 8470,
+  "flipped": 38,
+  "min_angle_deg_p1": 6.95,
+  "degenerate_lt_2deg": 0,
+  "max_area_change_ratio": 7.15
+ },
+ "seconds": 20.8
+}
