@@ -1,0 +1,15 @@
+{
+ "checks": [
+  {
+   "name": "v3 studio boots",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "no page errors",
+   "pass": true,
+   "detail": ""
+  }
+ ],
+ "errors": []
+}

@@ -20,7 +20,8 @@ SRC = "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/mak
 EXP = ROOT / "experiments/makehuman_visual_proof"
 DST = ROOT / "forge_character_forge/v3/assets"
 FILES = ["3dobjs/base.obj", "eyes/high-poly/high-poly.obj", "eyes/high-poly/high-poly.mhclo", "rigs/default.mhskel",
-         "rigs/default_weights.mhw", "poseunits/face-poseunits.bvh", "poseunits/face-poseunits.json"]
+         "rigs/default_weights.mhw", "poseunits/face-poseunits.bvh", "poseunits/face-poseunits.json",
+         "eyes/materials/brown.mhmat", "eyes/materials/brown_eye.png"]
 
 
 def main():

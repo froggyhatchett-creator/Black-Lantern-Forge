@@ -33,7 +33,7 @@ async function loadPack(url) {
   const n = new DataView(raw).getUint32(8, true);
   const man = JSON.parse(new TextDecoder().decode(new Uint8Array(raw, 12, n)));
   const blob = raw.slice(12 + n);
-  const T = { f4: Float32Array, u4: Uint32Array, i2: Int16Array, u1: Uint8Array };
+  const T = { f4: Float32Array, u4: Uint32Array, i2: Int16Array, u2: Uint16Array, u1: Uint8Array };
   const cache = new Map();
   const arr = (e) => {
     const n = e.s.reduce((a, b) => a * b, 1);
@@ -132,13 +132,15 @@ const GROUPS = {
     ["Mouth & ears", ["lip_upper", "lip_lower", "mouth_width", "ear_size", "ear_protrusion"]]],
 };
 const HAIR_LABELS = { bald: "Bald", buzz: "Buzz cut", short: "Short (close crop)", pixie: "Pixie / shag", bob: "Layered bob",
-  bangs: "Bob with asymmetric bangs", long: "Long layered", bun: "Bun" };
+  bangs: "Bob with asymmetric bangs", long: "Long layered", bun: "Bun", shoulder: "Shoulder-length layers (strands)" };
 const HAIR_SWAY = { hair_long: [1.0, 0.15, 0.5], hair_bob: [0.45, 0.16, 0.15], hair_bangs: [0.45, 0.16, 0.15], hair_pixie: [0.12, 0.2, 0.1] };  // amount, unit top, unit length
 const MATERIAL = {
   skin: { kind: 0, rough: 0.5, spec: 0.28, sss: 1, detail: 1 }, eye: { kind: 3, rough: 0.15, spec: 0.6 },
   cornea: { kind: 4, blend: true, rough: 0.03, spec: 1 }, teeth: { kind: 6, rough: 0.3, spec: 0.4 },
   brow: { kind: 5, double: true, blend: true, rough: 0.7, spec: 0.1 }, lash: { kind: 5, double: true, blend: true, rough: 0.6, spec: 0.1 },
   hair: { kind: 2, double: true, rough: 0.5, spec: 0.3 },
+  strand_hair: { kind: 8, double: true, a2c: true, rough: 0.4, spec: 0.55 }, strand_brow: { kind: 8, double: true, a2c: true, spec: 0.25 },
+  strand_lash: { kind: 8, double: true, a2c: true, spec: 0.3 },
 };
 
 // ---------------------------------------------------------------- application
@@ -163,6 +165,7 @@ class Studio {
     this.parts = {};
     for (const [name, p] of Object.entries(this.man.parts)) this.buildPart(name, p);
     this.decodeCache = new Map();
+    this.texturesReady = this.loadTextures();
     this.clipT = 0; this.playing = true;
     this.phys = { on: true, state: new Map(), freq: 2.4, damp: 0.22, support: 1, intensity: 1, hair: null };
     this.dirtyGeo = true;
@@ -191,8 +194,63 @@ class Studio {
     Object.assign(g, mat);
     this.parts[name] = { g, base: pos, idx, tint: col, cur: new Float32Array(pos.length), nrm: new Float32Array(pos.length), material: p.material,
       jnt: this.arr(p.joints), wgt: this.arr(p.weights), sway: null, headSpace: p.frame === "head", hl,
-      weld: p.weld ? this.arr(p.weld) : null, uv, sphere: !!p.sphere };
+      weld: p.weld ? this.arr(p.weld) : null, uv, sphere: !!p.sphere, texNames: p.textures || null, iris: p.iris || null,
+      anchor: p.anchor ? { mode: p.anchor.mode, root: this.arr(p.anchor.root), tri: this.arr(p.anchor.tri), bary: this.arr(p.anchor.bary),
+        off: this.arr(p.anchor.off), cageIdx: p.anchor.cage_idx ? this.arr(p.anchor.cage_idx) : null,
+        cageW: p.anchor.cage_w ? Float32Array.from(this.arr(p.anchor.cage_w), (x) => x / 65535) : null } : null, strandPts: p.strand_points || 0 };
     if (p.iris_angle) g.irisA = p.iris_angle;
+  }
+  async loadTextures() {  // v3 maps live in the pack as PNG bytes
+    const names = this.man.textures || {}; this.texBitmaps = {}; this.texPNG = {};
+    const srgb = { skin_albedo: true, eye: true };
+    const gl = this.renderer;
+    const tex = {};
+    for (const [k, e] of Object.entries(names)) {
+      const bytes = this.arr(e); this.texPNG[k] = bytes;
+      const bmp = await createImageBitmap(new Blob([bytes], { type: "image/png" }), { premultiplyAlpha: "none", colorSpaceConversion: "none" });
+      this.texBitmaps[k] = bmp; tex[k] = gl.texture(bmp, !!srgb[k]);
+    }
+    for (const P of Object.values(this.parts)) if (P.texNames) {
+      if (P.texNames.albedo) P.g.texA = tex[P.texNames.albedo];
+      if (P.texNames.normal) P.g.texN = tex[P.texNames.normal];
+    }
+    this.dirtyFrame = true;
+  }
+  anchorEval(P, body, out) {  // strands follow the live body: root = barycentric point, offset in world or triangle frame
+    const A = P.anchor;
+    if (A.mode === "cage") {  // each strand point moves with a blend of nearby skin vertices' displacements (v3 hair)
+      const rest = this.parts.body.base, K = A.cageIdx.length / (out.length / 6), pos = P.base;
+      for (let q = 0; q < out.length / 6; q++) {
+        let dx = 0, dy = 0, dz = 0;
+        for (let k = 0; k < K; k++) { const j = A.cageIdx[q * K + k] * 3, w = A.cageW[q * K + k];
+          dx += (body[j] - rest[j]) * w; dy += (body[j + 1] - rest[j + 1]) * w; dz += (body[j + 2] - rest[j + 2]) * w; }
+        for (const v of [q * 2, q * 2 + 1]) { out[v * 3] = pos[v * 3] + dx; out[v * 3 + 1] = pos[v * 3 + 1] + dy; out[v * 3 + 2] = pos[v * 3 + 2] + dz; }
+      }
+      return;
+    }
+    const R = A.bary.length / 3, fr = new Float32Array(R * 12), frame = A.mode === "frame";
+    for (let r = 0; r < R; r++) {
+      const a = A.tri[r * 3] * 3, b = A.tri[r * 3 + 1] * 3, c = A.tri[r * 3 + 2] * 3, w0 = A.bary[r * 3], w1 = A.bary[r * 3 + 1], w2 = A.bary[r * 3 + 2];
+      for (let k = 0; k < 3; k++) fr[r * 12 + k] = body[a + k] * w0 + body[b + k] * w1 + body[c + k] * w2;
+      if (!frame) continue;
+      const e1 = [body[b] - body[a], body[b + 1] - body[a + 1], body[b + 2] - body[a + 2]], e2 = [body[c] - body[a], body[c + 1] - body[a + 1], body[c + 2] - body[a + 2]];
+      const t = norm(e1), nn = norm(cross(e1, e2)), bt = cross(nn, t);
+      fr.set(t, r * 12 + 3); fr.set(bt, r * 12 + 6); fr.set(nn, r * 12 + 9);
+    }
+    const off = A.off, root = A.root;
+    for (let v = 0; v < root.length; v++) {
+      const o = root[v] * 12, x = off[v * 3], y = off[v * 3 + 1], z = off[v * 3 + 2];
+      if (frame) for (let k = 0; k < 3; k++) out[v * 3 + k] = fr[o + k] + x * fr[o + 3 + k] + y * fr[o + 6 + k] + z * fr[o + 9 + k];
+      else { out[v * 3] = fr[o] + x; out[v * 3 + 1] = fr[o + 1] + y; out[v * 3 + 2] = fr[o + 2] + z; }
+    }
+  }
+  strandTangents(P, cur, out) {  // ribbons are laid out [strand][point][left,right]; the shader's "normal" is the strand direction
+    const K = P.strandPts, n = cur.length / 3, S = n / (2 * K);
+    for (let s = 0; s < S; s++) for (let k = 0; k < K; k++) {
+      const a = (s * K + Math.max(k - 1, 0)) * 2, b = (s * K + Math.min(k + 1, K - 1)) * 2;
+      const t = norm([cur[b * 3] - cur[a * 3], cur[b * 3 + 1] - cur[a * 3 + 1], cur[b * 3 + 2] - cur[a * 3 + 2]]);
+      for (const v of [(s * K + k) * 2, (s * K + k) * 2 + 1]) out.set(t, v * 3);
+    }
   }
   // -------------------------------------------------------------- geometry evaluation
   addDelta(target, enc, w) {
@@ -233,6 +291,7 @@ class Studio {
         for (let i = 0; i < cur.length; i += 3) { cur[i] = O[0] + P.base[i] * k; cur[i + 1] = O[1] + P.base[i + 1] * k; cur[i + 2] = O[2] + P.base[i + 2] * k; }
         this.normals(cur, P.idx, P.nrm); this.renderer.update(P.g, "pos", cur); this.renderer.update(P.g, "nrm", P.nrm); continue;
       }
+      if (P.anchor) continue;  // grooming: evaluated below, from the final (height-scaled) body
       cur.set(P.base);
       for (const [se, w] of ws) this.addDelta(cur, se.parts[name], w);
       if (pre && pre.parts) this.addDelta(cur, pre.parts[name], 1);
@@ -253,11 +312,16 @@ class Studio {
     const hs = Object.entries(this.man.params).find(([, pe]) => pe.mode === "uniform_scale");
     if (hs) {  // exact height: scale the whole evaluated character (all parts and joints) about the floor origin
       const k = this.state.params[hs[0]] / this.measureHeight();
-      for (const P of Object.values(this.parts)) { if (P.headSpace) continue;
+      for (const P of Object.values(this.parts)) { if (P.headSpace || P.anchor) continue;
         for (let i = 0; i < P.cur.length; i++) P.cur[i] *= k; this.renderer.update(P.g, "pos", P.cur);
         if (P.material === "eye") P.g.eyeC = P.g.eyeC.map((x) => x * k); }
       for (let i = 0; i < rest.length; i++) rest[i] *= k;
       for (const [name, P] of Object.entries(this.parts)) if (P.material === "cornea") P.g.eyeC = this.parts[`eye_${name.slice(-1)}`].g.eyeC;
+    }
+    for (const [name, P] of Object.entries(this.parts)) {  // strands follow the live body (controls, blink, height)
+      if (!P.anchor || (!P.g.visible && name.startsWith("hair_"))) continue;
+      this.anchorEval(P, this.parts.body.cur, P.cur); this.strandTangents(P, P.cur, P.nrm);
+      this.renderer.update(P.g, "pos", P.cur); this.renderer.update(P.g, "nrm", P.nrm);
     }
     this.heightNow = this.measureHeight();
     this.updateColors();
@@ -284,11 +348,15 @@ class Studio {
     const hair = hex2lin(s.hair_color);
     for (const [name, P] of Object.entries(this.parts)) {
       const g = P.g;
-      if (P.material === "skin") g.base = skin;
+      if (P.material === "skin") { g.base = skin; g.iris = hair.map((v) => v * 0.6);  // scalp tint under the v3 hair
+        g.scalp = Object.entries(this.parts).some(([n, Q]) => n.startsWith("hair_") && Q.anchor && Q.g.visible) ? 1 : 0; }
       else if (P.material === "hair") { g.base = hair; g.iris = hex2lin(s.hl_color); g.detail = s.hl_amount; }  // highlight color/amount
       else if (P.material === "brow") g.base = hair.map((v) => v * 0.8);
       else if (P.material === "lash") g.base = [0.02, 0.015, 0.012];
-      else if (P.material === "eye") { g.base = [1, 1, 1]; g.iris = this.meta.eye_colors[s.eye] || [0.2, 0.09, 0.03]; }
+      else if (P.material === "strand_hair") g.base = hair;
+      else if (P.material === "strand_brow") g.base = hair.map((v) => v * 0.55);
+      else if (P.material === "strand_lash") g.base = [0.025, 0.02, 0.018];
+      else if (P.material === "eye") { g.base = [1, 1, 1]; g.iris = this.meta.eye_colors[s.eye] || [0.2, 0.09, 0.03]; if (P.iris) g.detail = P.iris.mean_lum; }
       else if (P.material === "cornea") g.base = [1, 1, 1];
       else if (P.material === "teeth") g.base = [1, 1, 1];
       else if (P.material.startsWith("cloth_")) { const gname = P.material.slice(6);
@@ -464,7 +532,43 @@ class Studio {
       generator: this.man.generator || null,
       expressions: this.man.expressions, clips: Object.values(this.clips),
       coverage: { required: this.required(), covered_by: Object.fromEntries(this.required().map((r) => [r, this.state.outfit.filter((g) => this.meta.covers[r].includes(g))])), outfit: this.state.outfit },
-      dna: this.toDNA(), decodeSparse: (enc, n) => this.decodeSparse(enc, n), expressionDelta: (e, n) => this.expressionDelta(e, n) };
+      dna: this.toDNA(), decodeSparse: (enc, n) => this.decodeSparse(enc, n), expressionDelta: (e, n) => this.expressionDelta(e, n),
+      texPNG: this.texPNG || {}, eyePNG: () => this.eyePNG(), anchoredDelta: (P, e) => this.anchoredDelta(P, e),
+      surfaceNormals: (P) => { const o = new Float32Array(P.cur.length); this.normals(P.cur, P.idx, o); return o; } };
+  }
+  anchoredDelta(P, e) {  // morph target of a strand part for an expression (lashes ride the blink)
+    const body = this.parts.body, n = body.cur.length / 3, { idx, val } = this.expressionDelta(e, n);
+    if (!idx.length) return null;
+    const moved = Float32Array.from(body.cur);
+    for (let k = 0; k < idx.length; k++) for (let c = 0; c < 3; c++) moved[idx[k] * 3 + c] += val[k * 3 + c];
+    const out = new Float32Array(P.cur.length); this.anchorEval(P, moved, out);
+    const ii = [], vv = [];
+    for (let v = 0; v < out.length / 3; v++) {
+      const d = [out[v * 3] - P.cur[v * 3], out[v * 3 + 1] - P.cur[v * 3 + 1], out[v * 3 + 2] - P.cur[v * 3 + 2]];
+      if (Math.abs(d[0]) + Math.abs(d[1]) + Math.abs(d[2]) > 1e-7) { ii.push(v); vv.push(...d); }
+    }
+    return ii.length ? { idx: Uint32Array.from(ii), val: Float32Array.from(vv) } : null;
+  }
+  eyePNG() {  // the CC0 eye texture with its iris recoloured to the chosen eye colour (what the shader shows), as PNG bytes
+    const bmp = this.texBitmaps && this.texBitmaps.eye, eye = Object.values(this.parts).find((P) => P.material === "eye" && P.iris);
+    if (!bmp || !eye) return null;
+    const cv = document.createElement("canvas"); cv.width = bmp.width; cv.height = bmp.height;
+    const cx = cv.getContext("2d"); cx.drawImage(bmp, 0, 0);
+    const im = cx.getImageData(0, 0, cv.width, cv.height), d = im.data, col = this.meta.eye_colors[this.state.eye] || [0.2, 0.09, 0.03];
+    const lin = (c) => (c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)), enc = (c) => Math.round(255 * (c <= 0.0031308 ? c * 12.92 : 1.055 * Math.pow(Math.min(c, 1), 1 / 2.4) - 0.055));
+    for (const P of Object.values(this.parts)) if (P.material === "eye" && P.iris) {
+      const [ox, oy] = P.iris.centre_px, R = P.iris.radius_px;
+      for (let y = Math.max(0, Math.floor(oy - R * 1.1)); y < Math.min(cv.height, oy + R * 1.1); y++)
+        for (let x = Math.max(0, Math.floor(ox - R * 1.1)); x < Math.min(cv.width, ox + R * 1.1); x++) {
+          const r = Math.hypot(x - ox, y - oy) / R, w = Math.min(1, Math.max(0, (1.0 - r) / 0.1)); if (!w) continue;  // as the shader
+          const i = (y * cv.width + x) * 4, L = 0.2126 * lin(d[i] / 255) + 0.7152 * lin(d[i + 1] / 255) + 0.0722 * lin(d[i + 2] / 255);
+          for (let c = 0; c < 3; c++) d[i + c] = Math.round(d[i + c] * (1 - w) + enc(col[c] * Math.min(L / P.iris.mean_lum, 2.5)) * w);
+        }
+    }
+    cx.putImageData(im, 0, 0);
+    const b64 = cv.toDataURL("image/png").split(",")[1], bin = atob(b64), out = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
   }
   expressionDelta(e, n) {  // the morph target for this character: base delta plus any per-control correctives (v3)
     const ws = this.weights().filter(([se]) => se.expr && se.expr[e.name]);
@@ -786,6 +890,7 @@ class Studio {
     let clips = null;
     if (!v3) try { const r = await fetch("studio_clips.json"); if (r.ok) clips = await r.json(); } catch { /* use the pack's clips */ }
     window.studio = new Studio(meta, pack, clips);
+    await window.studio.texturesReady;
     setStatus("Drag to rotate · scroll or pinch to zoom · right-drag or shift-drag to pan · double-click a slider to reset it");
     document.body.dataset.ready = "1";
   } catch (err) {

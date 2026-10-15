@@ -54,6 +54,20 @@
    "origin": "copied from experiments/makehuman_visual_proof (same source URL)"
   },
   {
+   "file": "eyes/materials/brown.mhmat",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/eyes/materials/brown.mhmat",
+   "bytes": 1247,
+   "sha256": "4abad93ce50541c08127721e77bce035640c9f16bed16cd0f5524b1cd5908465",
+   "origin": "downloaded"
+  },
+  {
+   "file": "eyes/materials/brown_eye.png",
+   "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/eyes/materials/brown_eye.png",
+   "bytes": 610817,
+   "sha256": "4659691c7295ad6206c78b003e5fd0e5f91dcd53032fa914a229bb48cabe424b",
+   "origin": "downloaded"
+  },
+  {
    "file": "targets/armslegs/l-foot-scale-decr.target",
    "source_url": "https://raw.githubusercontent.com/makehumancommunity/makehuman/master/makehuman/data/targets/armslegs/l-foot-scale-decr.target",
    "bytes": 37491,

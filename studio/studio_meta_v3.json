@@ -371,7 +371,10 @@
    0.03
   ]
  },
- "hair_styles": [],
+ "hair_styles": [
+  "bald",
+  "shoulder"
+ ],
  "garments": [
   "basic_top",
   "basic_shorts"
@@ -845,14 +848,20 @@
     "basic_top",
     "basic_shorts"
    ],
-   "skin_tone": 0.45
+   "skin_tone": 0.45,
+   "hair_style": "shoulder",
+   "hair_color": "#1f1712",
+   "hl_amount": 0
   },
   "female": {
    "outfit": [
     "basic_top",
     "basic_shorts"
    ],
-   "skin_tone": 0.3
+   "skin_tone": 0.3,
+   "hair_style": "shoulder",
+   "hair_color": "#3b2416",
+   "hl_amount": 0
   }
  }
 }

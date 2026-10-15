@@ -137,3 +137,18 @@ def bvh_pose_unit(unit: str) -> dict[str, tuple[float, float, float]]:
         if any(abs(v) > 1e-3 for v in rot.values()):
             out[name] = (rot.get("X", 0.0), rot.get("Y", 0.0), rot.get("Z", 0.0))
     return out
+
+
+@lru_cache(maxsize=None)
+def eye_uvs() -> np.ndarray:
+    """UV per eye-proxy vertex (first use in the faces; 10 rim vertices at the hidden back edge sit on a seam)."""
+    vt, uv = [], {}
+    with open(ASSETS / "eyes" / "high-poly" / "high-poly.obj") as fh:
+        for line in fh:
+            if line.startswith("vt "):
+                vt.append([float(x) for x in line.split()[1:3]])
+            elif line.startswith("f "):
+                for tok in line.split()[1:]:
+                    a, b = (int(x) - 1 for x in tok.split("/")[:2])
+                    uv.setdefault(a, b)
+    return np.array([vt[uv[i]] for i in range(len(uv))])

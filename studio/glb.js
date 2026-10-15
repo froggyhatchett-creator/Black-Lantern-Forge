@@ -50,13 +50,22 @@ export function exportGLB(st) {
   const skin = { name: "forge_skin", joints: [...Array(J).keys()], inverseBindMatrices: b.acc(ibm, "MAT4", FLOAT, 16, { target: 0 }), skeleton: 0 };
   delete b.views[b.accessors[skin.inverseBindMatrices].bufferView].target;
   const materials = [], matIndex = new Map(), meshes = [], meshNodes = [];
+  const images = [], textures = [], texIndex = new Map();
+  const texture = (key, bytes) => {  // PNG bytes -> glTF texture index (deduplicated)
+    if (!bytes) return null;
+    if (!texIndex.has(key)) { images.push({ name: key, bufferView: b.view(bytes), mimeType: "image/png" }); textures.push({ sampler: 0, source: images.length - 1 }); texIndex.set(key, textures.length - 1); }
+    return texIndex.get(key);
+  };
+  const flipV = (uv) => { const o = Float32Array.from(uv); for (let i = 1; i < o.length; i += 2) o[i] = 1 - o[i]; return o; };  // OBJ v-up -> glTF
   const material = (key, def) => { if (!matIndex.has(key)) { materials.push(def); matIndex.set(key, materials.length - 1); } return matIndex.get(key); };
   for (const [name, P] of Object.entries(st.parts)) {
     if (!P.g.visible) continue;
     const n = P.cur.length / 3;
-    const attrs = { POSITION: b.acc(P.cur, "VEC3", FLOAT, 3, { minmax: true }), NORMAL: b.acc(P.nrm, "VEC3", FLOAT, 3) };
-    if (P.uv && P.weld) attrs.TEXCOORD_0 = b.acc(P.uv, "VEC2", FLOAT, 2);  // v3 body: MakeHuman UVs, split at seams
-    if (P.material === "skin" || P.material === "teeth") {
+    const strand = P.material.startsWith("strand_");
+    const attrs = { POSITION: b.acc(P.cur, "VEC3", FLOAT, 3, { minmax: true }), NORMAL: b.acc(strand ? st.surfaceNormals(P) : P.nrm, "VEC3", FLOAT, 3) };
+    const tn = P.texNames || null;
+    if (P.uv && (P.weld || tn)) attrs.TEXCOORD_0 = b.acc(strand ? Float32Array.from(P.uv) : flipV(P.uv), "VEC2", FLOAT, 2);  // v3: MakeHuman UVs
+    if ((P.material === "skin" && !tn) || P.material === "teeth") {
       const col = new Float32Array(n * 3), base = P.g.base;
       for (let i = 0; i < n * 3; i++) col[i] = Math.min(1, Math.max(0, (P.tint ? P.tint[i] : 1) * base[i % 3]));
       attrs.COLOR_0 = b.acc(col, "VEC3", FLOAT, 3);
@@ -71,14 +80,31 @@ export function exportGLB(st) {
     const ww = new Float32Array(P.wgt.length);
     for (let v = 0; v < n; v++) { let s = 0; for (let k = 0; k < 4; k++) s += P.wgt[v * 4 + k]; for (let k = 0; k < 4; k++) ww[v * 4 + k] = P.wgt[v * 4 + k] / s; }
     attrs.JOINTS_0 = b.acc(jj, "VEC4", USHORT, 4); attrs.WEIGHTS_0 = b.acc(ww, "VEC4", FLOAT, 4);
-    const isTex = P.material === "skin" || P.material === "teeth" || streaks;
+    if (strand && P.tint) attrs.COLOR_0 = b.acc(Float32Array.from(P.tint, (x) => Math.min(1, x)), "VEC3", FLOAT, 3);
+    const isTex = (P.material === "skin" && !tn) || P.material === "teeth" || streaks;
     // brow/lash strands are procedural in the studio; the browser GLB carries them as soft translucent cards
     const alpha = P.g.kind === 4 ? 0.08 : P.g.kind === 5 ? 0.6 : 1;
     const m = material(streaks ? "hair_highlights" : P.material, { name: streaks ? "hair_highlights" : P.material, doubleSided: !!P.g.double,
       ...(P.g.blend ? { alphaMode: "BLEND" } : {}),
       pbrMetallicRoughness: { baseColorFactor: isTex ? [1, 1, 1, 1] : [...P.g.base, alpha], metallicFactor: 0, roughnessFactor: P.g.rough } });
+    if (tn && P.material === "skin") {  // v3 skin: texture x tone (the albedo map is a multiplier around 0.85)
+      materials[m] = { name: "skin_textured", pbrMetallicRoughness: { baseColorFactor: [...P.g.base.map((c) => Math.min(1, c / 0.85)), 1],
+        baseColorTexture: { index: texture("skin_albedo", st.texPNG.skin_albedo) }, metallicFactor: 0, roughnessFactor: 0.55 },
+        normalTexture: { index: texture("skin_normal", st.texPNG.skin_normal) } };
+    } else if (tn && P.material === "eye") {
+      materials[m] = { name: "eye_textured", pbrMetallicRoughness: { baseColorFactor: [1, 1, 1, 1], baseColorTexture: { index: texture("eye", st.eyePNG()) },
+        metallicFactor: 0, roughnessFactor: 0.2 } };
+    } else if (strand) {
+      materials[m] = { name: P.material, doubleSided: true, alphaMode: "MASK", alphaCutoff: 0.3, pbrMetallicRoughness: { baseColorFactor: [...P.g.base, 1],
+        baseColorTexture: { index: texture(tn.albedo, st.texPNG[tn.albedo]) }, metallicFactor: 0, roughnessFactor: P.g.rough } };
+    }
     const prim = { attributes: attrs, indices: b.acc(P.idx, "SCALAR", UINT, 1, { target: 34963 }), material: m, mode: 4 };
     const mesh = { name, primitives: [prim] };
+    if (P.anchor && st.expressions.length) {  // strands that ride an expression (lashes on the blink) get morph targets too
+      const ts = [], tn2 = [];
+      for (const e of st.expressions) { const d = st.anchoredDelta(P, e); if (d) { ts.push({ POSITION: b.sparse(n, d.idx, d.val) }); tn2.push(e.name); } }
+      if (ts.length) { prim.targets = ts; mesh.weights = tn2.map(() => 0); mesh.extras = { targetNames: tn2 }; }
+    }
     if (name === "body" && st.expressions.length) {
       prim.targets = []; const tn = [];
       for (const e of st.expressions) { const { idx, val } = st.expressionDelta ? st.expressionDelta(e, n) : st.decodeSparse(e.body, n); prim.targets.push({ POSITION: b.sparse(n, idx, val) }); tn.push(e.name); }
@@ -116,6 +142,7 @@ export function exportGLB(st) {
       geometry_source: "Character Studio linear morph basis over exact Python builds; regenerate exact geometry from the DNA",
       dna: st.dna } } },
     scene: 0, scenes: [{ name: "character", nodes: [nodes.length - 1] }], nodes, meshes, skins: [skin], materials, animations,
+    ...(images.length ? { images, textures, samplers: [{ magFilter: 9729, minFilter: 9987, wrapS: 33071, wrapT: 33071 }] } : {}),
     accessors: b.accessors, bufferViews: b.views, buffers: [{ byteLength: 0 }],
   };
   const bin = b.bytes(); gltf.buffers[0].byteLength = bin.length;

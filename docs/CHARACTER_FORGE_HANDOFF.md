@@ -103,6 +103,15 @@ adult character in the real studio before expanding. Finite credits: short visua
 - Next (needs owner approval): brows/lashes/hair and skin maps on v3 (biggest realism gap), more expressions,
   draped garments, the Forge identity layer on v3, Python exact export for v3.
 
+## Generator v3 Phase 2: visual quality (milestone reached, stopped for visual review)
+- Report: `docs/CHARACTER_FORGE_V3_PHASE2.md`; evidence `examples/character_forge_aaa/humanity/v3_phase2/` (matched
+  before/after from the Phase 1 build vs this build, blink, variations, motion, GLB).
+- Forge-generated skin maps (`v3/textures.py`, cached in `.forge_cache/v3_textures_*`), MakeHuman CC0 eye texture,
+  Forge strand grooming (`v3/grooming.py`: brows/lashes anchored in triangle frames, hair cage-bound to the skin).
+- Studio: textures, normal map, textured eyes, strand shader with alpha-to-coverage, scalp tint, GLB images/strands.
+- SwiftShader is slow with the hair (close-ups take 2-3 min per frame); tools use a 1000x700 viewport.
+- MakeHuman's skins/brows/lashes/hair (repo `makehuman-assets`, LFS) are unreachable from this environment.
+
 ## Open problems / next actions
 1. Commit/push checkpoint; publish the studio artifact (multi-file; `downloads` capability; GLB offered zipped).
 2. Face realism (lips/eyes/brows) and anatomy fixes (hands, knees, feet) need a re-bake (~28 min) to reach the studio.

@@ -10,7 +10,7 @@ from pathlib import Path
 import numpy as np
 
 from forge_character_forge.studio_bake import BODY_RANGES, FACE_RANGES, pack_array, read_pack
-from forge_character_forge.v3 import GENERATOR, TEMPLATE_VERTICES, controls, garments, metrics, mh, model, rig
+from forge_character_forge.v3 import GENERATOR, TEMPLATE_VERTICES, controls, garments, grooming, metrics, mh, model, rig, textures
 
 ROOT = Path(__file__).resolve().parent.parent
 PACK_V3 = ROOT / "examples" / "character_forge_aaa" / "studio" / "studio_pack_v3.bin"
@@ -138,6 +138,72 @@ class GarmentTests(unittest.TestCase):
         self.assertTrue(len(crotch) and set(crotch) <= covered["basic_shorts"])
 
 
+class SurfaceTests(unittest.TestCase):
+    """Phase 2: Forge-baked skin maps, the CC0 eye texture, and anchored grooming."""
+
+    def test_skin_maps(self):
+        a, n = textures.skin_albedo(), textures.skin_normal()
+        self.assertEqual(a.shape, (textures.ALBEDO_PX, textures.ALBEDO_PX, 4))
+        self.assertEqual(n.shape, (textures.NORMAL_PX, textures.NORMAL_PX, 3))
+        lin = (a[:, :, :3] / 255.0) ** 2.2
+        self.assertAlmostEqual(float(lin.mean()), textures.ALBEDO_MEAN, delta=0.08)  # a multiplier around the skin tone
+        nz = n[:, :, 2] / 127.5 - 1
+        self.assertGreater(float(nz.mean()), 0.9)  # a subtle normal map (mostly facing out)
+        self.assertGreater(int((a[:, :, 3] > 128).sum()), 10000)  # scalp mask present
+
+    def test_maps_are_deterministic(self):
+        textures.skin_albedo.cache_clear()
+        b = textures._png(textures.skin_albedo())
+        self.assertEqual(b, textures.png_bytes()["skin_albedo"])
+
+    def test_eye_texture_is_the_recorded_cc0_file(self):
+        prov = {p["file"]: p for p in json.loads((ASSETS / "PROVENANCE.json").read_text())["files"]}
+        self.assertEqual(hashlib.sha256(textures.eye_texture_bytes()).hexdigest(), prov["eyes/materials/brown_eye.png"]["sha256"])
+
+    def test_scalp_excludes_face_mouth_and_ears(self):
+        v = model.neutral()
+        m = textures.scalp_mask(v)
+        E, cs = textures.head_frame_v3(v)
+        body = model.body_vertex_ids()
+        rel = v[body] - E
+        self.assertFalse(((m[body] > 0.5) & (rel[:, 1] < 0.03) & (rel[:, 2] > -0.02) & (np.abs(rel[:, 0]) < 0.05)).any())  # face (temples may grow hair)
+        self.assertGreater(m[body][rel[:, 1] > 0.1].mean(), 0.9)  # the crown
+
+    def test_grooming_anchors_reproduce_rest_positions(self):
+        P, tris, _, _ = grooming.surface()
+        for name, g in grooming.parts().items():
+            A = g["anchor"]
+            root = (P[A["tri"]] * A["bary"][:, :, None]).sum(1)[A["root"]]
+            if A["mode"] == "frame":
+                t, b, n = grooming._frame(P, A["tri"])
+                o = A["off"]
+                rebuilt = root + o[:, :1] * t[A["root"]] + o[:, 1:2] * b[A["root"]] + o[:, 2:] * n[A["root"]]
+            else:
+                rebuilt = root + A["off"]
+            np.testing.assert_allclose(rebuilt, g["pos"], atol=1e-9, err_msg=name)
+            K = g["points"]
+            gap = np.linalg.norm((g["pos"][0::2 * K] + g["pos"][1::2 * K]) / 2 - (P[A["tri"]] * A["bary"][:, :, None]).sum(1), axis=1)
+            self.assertLess(float(gap.max()), 0.0005, name)  # every strand starts on its anchor point
+
+    def test_hair_cage_weights(self):
+        A = grooming.parts()["hair_shoulder"]["anchor"]
+        np.testing.assert_allclose(A["cage_w"].sum(1), 1, atol=1e-6)
+        self.assertEqual(A["cage_idx"].shape[1], grooming.CAGE_K)
+
+    def test_hair_clears_the_face_and_lashes_sit_on_the_lid_margin(self):
+        v = model.neutral()
+        E, _ = textures.head_frame_v3(v)
+        h = grooming.parts()["hair_shoulder"]
+        r = h["pos"] - E
+        face = (r[:, 2] > -0.005) & (np.abs(r[:, 0]) < 0.06) & (r[:, 1] < 0.015) & (r[:, 1] > -0.2)  # eyes down (a fringe may sweep the forehead)
+        self.assertEqual(int(face.sum()), 0)
+        self.assertGreater(h["strands"], 2000)
+        lashes = grooming.parts()["lashes"]
+        _, _, _, src = grooming.surface()
+        lid = set(np.concatenate([model.lid_region(s, 2) for s in "lr"]).tolist())
+        self.assertTrue(all(int(x) in lid for x in src[lashes["anchor"]["tri"]].ravel()))  # every lash grows from the lid
+
+
 class PackTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -162,7 +228,12 @@ class PackTests(unittest.TestCase):
 
     def test_parts_skeleton_and_clips(self):
         P = self.man["parts"]
-        self.assertEqual(set(P), {"body", "eye_l", "eye_r", "cornea_l", "cornea_r", "basic_top", "basic_shorts"})
+        self.assertEqual(set(P), {"body", "eye_l", "eye_r", "cornea_l", "cornea_r", "basic_top", "basic_shorts", "brows", "lashes",
+                                  "hair_shoulder"})
+        self.assertEqual(set(self.man["textures"]), {"skin_albedo", "skin_normal", "eye", "strand_single", "strand_hair"})
+        for pe in self.man["params"].values():  # grooming has no per-control data: it is re-evaluated from the body
+            for se in pe["sides"].values():
+                self.assertFalse({"brows", "lashes", "hair_shoulder"} & set(se["parts"]))
         src, uv, tris, weld = model.body_surface()
         self.assertEqual(P["body"]["n"], len(src))
         np.testing.assert_array_equal(pack_array(P["body"]["weld"], self.blob), weld)

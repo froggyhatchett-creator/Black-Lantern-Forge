@@ -1,0 +1,35 @@
+{
+ "checks": [
+  {
+   "name": "v3 studio boots",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "skin, eye and strand textures loaded",
+   "pass": true,
+   "detail": "skin_albedo,skin_normal,eye,strand_single,strand_hair"
+  },
+  {
+   "name": "lashes ride the blink",
+   "pass": true,
+   "detail": "5.30 mm mean lash displacement"
+  },
+  {
+   "name": "strand roots stay on the skin after extreme edits",
+   "pass": true,
+   "detail": "{\"brows\":0.25,\"lashes\":0.3,\"hair\":0.002}"
+  },
+  {
+   "name": "GLB exported",
+   "pass": true,
+   "detail": "12.2 MB"
+  },
+  {
+   "name": "no page errors",
+   "pass": true,
+   "detail": ""
+  }
+ ],
+ "errors": []
+}

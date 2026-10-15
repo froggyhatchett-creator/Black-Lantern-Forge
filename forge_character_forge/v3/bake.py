@@ -21,10 +21,9 @@ from forge_character_forge.params import preset
 from forge_character_forge.skeleton import HUMANOID_MAP
 from forge_character_forge.studio_bake import (BODY_RANGES, FACE_RANGES, PACK_MAGIC, PACK_VERSION, _Blob, _encode_delta,
                                                base_params, compact_pack)
-from forge_character_forge.v3 import GENERATOR, controls, garments, mh, model, rig
+from forge_character_forge.v3 import GENERATOR, controls, garments, grooming, mh, model, rig, textures
 
 BLINK_RESHAPE_M = 0.0003  # a control side whose lid-region shape changes by more than this gets a blink corrective
-IRIS_RADIUS_M = 0.006  # anatomical iris radius; with the fitted eyeball radius it gives the shader's iris angle
 
 
 def _weights_u1(w):
@@ -66,11 +65,16 @@ def part_arrays():
         ww = np.zeros((n, 4))
         ww[:, 0] = 1
         parts[name] = {"eye_ids": ids, "pos": ev[ids], "tris": t, "joints": jj, "weights": ww,
-                       "material": "eye" if name.startswith("eye") else "cornea", "double_sided": name.startswith("cornea")}
+                       "material": "eye" if name.startswith("eye") else "cornea", "double_sided": name.startswith("cornea"),
+                       "uv": mh.eye_uvs()[ids]}
     for name, (ci, cw, t, off) in garments.shells().items():
         gj, gw = _blend_skin(joints, weights, ci, cw)
         parts[name] = {"comb": (ci, cw), "pos": (v[ci] * cw[:, :, None]).sum(1) + off, "tris": t, "joints": gj,
                        "weights": gw, "material": f"cloth_{name}", "double_sided": True}
+    for name, g in grooming.parts().items():
+        parts[name] = {"pos": g["pos"], "tris": g["tris"], "joints": g["joints"], "weights": g["weights"], "uv": g["uv"],
+                       "material": f"strand_{g['kind']}", "double_sided": True, "anchor": g["anchor"],
+                       "strand_points": g["points"], "color": g.get("color")}
     return parts, skin_report
 
 
@@ -113,13 +117,33 @@ def bake(out_path, log=print) -> dict:
                  "joints": blob.add(np.asarray(p["joints"]).astype("u1")), "weights": blob.add(_weights_u1(p["weights"]))}
         if "uv" in p:
             entry["uv"] = blob.add(np.asarray(p["uv"], "<f4"))
+        if p.get("anchor") is not None:  # re-evaluated from the live body in the studio (v3/grooming.py)
+            A = p["anchor"]
+            entry["anchor"] = {"mode": A["mode"], "root": blob.add(np.asarray(A["root"], "<u4")),
+                               "tri": blob.add(np.asarray(A["tri"], "<u4")), "bary": blob.add(np.asarray(A["bary"], "<f4")),
+                               "off": blob.add(np.asarray(A["off"], "<f4"))}
+            if A["mode"] == "cage":  # per strand point (both ribbon vertices share it)
+                entry["anchor"]["cage_idx"] = blob.add(np.asarray(A["cage_idx"], "<u4"))
+                entry["anchor"]["cage_w"] = blob.add(np.round(np.asarray(A["cage_w"]) * 65535).astype("<u2"))
+            entry["strand_points"] = int(p["strand_points"])
+        if p.get("color") is not None:
+            entry["color"] = blob.add(np.clip(np.asarray(p["color"]) * 0.5 * 255, 0, 255).astype("u1"))  # x2 headroom
+        if name == "body":
+            entry["textures"] = {"albedo": "skin_albedo", "normal": "skin_normal", "albedo_mean": textures.ALBEDO_MEAN}
+        elif p["material"] == "eye":
+            entry["textures"] = {"albedo": "eye"}
+            entry["iris"] = textures.eye_iris_stats(np.asarray(p["uv"]), np.asarray(p["pos"]))
+            entry["iris_angle"] = entry["iris"]["angle"]  # the texture's iris, not a nominal radius
+        elif p["material"].startswith("strand_"):
+            entry["textures"] = {"albedo": "strand_hair" if name.startswith("hair_") else "strand_single"}
         if "weld" in p:
             entry["weld"] = blob.add(np.asarray(p["weld"], "<u4"))  # normals are averaged over seam copies
         if p["material"] in ("eye", "cornea"):
-            c, r = model.sphere_fit(np.asarray(p["pos"]))
             entry["sphere"] = True  # eyeball centre = sphere fit (the shells are open at the back)
-            entry["iris_angle"] = float(np.arcsin(min(IRIS_RADIUS_M / r, 0.9)))
+            if p["material"] == "cornea":  # the cornea's clear cap matches its eye's (texture) iris
+                entry["iris_angle"] = man["parts"][f"eye_{name[-1]}"]["iris_angle"]
         man["parts"][name] = entry
+    man["textures"] = {k: blob.add(np.frombuffer(b, "u1")) for k, b in textures.png_bytes().items()}
     # expressions: the corrected blink, fitted to the neutral eye shape
     bsrc = parts["body"]["src"]
     lid = np.concatenate([model.lid_region(s, model.CORRECTIVE_RINGS) for s in "lr"])
@@ -146,6 +170,8 @@ def bake(out_path, log=print) -> dict:
                 ed = mh.fit_eyes(v + d) - eyes0
                 se = {"at": float(at), "parts": {}, "joints": blob.add((rig.joint_rest(v + d) - j0).astype("<f4"))}
                 for name, p in parts.items():
+                    if p.get("anchor") is not None:
+                        continue
                     enc = _encode_delta(blob, _part_delta(p, d, ed))
                     if enc:
                         se["parts"][name] = enc
@@ -192,10 +218,12 @@ def studio_meta_v3() -> dict:
     """Studio meta for v3: v2's DNA schema and defaults, v3 garments and coverage, no hair styles yet."""
     from forge_character_forge.studio_bake import studio_meta
     m = studio_meta()
-    m.update({"generator": GENERATOR, "hair_styles": [], "garments": list(garments.GARMENTS),
+    m.update({"generator": GENERATOR, "hair_styles": ["bald", "shoulder"], "garments": list(garments.GARMENTS),
               "garment_colors": {k: list(c) for k, c in garments.COLORS.items()}, "covers": garments.COVERS,
               "coverage_defaults": garments.COVERAGE_DEFAULTS, "breast_support": {"basic_top": 1.15},
               "controls": {k: {"quality": q, "note": note} for k, (q, _, _, note) in controls.CONTROLS.items()},
-              "preset_styling": {"male": {"outfit": ["basic_top", "basic_shorts"], "skin_tone": 0.45},
-                                 "female": {"outfit": ["basic_top", "basic_shorts"], "skin_tone": 0.3}}})
+              "preset_styling": {"male": {"outfit": ["basic_top", "basic_shorts"], "skin_tone": 0.45, "hair_style": "shoulder",
+                                          "hair_color": "#1f1712", "hl_amount": 0},
+                                 "female": {"outfit": ["basic_top", "basic_shorts"], "skin_tone": 0.3, "hair_style": "shoulder",
+                                            "hair_color": "#3b2416", "hl_amount": 0}}})
     return m

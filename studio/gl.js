@@ -24,9 +24,17 @@ const FS = `#version 300 es
 precision highp float;
 in vec3 vPos; in vec3 vNrm; in vec3 vCol; in vec2 vUV; in vec3 vObj;
 uniform vec3 uEye; uniform vec3 uBase; uniform float uRough; uniform float uSpec; uniform float uSSS;
-uniform int uKind;   // 0 skin 1 cloth 2 hair 3 eye 4 cornea 5 card 6 teeth 7 ground
+uniform int uKind;   // 0 skin 1 cloth 2 hair 3 eye 4 cornea 5 card 6 teeth 7 ground 8 strand
 uniform float uAlpha; uniform vec3 uIris; uniform float uDetail; uniform vec3 uEyeC; uniform float uIrisA;  // iris half-angle (rad)
+uniform sampler2D uTexA; uniform sampler2D uTexN; uniform int uHasA; uniform int uHasN; uniform float uScalp;
 out vec4 o;
+vec3 perturb(vec3 n, vec3 tn) {  // tangent-space normal map without stored tangents (frame from screen derivatives)
+  vec3 dp1 = dFdx(vPos), dp2 = dFdy(vPos); vec2 du1 = dFdx(vUV), du2 = dFdy(vUV);
+  vec3 p2 = cross(dp2, n), p1 = cross(n, dp1);
+  vec3 T = p2 * du1.x + p1 * du2.x, B = p2 * du1.y + p1 * du2.y;
+  float s = inversesqrt(max(max(dot(T, T), dot(B, B)), 1e-24));
+  return normalize(T * s * tn.x + B * s * tn.y + n * tn.z);
+}
 float h3(vec3 p){ p = fract(p * 0.3183099 + 0.1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }
 float noise(vec3 x){ vec3 i = floor(x), f = fract(x); f = f*f*(3.0-2.0*f);
   return mix(mix(mix(h3(i), h3(i+vec3(1,0,0)), f.x), mix(h3(i+vec3(0,1,0)), h3(i+vec3(1,1,0)), f.x), f.y),
@@ -45,6 +53,13 @@ void main() {
     o = vec4(base * (0.55 + 0.45 * sh), edge * 0.9); return;
   }
   if (uKind == 0 || uKind == 6) base *= vCol;
+  if (uKind == 0 && uHasA == 1) {  // v3 skin maps (UV space): albedo multiplier, scalp tint under hair, normal map
+    vec2 tuv = vec2(vUV.x, 1.0 - vUV.y);
+    vec4 ta = texture(uTexA, tuv);
+    base *= ta.rgb / 0.85;
+    base = mix(base, uIris, clamp(ta.a * uScalp, 0.0, 1.0) * 0.85);
+    if (uHasN == 1) n = perturb(n, texture(uTexN, tuv).xyz * 2.0 - 1.0);
+  }
   if (uKind == 0 && uDetail > 0.0) {  // procedural skin micro-relief (object space, so it sticks to the skin)
     float e = 0.0006;
     vec3 q = vObj * 900.0;
@@ -69,6 +84,12 @@ void main() {
     vec3 sclera = mix(vec3(0.80, 0.77, 0.73), vec3(0.70, 0.58, 0.54), smoothstep(1.4, 3.0, s));
     sclera *= 0.97 + 0.06 * noise(vObj * 900.0);
     base = mix(iris, sclera, smoothstep(0.97, 1.10, s));
+    if (uHasA == 1) {  // v3: CC0 eye texture; its iris keeps its detail but takes the chosen colour (uDetail = its mean luminance)
+      vec3 tx = texture(uTexA, vec2(vUV.x, 1.0 - vUV.y)).rgb;
+      float lum = dot(tx, vec3(0.2126, 0.7152, 0.0722));
+      vec3 irisT = uIris * min(lum / max(uDetail, 1e-3), 2.5);  // clamped: sclera texels near the limbus must not glow
+      base = mix(irisT, tx * vec3(0.96, 0.92, 0.88), smoothstep(0.9, 1.0, s));  // sclera slightly warmed
+    }
     // occlusion: corners sit deep under the lids; the upper lid shades the top of the eye
     eyeAO = mix(1.0, 0.42, smoothstep(1.5, 2.9, s)) * mix(1.0, 0.45, smoothstep(0.0, 0.45, n.y));
     rough = mix(0.35, 0.22, step(1.0, s)); spec = 0.25;
@@ -82,6 +103,11 @@ void main() {
     alpha = clamp(strand * edge * ends * 1.3, 0.0, 0.95);
     if (alpha < 0.03) discard;
   }
+  if (uKind == 8) {  // strands (hair, brows, lashes): alpha profile from the strand texture, darker roots
+    alpha = uHasA == 1 ? texture(uTexA, vUV).a : 1.0;
+    if (alpha < 0.06) discard;
+    base *= vCol * mix(0.65, 1.0, smoothstep(0.0, 0.3, vUV.x));
+  }
   if (uKind == 2) {  // highlight streaks: broad per-vertex panels broken into fine strands
     float fine = noise(vec3(vObj.x * 900.0, vObj.y * 30.0, vObj.z * 900.0));
     base = mix(base, uIris, clamp(vCol.r, 0.0, 1.0) * uDetail * (0.35 + 0.65 * fine));
@@ -94,6 +120,13 @@ void main() {
   vec3 col = vec3(0.0);
   float shin = 2.0 / max(pow(rough, 4.0), 1e-3) - 2.0;
   for (int i = 0; i < 3; i++) {
+    if (uKind == 8) {  // Kajiya-Kay: n carries the strand tangent
+      vec3 T = n; float tl = dot(T, L[i]);
+      col += base * (0.3 + 0.7 * sqrt(max(1.0 - tl * tl, 0.0))) * C[i] * 0.32;
+      vec3 h8 = normalize(L[i] + v); float th = dot(T, h8), st = sqrt(max(1.0 - th * th, 0.0));
+      col += C[i] * spec * (pow(st, 140.0) * 0.07 + base * pow(st, 16.0) * 0.5);  // faint white + tinted secondary lobe
+      continue;
+    }
     float ndl = dot(n, L[i]);
     float wrap = sss * 0.5;
     float diff = clamp((ndl + wrap) / (1.0 + wrap), 0.0, 1.0);
@@ -110,7 +143,7 @@ void main() {
     }
     col += C[i] * spec * sp * step(0.0, ndl) * 0.25;
   }
-  float hemi = 0.5 + 0.5 * n.y;
+  float hemi = uKind == 8 ? 0.6 : 0.5 + 0.5 * n.y;
   col += base * (vec3(0.32, 0.34, 0.40) * hemi + vec3(0.16, 0.13, 0.11) * (1.0 - hemi)) * 0.85 * eyeAO;
   float fres = pow(1.0 - clamp(dot(n, v), 0.0, 1.0), 4.0);
   if (uKind == 0) col += base * vec3(0.9, 0.35, 0.25) * sss * pow(1.0 - clamp(dot(n, v), 0.0, 1.0), 3.0) * 0.25;
@@ -133,8 +166,10 @@ export class Renderer {
     this.gl = gl; this.canvas = canvas;
     this.prog = this._program(VS, FS);
     this.u = {};
-    for (const n of ["uJ", "uVP", "uEye", "uBase", "uRough", "uSpec", "uSSS", "uKind", "uAlpha", "uIris", "uDetail", "uEyeC", "uIrisA"])
+    for (const n of ["uJ", "uVP", "uEye", "uBase", "uRough", "uSpec", "uSSS", "uKind", "uAlpha", "uIris", "uDetail", "uEyeC", "uIrisA",
+      "uTexA", "uTexN", "uHasA", "uHasN", "uScalp"])
       this.u[n] = gl.getUniformLocation(this.prog, n);
+    gl.useProgram(this.prog); gl.uniform1i(this.u.uTexA, 0); gl.uniform1i(this.u.uTexN, 1);
     this.meshes = [];
     this.ground = this._groundMesh();
   }
@@ -169,6 +204,16 @@ export class Renderer {
     this.meshes.push(g);
     return g;
   }
+  texture(img, srgb) {  // ImageBitmap -> mipmapped texture (sRGB colour maps are decoded by the GPU)
+    const gl = this.gl, t = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, t);
+    gl.texImage2D(gl.TEXTURE_2D, 0, srgb ? gl.SRGB8_ALPHA8 : gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, img);
+    gl.generateMipmap(gl.TEXTURE_2D);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    const an = gl.getExtension("EXT_texture_filter_anisotropic"); if (an) gl.texParameterf(gl.TEXTURE_2D, an.TEXTURE_MAX_ANISOTROPY_EXT, 8);
+    return t;
+  }
   update(g, attr, data) { const gl = this.gl; gl.bindBuffer(gl.ARRAY_BUFFER, g[attr]); gl.bufferSubData(gl.ARRAY_BUFFER, 0, data); }
   _groundMesh() {
     const seg = 64, pos = [0, 0, 0], idx = [];
@@ -202,9 +247,14 @@ export class Renderer {
       gl.uniform1f(this.u.uSSS, g.sss); gl.uniform1i(this.u.uKind, g.kind); gl.uniform1f(this.u.uAlpha, g.alpha);
       gl.uniform3fv(this.u.uIris, g.iris || [0.2, 0.1, 0.05]); gl.uniform1f(this.u.uDetail, g.detail || 0);
       gl.uniform3fv(this.u.uEyeC, g.eyeC || [0, 0, 0]); gl.uniform1f(this.u.uIrisA, g.irisA || 0.5432);  // v2: asin(6.2 / 12 mm)
+      gl.uniform1i(this.u.uHasA, g.texA ? 1 : 0); gl.uniform1i(this.u.uHasN, g.texN ? 1 : 0); gl.uniform1f(this.u.uScalp, g.scalp || 0);
+      if (g.texA) { gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, g.texA); }
+      if (g.texN) { gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, g.texN); }
       if (g.double) gl.disable(gl.CULL_FACE); else { gl.enable(gl.CULL_FACE); gl.cullFace(gl.BACK); }
+      if (g.a2c) gl.enable(gl.SAMPLE_ALPHA_TO_COVERAGE);  // strands: order-independent soft edges with MSAA
       gl.bindVertexArray(g.vao);
       gl.drawElements(gl.TRIANGLES, g.count, gl.UNSIGNED_INT, 0);
+      if (g.a2c) gl.disable(gl.SAMPLE_ALPHA_TO_COVERAGE);
     };
     if (groundOn) {
       gl.uniformMatrix4fv(this.u.uJ, false, ident);
