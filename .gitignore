@@ -11,3 +11,4 @@ output/*
 
 # Subagent-driven-development scratch workspace (ledger, briefs, review packages)
 .superpowers/
+.forge_cache/
