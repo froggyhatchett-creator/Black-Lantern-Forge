@@ -201,7 +201,7 @@ def _shade(zbuf, nbuf, cbuf, mbuf, pbuf, cam, W, H, background, ground_y):
     rim = (1 - np.clip(np.sum(n * vdir, 1), 0, 1)) ** 3
     col += base * np.array([0.9, 0.35, 0.25])[None, :] * (sss * rim)[:, None] * 0.25
     out[hit] = col
-    img = np.clip(out, 0, 1) ** (1 / 2.2)
+    img = np.clip(np.nan_to_num(out), 0, 1) ** (1 / 2.2)
     return (img.reshape(H, W, 3) * 255 + 0.5).astype(np.uint8)
 
 

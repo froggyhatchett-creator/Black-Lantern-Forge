@@ -151,10 +151,10 @@ def build_brows_lashes(skel, field: Field, app: AppearanceParams, face) -> list[
             rows.append(O + _v(x, y, 0.14) * k)
         center = _project_from_front(field, np.array(rows))
         nrm = field.gradient(center)
-        nrm /= np.linalg.norm(nrm, axis=1, keepdims=True)
+        nrm /= np.maximum(np.linalg.norm(nrm, axis=1, keepdims=True), 1e-9)
         up = np.cross(nrm, np.tile(_v(side, 0, 0), (len(center), 1)) * -1.0)
         up = np.where((up[:, 1] < 0)[:, None], -up, up)
-        up /= np.linalg.norm(up, axis=1, keepdims=True)
+        up /= np.maximum(np.linalg.norm(up, axis=1, keepdims=True), 1e-9)
         base = len(bv)
         for i, (c, n, uvec) in enumerate(zip(center, nrm, up)):
             t = i / n_seg

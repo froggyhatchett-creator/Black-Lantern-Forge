@@ -1,0 +1,740 @@
+{
+ "history": [
+  {
+   "op": "set",
+   "trait": "appearance.hair_style",
+   "value": "long"
+  },
+  {
+   "op": "set",
+   "trait": "appearance.hair_color",
+   "value": "#3a2214"
+  },
+  {
+   "op": "set",
+   "trait": "appearance.eye_color",
+   "value": "green"
+  },
+  {
+   "op": "set",
+   "trait": "appearance.skin_tone",
+   "value": 0.3
+  },
+  {
+   "op": "set",
+   "trait": "wardrobe.outfit",
+   "value": [
+    "tshirt",
+    "shorts"
+   ]
+  },
+  {
+   "op": "set",
+   "trait": "wardrobe.colors",
+   "value": {
+    "shorts": "#2a2f3d",
+    "tshirt": "#6d8fb3"
+   }
+  },
+  {
+   "op": "set",
+   "trait": "body.height_m",
+   "value": 1.78
+  },
+  {
+   "op": "set",
+   "trait": "body.body_fat",
+   "value": 0.6
+  },
+  {
+   "op": "set",
+   "trait": "body.muscle",
+   "value": 0.2
+  },
+  {
+   "op": "set",
+   "trait": "body.shoulder_width",
+   "value": 1.05
+  },
+  {
+   "op": "set",
+   "trait": "body.hip_width",
+   "value": 1.12
+  },
+  {
+   "op": "set",
+   "trait": "body.breast_size",
+   "value": 1.8
+  },
+  {
+   "op": "set",
+   "trait": "body.belly",
+   "value": 0.35
+  },
+  {
+   "op": "set",
+   "trait": "body.leg_length",
+   "value": 0.95
+  },
+  {
+   "op": "set",
+   "trait": "face.jaw_width",
+   "value": 1.1
+  },
+  {
+   "op": "set",
+   "trait": "face.nose_length",
+   "value": 1.2
+  },
+  {
+   "op": "set",
+   "trait": "face.nose_width",
+   "value": 1.15
+  },
+  {
+   "op": "set",
+   "trait": "face.eye_size",
+   "value": 0.9
+  },
+  {
+   "op": "set",
+   "trait": "face.lip_upper",
+   "value": 0.85
+  },
+  {
+   "op": "set",
+   "trait": "face.chin_projection",
+   "value": 1.2
+  },
+  {
+   "op": "set",
+   "trait": "face.cheek_fullness",
+   "value": 1.3
+  },
+  {
+   "op": "set",
+   "trait": "appearance.skin_tone",
+   "value": 0.75
+  },
+  {
+   "op": "set",
+   "trait": "appearance.hair_style",
+   "value": "bun"
+  },
+  {
+   "op": "set",
+   "trait": "appearance.hair_color",
+   "value": "#9a9a9a"
+  }
+ ],
+ "identity": {
+  "age_years": 29.0,
+  "name": "ada_variant",
+  "preset": "female"
+ },
+ "reconstruction": null,
+ "regions": {},
+ "schema": "forge.character-dna",
+ "sources": [],
+ "traits": {
+  "appearance.brow_color": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": ""
+  },
+  "appearance.eye_color": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "user edit",
+   "provenance": "user",
+   "sources": [],
+   "value": "green"
+  },
+  "appearance.flush": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.5
+  },
+  "appearance.hair_color": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "user edit",
+   "provenance": "user",
+   "sources": [],
+   "value": "#9a9a9a"
+  },
+  "appearance.hair_style": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "user edit",
+   "provenance": "user",
+   "sources": [],
+   "value": "bun"
+  },
+  "appearance.lip_tint": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.5
+  },
+  "appearance.skin_roughness": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.5
+  },
+  "appearance.skin_tone": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "user edit",
+   "provenance": "user",
+   "sources": [],
+   "value": 0.75
+  },
+  "appearance.undertone": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.0
+  },
+  "body.areola_size": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "body.arm_length": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "body.arm_thickness": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.92
+  },
+  "body.belly": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "user edit",
+   "provenance": "user",
+   "sources": [],
+   "value": 0.35
+  },
+  "body.body_fat": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "user edit",
+   "provenance": "user",
+   "sources": [],
+   "value": 0.6
+  },
+  "body.breast_height": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "body.breast_projection": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "body.breast_sag": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.3
+  },
+  "body.breast_size": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "user edit",
+   "provenance": "user",
+   "sources": [],
+   "value": 1.8
+  },
+  "body.breast_spacing": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "body.calf_thickness": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "body.chest_depth": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "body.chest_width": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.95
+  },
+  "body.femininity": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "body.foot_size": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.92
+  },
+  "body.glute_size": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.08
+  },
+  "body.hand_size": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.94
+  },
+  "body.head_size": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "body.height_m": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "user edit",
+   "provenance": "user",
+   "sources": [],
+   "value": 1.78
+  },
+  "body.hip_width": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "user edit",
+   "provenance": "user",
+   "sources": [],
+   "value": 1.12
+  },
+  "body.leg_length": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "user edit",
+   "provenance": "user",
+   "sources": [],
+   "value": 0.95
+  },
+  "body.muscle": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "user edit",
+   "provenance": "user",
+   "sources": [],
+   "value": 0.2
+  },
+  "body.neck_length": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.05
+  },
+  "body.neck_thickness": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.9
+  },
+  "body.nipple_size": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "body.shoulder_width": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "user edit",
+   "provenance": "user",
+   "sources": [],
+   "value": 1.05
+  },
+  "body.thigh_thickness": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.04
+  },
+  "body.torso_length": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "body.waist_width": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.97
+  },
+  "face.asymmetry": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.0
+  },
+  "face.brow_height": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.04
+  },
+  "face.brow_prominence": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.75
+  },
+  "face.cheek_fullness": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "user edit",
+   "provenance": "user",
+   "sources": [],
+   "value": 1.3
+  },
+  "face.cheekbone_height": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.04
+  },
+  "face.cheekbone_width": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "face.chin_length": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.95
+  },
+  "face.chin_projection": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "user edit",
+   "provenance": "user",
+   "sources": [],
+   "value": 1.2
+  },
+  "face.chin_width": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.88
+  },
+  "face.ear_protrusion": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "face.ear_size": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "face.eye_size": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "user edit",
+   "provenance": "user",
+   "sources": [],
+   "value": 0.9
+  },
+  "face.eye_spacing": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "face.eye_tilt": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.0
+  },
+  "face.face_length": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.97
+  },
+  "face.face_width": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.96
+  },
+  "face.jaw_angle": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.8
+  },
+  "face.jaw_width": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "user edit",
+   "provenance": "user",
+   "sources": [],
+   "value": 1.1
+  },
+  "face.lip_lower": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.12
+  },
+  "face.lip_upper": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "user edit",
+   "provenance": "user",
+   "sources": [],
+   "value": 0.85
+  },
+  "face.mouth_width": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "face.nose_bridge": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.92
+  },
+  "face.nose_length": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "user edit",
+   "provenance": "user",
+   "sources": [],
+   "value": 1.2
+  },
+  "face.nose_tip": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.92
+  },
+  "face.nose_upturn": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.0
+  },
+  "face.nose_width": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "user edit",
+   "provenance": "user",
+   "sources": [],
+   "value": 1.15
+  },
+  "genital.enabled": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.0
+  },
+  "genital.glans_size": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "genital.penis_curve": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.0
+  },
+  "genital.penis_girth": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "genital.penis_length": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "genital.scrotum_size": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "genital.testicle_asymmetry": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.4
+  },
+  "genital.testicle_size": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "wardrobe.colors": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "user edit",
+   "provenance": "user",
+   "sources": [],
+   "value": {
+    "shorts": "#2a2f3d",
+    "tshirt": "#6d8fb3"
+   }
+  },
+  "wardrobe.outfit": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "user edit",
+   "provenance": "user",
+   "sources": [],
+   "value": [
+    "tshirt",
+    "shorts"
+   ]
+  }
+ },
+ "version": 1
+}

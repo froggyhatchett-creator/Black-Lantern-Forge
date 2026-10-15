@@ -181,7 +181,7 @@ class SimResult:
     rotations: dict                  # bone -> (T, 4) local quaternions (secondary only)
     tip_offsets: dict                # bone -> (T,) distance of simulated tip from animated target (m)
     angles_deg: dict                 # bone -> (T,) angular deviation
-    max_penetration: float           # deepest collider penetration after constraints (m)
+    max_penetration: float           # deepest collider penetration in the final state of each step (m)
     raw_max_penetration: float       # deepest penetration before collision resolution (m)
     containment_violations: int
     stable: bool
@@ -330,8 +330,8 @@ def simulate(skel, c: Clip, chains: list[Chain], colliders: list[Collider] | Non
                     off[b][f] = np.linalg.norm(p_new - target)
                     angs[b][f] = math.degrees(math.acos(float(np.clip(np.dot(
                         (p_new - joint) / L, (target - joint) / L), -1, 1))))
-            # penetration audit after resolution
-            if collide:
+            # penetration audit (also measured when collisions are disabled, as the counterfactual)
+            if True:
                 for b in ch.bones:
                     p = state[b][0]
                     for col in colliders:

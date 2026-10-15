@@ -1,0 +1,34 @@
+== Demonstration A: baseline character
+  export: 9574364 bytes validation ok: True node ok: True max err: 7.524542555595475e-08
+  determinism identical: True
+== Demonstration B: customization (same topology, different geometry)
+  displacement mean/max: 0.08368693996031464 0.11985376048058949
+== Demonstration C: skeletal deformation
+== Demonstration D: image-to-3D reconstruction + full-body completion
+  segmentation: {'method': 'border_color_model+otsu', 'quality': 0.9, 'foreground_fraction': 0.2318, 'hair_excluded_from_measurement': True}; posture=standing; style=realistic
+  visible rows: 7.82 head units; regions: {'head': 'visible', 'neck': 'visible', 'shoulders': 'visible', 'chest': 'visible', 'arms_upper': 'visible', 'waist': 'visible', 'hips_pelvis': 'visible', 'hands': 'visible', 'thighs': 'visible', 'knees': 'visible', 'lower_legs': 'visible', 'feet': 'visible', 'back': 'unobservable'}
+  body-type cue: waist/hip width ratio 0.577 (male preset 0.776, female preset 0.608) -> femininity 1.00, prior 'female'; fitting ['body.shoulder_width', 'body.chest_width', 'body.waist_width', 'body.hip_width', 'body.thigh_thickness', 'body.leg_length', 'body.calf_thickness', 'face.face_width', 'body.head_size']
+    fit loss 0.05315
+  ref_full_front.png: {'observed': 7, 'estimated': 11, 'invented': 32, 'user': 0, 'default': 24} posture=standing style=realistic
+  segmentation: {'method': 'border_color_model+otsu', 'quality': 0.874, 'foreground_fraction': 0.2769, 'hair_excluded_from_measurement': True}; posture=standing; style=realistic
+  visible rows: 3.26 head units; regions: {'head': 'visible', 'neck': 'visible', 'shoulders': 'visible', 'chest': 'visible', 'arms_upper': 'visible', 'waist': 'visible', 'hips_pelvis': 'cropped', 'hands': 'cropped', 'thighs': 'cropped', 'knees': 'cropped', 'lower_legs': 'cropped', 'feet': 'cropped', 'back': 'unobservable'}
+  body-type cue: waist and hips not both visible: no body-type cue; neutral prior (edit and lock to correct) -> femininity 0.50, prior 'neutral'; fitting ['body.shoulder_width', 'body.chest_width', 'body.waist_width', 'face.face_width']
+    fit loss 0.09191
+  ref_waist_up.png: {'observed': 4, 'estimated': 8, 'invented': 38, 'user': 0, 'default': 24} posture=standing style=realistic
+  segmentation: {'method': 'border_color_model+otsu', 'quality': 0.773, 'foreground_fraction': 0.4996, 'hair_excluded_from_measurement': True}; posture=standing; style=realistic
+  visible rows: 1.80 head units; regions: {'head': 'visible', 'neck': 'visible', 'shoulders': 'visible', 'chest': 'cropped', 'arms_upper': 'cropped', 'waist': 'cropped', 'hips_pelvis': 'cropped', 'hands': 'cropped', 'thighs': 'cropped', 'knees': 'cropped', 'lower_legs': 'cropped', 'feet': 'cropped', 'back': 'unobservable'}
+  body-type cue: waist and hips not both visible: no body-type cue; neutral prior (edit and lock to correct) -> femininity 0.50, prior 'neutral'; fitting ['body.shoulder_width', 'face.face_width']
+    fit loss 0.14556
+  ref_portrait.jpg: {'observed': 3, 'estimated': 5, 'invented': 41, 'user': 0, 'default': 25} posture=standing style=realistic
+  segmentation: {'method': 'border_color_model+otsu', 'quality': 0.9, 'foreground_fraction': 0.1953, 'hair_excluded_from_measurement': True}; posture=seated; style=realistic
+  visible rows: 6.11 head units; regions: {'head': 'visible', 'neck': 'visible', 'shoulders': 'visible', 'chest': 'visible', 'arms_upper': 'visible', 'waist': 'visible', 'hips_pelvis': 'visible', 'hands': 'visible', 'thighs': 'occluded_by_pose', 'knees': 'occluded_by_pose', 'lower_legs': 'occluded_by_pose', 'feet': 'occluded_by_pose', 'back': 'unobservable'}
+  body-type cue: waist/hip width ratio 0.811 (male preset 0.776, female preset 0.608) -> femininity 0.00, prior 'male'; fitting ['body.shoulder_width', 'body.chest_width', 'body.waist_width', 'body.hip_width', 'face.face_width']
+    fit loss 0.10308
+  ref_seated.png: {'observed': 5, 'estimated': 9, 'invented': 36, 'user': 0, 'default': 24} posture=seated style=realistic
+  segmentation: {'method': 'border_color_model+otsu', 'quality': 0.884, 'foreground_fraction': 0.1975, 'hair_excluded_from_measurement': True}; posture=standing; style=stylized
+  visible rows: 4.96 head units; regions: {'head': 'visible', 'neck': 'visible', 'shoulders': 'visible', 'chest': 'visible', 'arms_upper': 'visible', 'waist': 'visible', 'hips_pelvis': 'visible', 'hands': 'visible', 'thighs': 'visible', 'knees': 'cropped', 'lower_legs': 'cropped', 'feet': 'cropped', 'back': 'unobservable'}
+  body-type cue: waist/hip width ratio 3.788 (male preset 0.776, female preset 0.608) -> femininity 0.00, prior 'male'; fitting ['body.shoulder_width', 'body.chest_width', 'body.waist_width', 'body.hip_width', 'body.thigh_thickness', 'body.leg_length', 'face.face_width', 'body.head_size']
+    fit loss 0.03595
+  ref_stylized_drawing.png: {'observed': 7, 'estimated': 10, 'invented': 33, 'user': 0, 'default': 24} posture=standing style=stylized
+== Demonstration E: secondary physics
+  breast amplitudes: {'no support f=2.4Hz z=0.22': 0.0208, 't-shirt': 0.0177, 'bra': 0.0096, 'stiff f=4Hz z=0.5': 0.021, 'soft f=1.6Hz z=0.12': 0.0285}

@@ -12,3 +12,7 @@ output/*
 # Subagent-driven-development scratch workspace (ledger, briefs, review packages)
 .superpowers/
 .forge_cache/
+# Character Forge experiment: developer-profile assets stay local (regenerate with tools/run_demos.py)
+*.dev.glb
+examples/character_forge_aaa/glb/recon_ref_full_front.glb
+examples/character_forge_aaa/glb/bram.glb

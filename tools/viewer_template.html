@@ -1,0 +1,181 @@
+<title>Character Forge Viewer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;600&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: workbench — a large 3D viewport with an inspector rail; the rail stacks under the viewport on phones. */
+:root {
+  --bg: #eef1f4; --panel: #f8f9fb; --fg: #1b2129; --muted: #5d6874; --line: #d3d9e0;
+  --accent: #b5701f; --accent-soft: #f3e4cf; --ok: #2f7d4f; --stage: #dfe4ea;
+  --display: "Archivo Narrow", "Arial Narrow", system-ui, sans-serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #12161b; --panel: #181d23; --fg: #e3e8ee; --muted: #93a0ad; --line: #2b333c;
+    --accent: #e0a050; --accent-soft: #3a2b18; --ok: #6cc690; --stage: #0d1014; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #12161b; --panel: #181d23; --fg: #e3e8ee; --muted: #93a0ad; --line: #2b333c;
+  --accent: #e0a050; --accent-soft: #3a2b18; --ok: #6cc690; --stage: #0d1014; color-scheme: dark; }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); line-height: 1.45; }
+.wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 16px 24px; max-width: 1400px; margin: 0 auto; display: grid; gap: 14px; }
+header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 16px; }
+h1 { font-family: var(--display); font-weight: 600; font-size: 1.7rem; margin: 0; letter-spacing: 0.01em; text-wrap: balance; }
+.sub { color: var(--muted); font-size: 0.92rem; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-left: auto; }
+.chip { font-family: var(--mono); font-size: 0.74rem; padding: 3px 8px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); }
+.chip.ok { color: var(--ok); border-color: currentColor; }
+.chip.acc { color: var(--accent); border-color: currentColor; }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 14px; }
+@media (max-width: 860px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+.stage { position: relative; background: var(--stage); border: 1px solid var(--line); border-radius: 6px; min-height: 420px; height: min(78vh, 820px); max-width: 100%; overflow: hidden; }
+canvas { display: block; width: 100%; height: 100%; }
+.status { position: absolute; left: 12px; bottom: 10px; font-family: var(--mono); font-size: 0.75rem; color: var(--muted); }
+.rail { display: grid; gap: 12px; align-content: start; min-width: 0; }
+section { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; display: grid; gap: 8px; min-width: 0; }
+h2 { font-family: var(--display); font-weight: 500; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.09em; color: var(--muted); margin: 0; }
+label { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; font-size: 0.86rem; align-items: center; }
+label input[type=range] { grid-column: 1 / -1; width: 100%; accent-color: var(--accent); }
+label .v { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+select, button { font: inherit; font-size: 0.88rem; padding: 6px 8px; border: 1px solid var(--line); border-radius: 4px; background: var(--bg); color: var(--fg); }
+button { cursor: pointer; }
+button[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.row { display: flex; flex-wrap: wrap; gap: 6px; }
+.toggles { display: flex; flex-wrap: wrap; gap: 6px; }
+.toggles label { display: inline-flex; gap: 5px; font-size: 0.82rem; font-family: var(--mono); }
+dl { display: grid; grid-template-columns: auto 1fr; gap: 3px 10px; margin: 0; font-size: 0.8rem; }
+dt { color: var(--muted); }
+dd { margin: 0; font-family: var(--mono); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.note { font-size: 0.8rem; color: var(--muted); }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1 id="name">Character Forge Viewer</h1>
+    <span class="sub">Exported GLB loaded by three.js GLTFLoader — skinned mesh, morph targets, baked secondary motion</span>
+    <div class="chips" id="chips"></div>
+  </header>
+  <div class="grid">
+    <div class="stage"><canvas id="c" aria-label="3D character viewport"></canvas><div class="status" id="status">loading three.js…</div></div>
+    <div class="rail">
+      <section>
+        <h2>Animation</h2>
+        <div class="row">
+          <select id="clip" aria-label="Animation clip"></select>
+          <button id="play" aria-pressed="true" type="button">Pause</button>
+        </div>
+        <p class="note">Clips ending in <code>_secondary</code> carry simulated breast/cloth motion baked into bone rotations.</p>
+      </section>
+      <section id="exprSec"><h2>Expressions (morph targets)</h2><div id="expr" class="rail"></div></section>
+      <section id="shapeSec"><h2>Body shape (morph targets)</h2><div id="shape" class="rail"></div></section>
+      <section><h2>Parts</h2><div id="parts" class="toggles"></div></section>
+      <section><h2>Asset contract</h2><dl id="meta"></dl></section>
+    </div>
+  </div>
+</div>
+
+<script type="application/octet-stream" id="glb">__GLB_BASE64__</script>
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+               "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }
+</script>
+<script type="module">
+import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+
+const status = document.getElementById("status");
+const canvas = document.getElementById("c");
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+const scene = new THREE.Scene();
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+const key = new THREE.DirectionalLight(0xfff1e0, 1.6); key.position.set(2, 3, 3); scene.add(key);
+const rim = new THREE.DirectionalLight(0xdfe8ff, 0.8); rim.position.set(-2, 2, -3); scene.add(rim);
+const camera = new THREE.PerspectiveCamera(28, 1, 0.05, 50);
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+const ground = new THREE.Mesh(new THREE.CircleGeometry(0.9, 64), new THREE.MeshStandardMaterial({ color: 0x8892a0, roughness: 1, transparent: true, opacity: 0.25 }));
+ground.rotation.x = -Math.PI / 2; scene.add(ground);
+
+function resize() {
+  const r = canvas.parentElement.getBoundingClientRect();
+  renderer.setSize(r.width, r.height, false);
+  camera.aspect = r.width / Math.max(r.height, 1); camera.updateProjectionMatrix();
+}
+new ResizeObserver(resize).observe(canvas.parentElement);
+
+const b64 = document.getElementById("glb").textContent.trim();
+const bin = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+status.textContent = `parsing ${(bin.length / 1048576).toFixed(1)} MB GLB…`;
+new GLTFLoader().parse(bin.buffer, "", (gltf) => {
+  const root = gltf.scene; scene.add(root);
+  const forge = gltf.parser.json.asset?.extras?.forge || {};
+  const box = new THREE.Box3().setFromObject(root);
+  const h = box.max.y - box.min.y;
+  camera.position.set(h * 0.9, h * 0.62, h * 2.6); controls.target.set(0, h * 0.53, 0); controls.update();
+  document.getElementById("name").textContent = `${gltf.parser.json.nodes.at(-1).name} — Character Forge`;
+  const meshes = []; root.traverse((o) => { if (o.isSkinnedMesh || o.isMesh) meshes.push(o); });
+  // chips
+  const chips = document.getElementById("chips");
+  const add = (t, cls = "") => { const s = document.createElement("span"); s.className = "chip " + cls; s.textContent = t; chips.append(s); };
+  add(`profile: ${forge.profile}`, "acc");
+  add(`${meshes.length} meshes`); add(`${gltf.parser.json.skins?.[0]?.joints.length} joints`);
+  add(`${gltf.animations.length} clips`); add("GLTFLoader: parsed", "ok");
+  // animation
+  const mixer = new THREE.AnimationMixer(root);
+  const sel = document.getElementById("clip");
+  gltf.animations.forEach((a, i) => { const o = new Option(a.name, i); sel.append(o); });
+  let action = null;
+  const pick = () => { if (action) action.stop(); action = mixer.clipAction(gltf.animations[+sel.value]); action.play(); };
+  const pref = gltf.animations.findIndex((a) => a.name === "jump_secondary");
+  sel.value = pref >= 0 ? pref : 0; sel.onchange = pick; if (gltf.animations.length) pick();
+  let playing = true;
+  const play = document.getElementById("play");
+  play.onclick = () => { playing = !playing; play.textContent = playing ? "Pause" : "Play"; play.setAttribute("aria-pressed", playing); };
+  // morph sliders
+  const body = meshes.find((m) => m.morphTargetDictionary && m.name.startsWith("body")) || meshes.find((m) => m.morphTargetDictionary);
+  const names = body ? Object.keys(body.morphTargetDictionary) : [];
+  const setMorph = (n, v) => meshes.forEach((m) => { const i = m.morphTargetDictionary?.[n]; if (i !== undefined) m.morphTargetInfluences[i] = v; });
+  const mk = (n, host) => {
+    const l = document.createElement("label"); const id = "m_" + n;
+    l.innerHTML = `<span>${n.replace("shape_", "").replaceAll("_", " ")}</span><span class="v" id="${id}_v">0.00</span><input type="range" id="${id}" min="0" max="1" step="0.01" value="0">`;
+    host.append(l);
+    l.querySelector("input").oninput = (e) => { setMorph(n, +e.target.value); l.querySelector(".v").textContent = (+e.target.value).toFixed(2); };
+  };
+  names.filter((n) => !n.startsWith("shape_")).forEach((n) => mk(n, document.getElementById("expr")));
+  const shapes = names.filter((n) => n.startsWith("shape_"));
+  shapes.forEach((n) => mk(n, document.getElementById("shape")));
+  if (!shapes.length) document.getElementById("shapeSec").hidden = true;
+  // parts
+  const parts = document.getElementById("parts");
+  const seen = new Set();
+  meshes.forEach((m) => {
+    const n = m.name.replace(/_\d+$/, ""); if (seen.has(n)) return; seen.add(n);
+    const l = document.createElement("label"); l.innerHTML = `<input type="checkbox" id="p_${n}" checked> ${n}`;
+    l.querySelector("input").onchange = (e) => meshes.filter((x) => x.name.replace(/_\d+$/, "") === n).forEach((x) => (x.visible = e.target.checked));
+    parts.append(l);
+  });
+  // meta
+  const dl = document.getElementById("meta");
+  const row = (k, v) => { const dt = document.createElement("dt"); dt.textContent = k; const dd = document.createElement("dd"); dd.textContent = v; dl.append(dt, dd); };
+  row("contract", `${forge.contract?.id} v${forge.contract?.version}`);
+  row("units / axes", `${forge.units}, up ${forge.up_axis}, front ${forge.front_axis}`);
+  row("fixed topology", `${forge.fixed_topology_vertices} body vertices`);
+  row("coverage", Object.keys(forge.coverage?.covered_by || {}).join(", ") || "—");
+  row("dev-only parts", (forge.dev_only_parts || []).join(", ") || "none");
+  row("physics bones", (forge.physics_bones || []).length);
+  row("DNA hash", (forge.dna_hash || "").slice(0, 16) + "…");
+  row("geometry", forge.geometry_source || "");
+  status.textContent = "drag to orbit · scroll to zoom";
+  const clock = new THREE.Clock();
+  renderer.setAnimationLoop(() => { const dt = clock.getDelta(); if (playing) mixer.update(dt); controls.update(); renderer.render(scene, camera); });
+  resize();
+}, (err) => { status.textContent = "GLB failed to parse: " + err; });
+</script>

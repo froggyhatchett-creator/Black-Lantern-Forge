@@ -1,0 +1,411 @@
+{
+ "path": "examples/character_forge_aaa/glb/ada.glb",
+ "bytes": 9574364,
+ "sha256": "4afa70304dc98e5b39e63ea3c5577fe6f4c57b945121a6993fa87d653bdd9d36",
+ "parts": {
+  "body": {
+   "vertices": 62639,
+   "triangles": 125282
+  },
+  "eye_l": {
+   "vertices": 1082,
+   "triangles": 2160
+  },
+  "cornea_l": {
+   "vertices": 241,
+   "triangles": 440
+  },
+  "eye_r": {
+   "vertices": 1082,
+   "triangles": 2160
+  },
+  "cornea_r": {
+   "vertices": 241,
+   "triangles": 440
+  },
+  "teeth_upper": {
+   "vertices": 3204,
+   "triangles": 6404
+  },
+  "teeth_lower": {
+   "vertices": 4830,
+   "triangles": 9656
+  },
+  "eyebrows": {
+   "vertices": 60,
+   "triangles": 56
+  },
+  "eyelashes": {
+   "vertices": 68,
+   "triangles": 64
+  },
+  "hair_cap": {
+   "vertices": 9837,
+   "triangles": 19398
+  },
+  "hair_long": {
+   "vertices": 713,
+   "triangles": 1320
+  },
+  "tshirt": {
+   "vertices": 8586,
+   "triangles": 16919
+  },
+  "shorts": {
+   "vertices": 5274,
+   "triangles": 10320
+  }
+ },
+ "body_quality": {
+  "surface_residual_mean_mm": 0.0,
+  "surface_residual_p99_mm": 0.0,
+  "flipped_triangles_vs_template": 7,
+  "degenerate_triangles": 0
+ },
+ "coverage": {
+  "required": [
+   "chest",
+   "pelvis"
+  ],
+  "covered_by": {
+   "chest": [
+    "tshirt"
+   ],
+   "pelvis": [
+    "shorts"
+   ]
+  },
+  "outfit": [
+   "tshirt",
+   "shorts"
+  ]
+ },
+ "clips": [
+  "idle",
+  "walk",
+  "jump",
+  "wave",
+  "idle_secondary",
+  "walk_secondary",
+  "jump_secondary",
+  "wave_secondary"
+ ],
+ "physics": {
+  "idle": {
+   "stable": true,
+   "max_penetration_m": 0.0,
+   "amplitude_m": {
+    "breast_l": 0.0004,
+    "breast_r": 0.0004,
+    "cloth_front_01": 0.0,
+    "cloth_front_02": 0.0001,
+    "cloth_front_03": 0.0001,
+    "cloth_back_01": 0.0,
+    "cloth_back_02": 0.0001,
+    "cloth_back_03": 0.0001
+   }
+  },
+  "walk": {
+   "stable": true,
+   "max_penetration_m": 0.0,
+   "amplitude_m": {
+    "breast_l": 0.016,
+    "breast_r": 0.0142,
+    "cloth_front_01": 0.0117,
+    "cloth_front_02": 0.0205,
+    "cloth_front_03": 0.0333,
+    "cloth_back_01": 0.0127,
+    "cloth_back_02": 0.0343,
+    "cloth_back_03": 0.0739
+   }
+  },
+  "jump": {
+   "stable": true,
+   "max_penetration_m": 2.5e-05,
+   "amplitude_m": {
+    "breast_l": 0.0177,
+    "breast_r": 0.0177,
+    "cloth_front_01": 0.0365,
+    "cloth_front_02": 0.1146,
+    "cloth_front_03": 0.0752,
+    "cloth_back_01": 0.0664,
+    "cloth_back_02": 0.1239,
+    "cloth_back_03": 0.0752
+   }
+  },
+  "wave": {
+   "stable": true,
+   "max_penetration_m": 0.0,
+   "amplitude_m": {
+    "breast_l": 0.0,
+    "breast_r": 0.0,
+    "cloth_front_01": 0.0,
+    "cloth_front_02": 0.0,
+    "cloth_front_03": 0.0,
+    "cloth_back_01": 0.0,
+    "cloth_back_02": 0.0,
+    "cloth_back_03": 0.0
+   }
+  }
+ },
+ "validation": {
+  "ok": true,
+  "errors": [],
+  "stats": {
+   "meshes": 13,
+   "triangles": 194619,
+   "vertices": 99196,
+   "joints": 64,
+   "morph_targets": 16,
+   "animations": 8,
+   "materials": 9,
+   "images": 6,
+   "profile": "public"
+  }
+ },
+ "independent_node_check": {
+  "ok": true,
+  "file": "examples/character_forge_aaa/glb/ada.glb",
+  "meshes": {
+   "body": {
+    "vertices": 63978,
+    "triangles": 125282,
+    "indexInRange": true,
+    "morphTargets": 10,
+    "posedBBoxMin": [
+     -0.3371,
+     0.0053,
+     -0.527
+    ],
+    "posedBBoxMax": [
+     0.2521,
+     1.6251,
+     0.4674
+    ],
+    "verticesMovedBySkinning": 63978
+   },
+   "eye_l": {
+    "vertices": 1082,
+    "triangles": 2160,
+    "indexInRange": true,
+    "morphTargets": 0,
+    "posedBBoxMin": [
+     0.0493,
+     1.4956,
+     0.0534
+    ],
+    "posedBBoxMax": [
+     0.073,
+     1.5193,
+     0.0771
+    ],
+    "verticesMovedBySkinning": 1082
+   },
+   "cornea_l": {
+    "vertices": 241,
+    "triangles": 440,
+    "indexInRange": true,
+    "morphTargets": 0,
+    "posedBBoxMin": [
+     0.0539,
+     1.4995,
+     0.0742
+    ],
+    "posedBBoxMax": [
+     0.0688,
+     1.5144,
+     0.0782
+    ],
+    "verticesMovedBySkinning": 241
+   },
+   "eye_r": {
+    "vertices": 1082,
+    "triangles": 2160,
+    "indexInRange": true,
+    "morphTargets": 0,
+    "posedBBoxMin": [
+     -0.0072,
+     1.4984,
+     0.0544
+    ],
+    "posedBBoxMax": [
+     0.0165,
+     1.5221,
+     0.0781
+    ],
+    "verticesMovedBySkinning": 1082
+   },
+   "cornea_r": {
+    "vertices": 241,
+    "triangles": 440,
+    "indexInRange": true,
+    "morphTargets": 0,
+    "posedBBoxMin": [
+     -0.0027,
+     1.5023,
+     0.0752
+    ],
+    "posedBBoxMax": [
+     0.0122,
+     1.5172,
+     0.0792
+    ],
+    "verticesMovedBySkinning": 241
+   },
+   "teeth_upper": {
+    "vertices": 3204,
+    "triangles": 6404,
+    "indexInRange": true,
+    "morphTargets": 0,
+    "posedBBoxMin": [
+     0.0084,
+     1.4507,
+     0.0561
+    ],
+    "posedBBoxMax": [
+     0.0524,
+     1.4661,
+     0.0859
+    ],
+    "verticesMovedBySkinning": 3204
+   },
+   "teeth_lower": {
+    "vertices": 4830,
+    "triangles": 9656,
+    "indexInRange": true,
+    "morphTargets": 0,
+    "posedBBoxMin": [
+     0.0079,
+     1.4378,
+     0.0352
+    ],
+    "posedBBoxMax": [
+     0.0511,
+     1.4531,
+     0.0838
+    ],
+    "verticesMovedBySkinning": 4830
+   },
+   "eyebrows": {
+    "vertices": 60,
+    "triangles": 56,
+    "indexInRange": true,
+    "morphTargets": 0,
+    "posedBBoxMin": [
+     -0.0011,
+     1.5139,
+     0.0893
+    ],
+    "posedBBoxMax": [
+     0.0693,
+     1.5307,
+     0.0987
+    ],
+    "verticesMovedBySkinning": 60
+   },
+   "eyelashes": {
+    "vertices": 68,
+    "triangles": 64,
+    "indexInRange": true,
+    "morphTargets": 0,
+    "posedBBoxMin": [
+     -0.0078,
+     1.5084,
+     0.0766
+    ],
+    "posedBBoxMax": [
+     0.0744,
+     1.5228,
+     0.0873
+    ],
+    "verticesMovedBySkinning": 68
+   },
+   "hair_cap": {
+    "vertices": 9837,
+    "triangles": 19398,
+    "indexInRange": true,
+    "morphTargets": 0,
+    "posedBBoxMin": [
+     -0.05,
+     1.482,
+     -0.1093
+    ],
+    "posedBBoxMax": [
+     0.1172,
+     1.6387,
+     0.0952
+    ],
+    "verticesMovedBySkinning": 9837
+   },
+   "hair_long": {
+    "vertices": 713,
+    "triangles": 1320,
+    "indexInRange": true,
+    "morphTargets": 0,
+    "posedBBoxMin": [
+     -0.1313,
+     1.1872,
+     -0.1424
+    ],
+    "posedBBoxMax": [
+     0.1658,
+     1.5401,
+     0.0552
+    ],
+    "verticesMovedBySkinning": 713
+   },
+   "tshirt": {
+    "vertices": 8586,
+    "triangles": 16919,
+    "indexInRange": true,
+    "morphTargets": 3,
+    "posedBBoxMin": [
+     -0.1917,
+     0.8606,
+     -0.1225
+    ],
+    "posedBBoxMax": [
+     0.2274,
+     1.3713,
+     0.1633
+    ],
+    "verticesMovedBySkinning": 8586
+   },
+   "shorts": {
+    "vertices": 5274,
+    "triangles": 10320,
+    "indexInRange": true,
+    "morphTargets": 3,
+    "posedBBoxMin": [
+     -0.2019,
+     0.5878,
+     -0.1445
+    ],
+    "posedBBoxMax": [
+     0.1959,
+     0.9086,
+     0.1755
+    ],
+    "verticesMovedBySkinning": 5274
+   }
+  },
+  "joints": 64,
+  "animations": [
+   "idle",
+   "walk",
+   "jump",
+   "wave",
+   "idle_secondary",
+   "walk_secondary",
+   "jump_secondary",
+   "wave_secondary"
+  ],
+  "profile": "public",
+  "anim": "walk",
+  "frame": 8,
+  "time": 0.2666666805744171,
+  "maxWeightSumError": 4.684989107772708e-08,
+  "comparedVertices": 600,
+  "maxPositionErrorVsPython_m": 7.524542555595475e-08
+ }
+}

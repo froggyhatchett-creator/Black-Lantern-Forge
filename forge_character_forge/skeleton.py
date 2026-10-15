@@ -131,7 +131,7 @@ def build_skeleton(body: BodyParams, face: FaceParams | None = None, genital: Ge
     add("spine_03", "spine_02", (0, y_hip + 0.65 * t_len, -0.012 * s))
     add("neck_01", "spine_03", (0, y_neck_base, -0.016 * s))
     add("head", "neck_01", (0, y_chin + 0.2 * head_h, -0.012 * s))
-    add("jaw", "head", (0, y_chin + 0.3 * head_h, 0.006 * s))
+    add("jaw", "head", (0, y_chin + 0.3 * head_h, -0.012 * s + 0.078 * head_h))  # head-relative: scales with the head
     head_z = -0.012 * s
     eye_y = y_chin + 0.483 * head_h * fp.face_length
     eye_x = 0.137 * head_h * fp.eye_spacing * fp.face_width

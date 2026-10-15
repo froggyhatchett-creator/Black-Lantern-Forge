@@ -181,13 +181,21 @@ def proportion_warp(verts: np.ndarray, joints: np.ndarray, weights: np.ndarray, 
     defaulting to the global scale ratio in directions the joints do not constrain.
     """
     s = dst.marks["height"] / src.marks["height"]
+    s_head = dst.marks["head_h"] / src.marks["head_h"]
+    s_hand = dst.marks["hand_len"] / src.marks["hand_len"]
     lam = 1e-4
     A = np.zeros((len(src.names), 3, 4))
     for j, name in enumerate(src.names):
+        if name in ("head", "jaw", "eye_l", "eye_r"):
+            sj = s_head
+        elif name.startswith(("hand_", "thumb", "index", "middle", "ring", "pinky")):
+            sj = s_hand
+        else:
+            sj = s
         kids = [i for i, p in enumerate(src.parents) if p == j and src.names[i] not in WARP_EXCLUDE]
         P = np.array([src.rest[i] - src.rest[j] for i in kids]).reshape(-1, 3)
         Q = np.array([dst.rest[i] - dst.rest[j] for i in kids]).reshape(-1, 3)
-        M = (Q.T @ P + lam * s * np.eye(3)) @ np.linalg.inv(P.T @ P + lam * np.eye(3))
+        M = (Q.T @ P + lam * sj * np.eye(3)) @ np.linalg.inv(P.T @ P + lam * np.eye(3))
         A[j, :, :3] = M
         A[j, :, 3] = dst.rest[j] - M @ src.rest[j]
     T = np.einsum("vk,vkab->vab", weights, A[joints])

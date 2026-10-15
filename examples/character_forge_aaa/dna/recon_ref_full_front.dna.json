@@ -1,0 +1,766 @@
+{
+ "history": [
+  {
+   "kept_locked": [],
+   "n": 50,
+   "op": "apply_estimates"
+  }
+ ],
+ "identity": {
+  "age_years": 30.0,
+  "name": "ref_full_front",
+  "preset": "female"
+ },
+ "reconstruction": {
+  "body_type_prior": "female",
+  "completion": "every region not marked 'visible' was generated from the preset prior (provenance invented)",
+  "fit_confidence": 0.144,
+  "fit_residual_head_units": 0.2305,
+  "generative_model": null,
+  "interpretation": "realistic",
+  "landmark_model": null,
+  "method": "hybrid: classic CV segmentation + silhouette measurement + analysis-by-synthesis procedural fitting",
+  "notes": [],
+  "posture_detected": "standing",
+  "pretrained_model": null,
+  "segmentation": {
+   "foreground_fraction": 0.2318,
+   "hair_excluded_from_measurement": true,
+   "method": "border_color_model+otsu",
+   "quality": 0.9
+  },
+  "style_detected": "realistic"
+ },
+ "regions": {
+  "front": {
+   "arms_upper": "visible",
+   "back": "unobservable",
+   "chest": "visible",
+   "feet": "visible",
+   "hands": "visible",
+   "head": "visible",
+   "hips_pelvis": "visible",
+   "knees": "visible",
+   "lower_legs": "visible",
+   "neck": "visible",
+   "shoulders": "visible",
+   "thighs": "visible",
+   "waist": "visible"
+  }
+ },
+ "schema": "forge.character-dna",
+ "sources": [
+  {
+   "authorized_by_user": true,
+   "file": "ref_full_front.png",
+   "format": "PNG",
+   "height": 1000,
+   "id": "e4e8b5fee57171df",
+   "mime": "image/png",
+   "sha256": "e4e8b5fee57171df1bc060ced6c8a71cb641191b4ca26bf2e8addb48793aaa82",
+   "view": "front",
+   "width": 600
+  }
+ ],
+ "traits": {
+  "appearance.brow_color": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": ""
+  },
+  "appearance.eye_color": {
+   "confidence": 0.1,
+   "locked": false,
+   "note": "iris color is not measured",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": "brown"
+  },
+  "appearance.flush": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.5
+  },
+  "appearance.hair_color": {
+   "confidence": 0.6,
+   "locked": false,
+   "note": "crown-band color",
+   "provenance": "observed",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": "#5b3421"
+  },
+  "appearance.hair_style": {
+   "confidence": 0.45,
+   "locked": false,
+   "note": "hair-colored pixels beside the neck",
+   "provenance": "estimated",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": "long"
+  },
+  "appearance.lip_tint": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.5
+  },
+  "appearance.skin_roughness": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.5
+  },
+  "appearance.skin_tone": {
+   "confidence": 0.55,
+   "locked": false,
+   "note": "median lit face-band color (lighting-dependent)",
+   "provenance": "observed",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 0.46
+  },
+  "appearance.undertone": {
+   "confidence": 0.35,
+   "locked": false,
+   "note": "warm/cool from face-band chroma",
+   "provenance": "estimated",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 0.013
+  },
+  "body.areola_size": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "body.arm_length": {
+   "confidence": 0.2,
+   "locked": false,
+   "note": "not measured by the silhouette method; preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 1.0
+  },
+  "body.arm_thickness": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.92
+  },
+  "body.belly": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.0
+  },
+  "body.body_fat": {
+   "confidence": 0.3,
+   "locked": false,
+   "note": "from fitted waist and thigh girth",
+   "provenance": "estimated",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 0.1399999999999998
+  },
+  "body.breast_height": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "body.breast_projection": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "body.breast_sag": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.3
+  },
+  "body.breast_size": {
+   "confidence": 0.25,
+   "locked": false,
+   "note": "breast volume is not observable in a front silhouette; preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 1.0
+  },
+  "body.breast_spacing": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "body.calf_thickness": {
+   "confidence": 0.144,
+   "locked": false,
+   "note": "silhouette fit (residual 0.231 head units)",
+   "provenance": "observed",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 0.93
+  },
+  "body.chest_depth": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "body.chest_width": {
+   "confidence": 0.086,
+   "locked": false,
+   "note": "silhouette fit through clothing (garment ease prior 0.06 hu removed)",
+   "provenance": "estimated",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 0.89
+  },
+  "body.femininity": {
+   "confidence": 0.6,
+   "locked": false,
+   "note": "waist/hip width ratio 0.577 (male preset 0.776, female preset 0.608)",
+   "provenance": "estimated",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 1.0
+  },
+  "body.foot_size": {
+   "confidence": 0.2,
+   "locked": false,
+   "note": "not measured by the silhouette method; preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 0.92
+  },
+  "body.glute_size": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.08
+  },
+  "body.hand_size": {
+   "confidence": 0.2,
+   "locked": false,
+   "note": "not measured by the silhouette method; preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 0.94
+  },
+  "body.head_size": {
+   "confidence": 0.144,
+   "locked": false,
+   "note": "silhouette fit (residual 0.231 head units)",
+   "provenance": "observed",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 1.0
+  },
+  "body.height_m": {
+   "confidence": 0.2,
+   "locked": false,
+   "note": "absolute scale is not observable in a single image; population prior for the chosen body type",
+   "provenance": "estimated",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 1.66
+  },
+  "body.hip_width": {
+   "confidence": 0.086,
+   "locked": false,
+   "note": "silhouette fit through clothing (garment ease prior 0.06 hu removed)",
+   "provenance": "estimated",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 0.98
+  },
+  "body.leg_length": {
+   "confidence": 0.144,
+   "locked": false,
+   "note": "silhouette fit (residual 0.231 head units)",
+   "provenance": "observed",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 0.95
+  },
+  "body.muscle": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.35
+  },
+  "body.neck_length": {
+   "confidence": 0.2,
+   "locked": false,
+   "note": "not measured by the silhouette method; preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 1.05
+  },
+  "body.neck_thickness": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.9
+  },
+  "body.nipple_size": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "body.shoulder_width": {
+   "confidence": 0.086,
+   "locked": false,
+   "note": "silhouette fit through clothing (garment ease prior 0.06 hu removed)",
+   "provenance": "estimated",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 1.0
+  },
+  "body.thigh_thickness": {
+   "confidence": 0.086,
+   "locked": false,
+   "note": "silhouette fit through clothing (garment ease prior 0.06 hu removed)",
+   "provenance": "estimated",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 0.69
+  },
+  "body.torso_length": {
+   "confidence": 0.2,
+   "locked": false,
+   "note": "not measured by the silhouette method; preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 1.0
+  },
+  "body.waist_width": {
+   "confidence": 0.086,
+   "locked": false,
+   "note": "silhouette fit through clothing (garment ease prior 0.06 hu removed)",
+   "provenance": "estimated",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 1.03
+  },
+  "face.asymmetry": {
+   "confidence": 0.15,
+   "locked": false,
+   "note": "facial landmarks are not detected (no landmark model available); preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 0.0
+  },
+  "face.brow_height": {
+   "confidence": 0.15,
+   "locked": false,
+   "note": "facial landmarks are not detected (no landmark model available); preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 1.04
+  },
+  "face.brow_prominence": {
+   "confidence": 0.15,
+   "locked": false,
+   "note": "facial landmarks are not detected (no landmark model available); preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 0.75
+  },
+  "face.cheek_fullness": {
+   "confidence": 0.15,
+   "locked": false,
+   "note": "facial landmarks are not detected (no landmark model available); preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 1.08
+  },
+  "face.cheekbone_height": {
+   "confidence": 0.15,
+   "locked": false,
+   "note": "facial landmarks are not detected (no landmark model available); preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 1.04
+  },
+  "face.cheekbone_width": {
+   "confidence": 0.15,
+   "locked": false,
+   "note": "facial landmarks are not detected (no landmark model available); preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 1.0
+  },
+  "face.chin_length": {
+   "confidence": 0.15,
+   "locked": false,
+   "note": "facial landmarks are not detected (no landmark model available); preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 0.95
+  },
+  "face.chin_projection": {
+   "confidence": 0.15,
+   "locked": false,
+   "note": "facial landmarks are not detected (no landmark model available); preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 1.0
+  },
+  "face.chin_width": {
+   "confidence": 0.15,
+   "locked": false,
+   "note": "facial landmarks are not detected (no landmark model available); preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 0.88
+  },
+  "face.ear_protrusion": {
+   "confidence": 0.15,
+   "locked": false,
+   "note": "facial landmarks are not detected (no landmark model available); preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 1.0
+  },
+  "face.ear_size": {
+   "confidence": 0.15,
+   "locked": false,
+   "note": "facial landmarks are not detected (no landmark model available); preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 1.0
+  },
+  "face.eye_size": {
+   "confidence": 0.15,
+   "locked": false,
+   "note": "facial landmarks are not detected (no landmark model available); preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 1.06
+  },
+  "face.eye_spacing": {
+   "confidence": 0.15,
+   "locked": false,
+   "note": "facial landmarks are not detected (no landmark model available); preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 1.0
+  },
+  "face.eye_tilt": {
+   "confidence": 0.15,
+   "locked": false,
+   "note": "facial landmarks are not detected (no landmark model available); preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 0.0
+  },
+  "face.face_length": {
+   "confidence": 0.15,
+   "locked": false,
+   "note": "facial landmarks are not detected (no landmark model available); preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 0.97
+  },
+  "face.face_width": {
+   "confidence": 0.072,
+   "locked": false,
+   "note": "head silhouette width; hair and ears bias it",
+   "provenance": "estimated",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 1.11
+  },
+  "face.jaw_angle": {
+   "confidence": 0.15,
+   "locked": false,
+   "note": "facial landmarks are not detected (no landmark model available); preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 0.8
+  },
+  "face.jaw_width": {
+   "confidence": 0.15,
+   "locked": false,
+   "note": "facial landmarks are not detected (no landmark model available); preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 0.9
+  },
+  "face.lip_lower": {
+   "confidence": 0.15,
+   "locked": false,
+   "note": "facial landmarks are not detected (no landmark model available); preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 1.12
+  },
+  "face.lip_upper": {
+   "confidence": 0.15,
+   "locked": false,
+   "note": "facial landmarks are not detected (no landmark model available); preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 1.12
+  },
+  "face.mouth_width": {
+   "confidence": 0.15,
+   "locked": false,
+   "note": "facial landmarks are not detected (no landmark model available); preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 1.0
+  },
+  "face.nose_bridge": {
+   "confidence": 0.15,
+   "locked": false,
+   "note": "facial landmarks are not detected (no landmark model available); preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 0.92
+  },
+  "face.nose_length": {
+   "confidence": 0.15,
+   "locked": false,
+   "note": "facial landmarks are not detected (no landmark model available); preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 0.94
+  },
+  "face.nose_tip": {
+   "confidence": 0.15,
+   "locked": false,
+   "note": "facial landmarks are not detected (no landmark model available); preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 0.92
+  },
+  "face.nose_upturn": {
+   "confidence": 0.15,
+   "locked": false,
+   "note": "facial landmarks are not detected (no landmark model available); preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 0.0
+  },
+  "face.nose_width": {
+   "confidence": 0.15,
+   "locked": false,
+   "note": "facial landmarks are not detected (no landmark model available); preset prior",
+   "provenance": "invented",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": 0.9
+  },
+  "genital.enabled": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.0
+  },
+  "genital.glans_size": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "genital.penis_curve": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.0
+  },
+  "genital.penis_girth": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "genital.penis_length": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "genital.scrotum_size": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "genital.testicle_asymmetry": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 0.4
+  },
+  "genital.testicle_size": {
+   "confidence": 1.0,
+   "locked": false,
+   "note": "",
+   "provenance": "default",
+   "sources": [],
+   "value": 1.0
+  },
+  "wardrobe.colors": {
+   "confidence": 0.5,
+   "locked": false,
+   "note": "median garment colors",
+   "provenance": "observed",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": {
+    "shorts": "#2c354a",
+    "tshirt": "#b13d34"
+   }
+  },
+  "wardrobe.outfit": {
+   "confidence": 0.5,
+   "locked": false,
+   "note": "garment colors differ from skin in torso/leg regions",
+   "provenance": "observed",
+   "sources": [
+    "e4e8b5fee57171df"
+   ],
+   "value": [
+    "tshirt",
+    "shorts"
+   ]
+  }
+ },
+ "version": 1
+}

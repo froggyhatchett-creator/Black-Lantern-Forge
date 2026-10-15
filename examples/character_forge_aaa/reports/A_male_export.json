@@ -1,0 +1,161 @@
+{
+ "path": "examples/character_forge_aaa/glb/bram.glb",
+ "bytes": 8713456,
+ "sha256": "f193e8543fe26b12eb65a195bdf5abd06ccad43e7fcef9897cef95093f2cf698",
+ "parts": {
+  "body": {
+   "vertices": 62639,
+   "triangles": 125282
+  },
+  "eye_l": {
+   "vertices": 1082,
+   "triangles": 2160
+  },
+  "cornea_l": {
+   "vertices": 241,
+   "triangles": 440
+  },
+  "eye_r": {
+   "vertices": 1082,
+   "triangles": 2160
+  },
+  "cornea_r": {
+   "vertices": 241,
+   "triangles": 440
+  },
+  "teeth_upper": {
+   "vertices": 3275,
+   "triangles": 6546
+  },
+  "teeth_lower": {
+   "vertices": 4869,
+   "triangles": 9734
+  },
+  "eyebrows": {
+   "vertices": 60,
+   "triangles": 56
+  },
+  "eyelashes": {
+   "vertices": 68,
+   "triangles": 64
+  },
+  "hair_cap": {
+   "vertices": 9837,
+   "triangles": 19398
+  },
+  "tshirt": {
+   "vertices": 8586,
+   "triangles": 16919
+  },
+  "pants": {
+   "vertices": 10484,
+   "triangles": 20804
+  }
+ },
+ "body_quality": {
+  "surface_residual_mean_mm": 0.0,
+  "surface_residual_p99_mm": 0.0,
+  "flipped_triangles_vs_template": 52,
+  "degenerate_triangles": 0
+ },
+ "coverage": {
+  "required": [
+   "pelvis"
+  ],
+  "covered_by": {
+   "chest": [
+    "tshirt"
+   ],
+   "pelvis": [
+    "pants"
+   ]
+  },
+  "outfit": [
+   "tshirt",
+   "pants"
+  ]
+ },
+ "clips": [
+  "idle",
+  "walk",
+  "jump",
+  "wave",
+  "idle_secondary",
+  "walk_secondary",
+  "jump_secondary",
+  "wave_secondary"
+ ],
+ "physics": {
+  "idle": {
+   "stable": true,
+   "max_penetration_m": 0.0,
+   "amplitude_m": {
+    "breast_l": 0.0007,
+    "breast_r": 0.0007,
+    "cloth_front_01": 0.0,
+    "cloth_front_02": 0.0001,
+    "cloth_front_03": 0.0002,
+    "cloth_back_01": 0.0,
+    "cloth_back_02": 0.0001,
+    "cloth_back_03": 0.0002
+   }
+  },
+  "walk": {
+   "stable": true,
+   "max_penetration_m": 1e-06,
+   "amplitude_m": {
+    "breast_l": 0.0151,
+    "breast_r": 0.0098,
+    "cloth_front_01": 0.0124,
+    "cloth_front_02": 0.0219,
+    "cloth_front_03": 0.0352,
+    "cloth_back_01": 0.0135,
+    "cloth_back_02": 0.0363,
+    "cloth_back_03": 0.0721
+   }
+  },
+  "jump": {
+   "stable": true,
+   "max_penetration_m": 0.000843,
+   "amplitude_m": {
+    "breast_l": 0.0159,
+    "breast_r": 0.0159,
+    "cloth_front_01": 0.036,
+    "cloth_front_02": 0.1117,
+    "cloth_front_03": 0.0806,
+    "cloth_back_01": 0.0618,
+    "cloth_back_02": 0.1265,
+    "cloth_back_03": 0.0806
+   }
+  },
+  "wave": {
+   "stable": true,
+   "max_penetration_m": 0.0,
+   "amplitude_m": {
+    "breast_l": 0.0,
+    "breast_r": 0.0,
+    "cloth_front_01": 0.0,
+    "cloth_front_02": 0.0,
+    "cloth_front_03": 0.0,
+    "cloth_back_01": 0.0,
+    "cloth_back_02": 0.0,
+    "cloth_back_03": 0.0
+   }
+  }
+ },
+ "validation": {
+  "ok": true,
+  "errors": [],
+  "stats": {
+   "meshes": 12,
+   "triangles": 204003,
+   "vertices": 103803,
+   "joints": 64,
+   "morph_targets": 7,
+   "animations": 8,
+   "materials": 9,
+   "images": 6,
+   "profile": "public"
+  }
+ }
+}

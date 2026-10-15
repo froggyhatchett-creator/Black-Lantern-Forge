@@ -93,21 +93,43 @@ def clip(name: str, u: float = 1.0) -> Clip:
         root = np.stack([np.zeros(T), 0.002 * u * np.sin(ph), np.zeros(T)], 1)
         return Clip("idle", t, rot, root)
     if name == "jump":
-        T = 45
+        # physically plausible vertical jump: countermovement, ~1.7 g push-off, ballistic flight, landing
+        g = 9.81
+        v0 = math.sqrt(2 * g * 0.25 * u)            # 0.25 m apex
+        t_push, t_off = 0.40, 0.53
+        t_land = t_off + 2 * v0 / g
+        t_end = t_land + 0.55
+        T = int(round(t_end * FPS)) + 1
         t = np.arange(T) / FPS
-        s = np.arange(T) / (T - 1)
-        crouch = np.interp(s, [0, 0.2, 0.32, 0.38, 0.62, 0.72, 0.85, 1.0], [0, 1, 1, 0, 0, 0.9, 0.3, 0])
-        air = np.interp(s, [0, 0.32, 0.38, 0.5, 0.62, 0.66, 1.0], [0, 0, 0.6, 1.0, 0.25, 0, 0])
+        fine = np.linspace(0, t_end, T * 20)
+
+        def vel(x):
+            if x < t_push:  # smooth dip down and back to rest velocity
+                return -0.9 * math.sin(math.pi * x / t_push)
+            if x < t_off:
+                s_ = (x - t_push) / (t_off - t_push)
+                return v0 * (3 * s_ * s_ - 2 * s_ ** 3)
+            if x < t_land:
+                return v0 - g * (x - t_off)
+            s_ = min((x - t_land) / 0.25, 1.0)
+            return -v0 * (1 - (3 * s_ * s_ - 2 * s_ ** 3)) if x < t_land + 0.25 else \
+                0.6 * math.sin(math.pi * min((x - t_land - 0.25) / 0.30, 1.0))
+        v = np.array([vel(x) for x in fine])
+        y = np.concatenate([[0.0], np.cumsum((v[1:] + v[:-1]) * 0.5 * np.diff(fine))])
+        y -= np.linspace(0, y[-1], len(y))          # close the loop exactly at rest height
+        y = np.interp(t, fine, y)
+        crouch = np.clip(-y / (0.20 * u), 0, 1.2)
+        air = np.clip(y / (0.25 * u), 0, 1)
         rot = {"thigh_l": np.array([_q(-55 * c, 0, 0) for c in crouch]),
                "thigh_r": np.array([_q(-55 * c, 0, 0) for c in crouch]),
                "calf_l": np.array([_q(95 * c, 0, 0) for c in crouch]),
                "calf_r": np.array([_q(95 * c, 0, 0) for c in crouch]),
-               "foot_l": np.array([_q(-40 * c, 0, 0) for c in crouch]),
-               "foot_r": np.array([_q(-40 * c, 0, 0) for c in crouch]),
+               "foot_l": np.array([_q(-40 * c + 25 * a, 0, 0) for c, a in zip(crouch, air)]),
+               "foot_r": np.array([_q(-40 * c + 25 * a, 0, 0) for c, a in zip(crouch, air)]),
                "spine_01": np.array([_q(25 * c, 0, 0) for c in crouch]),
                "upperarm_l": np.array([_q(40 * c - 80 * a, 0, -30) for c, a in zip(crouch, air)]),
                "upperarm_r": np.array([_q(40 * c - 80 * a, 0, 30) for c, a in zip(crouch, air)])}
-        root = np.stack([np.zeros(T), (-0.20 * crouch + 0.32 * air) * u, 0.06 * u * crouch], 1)
+        root = np.stack([np.zeros(T), y + 0.0 * crouch, 0.06 * u * np.clip(crouch, 0, 1)], 1)
         return Clip("jump", t, rot, root, loop=False)
     if name == "wave":
         T = 40
