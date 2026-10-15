@@ -143,30 +143,23 @@ def skirt_garment(kind: str, skel, field, length: str = "knee") -> Part:
     top_y = yh + 0.07 * u
     hem_y = skel["calf_l"][1] - 0.02 * u if length == "knee" else skel["foot_l"][1] + 0.03 * u
     segs, rows = 64, 18
-    verts, uvs = [], []
     center = np.array([0.0, 0.0, -0.01 * u])
-    for r in range(rows + 1):
-        s = r / rows
-        y = top_y + (hem_y - top_y) * s
-        for c in range(segs):
-            a = 2 * math.pi * c / segs
-            d = np.array([math.sin(a), 0.0, math.cos(a)])
-            # find the body surface along the ray at this height, then add clearance + flare
-            lo, hi = 0.0, 0.5
-            for _ in range(28):
-                mid = (lo + hi) / 2
-                p = center + d * mid
-                p[1] = y
-                if field.evaluate(p[None])[0] < 0:
-                    lo = mid
-                else:
-                    hi = mid
-            radius = hi + 0.006 * u + (0.10 * u if kind == "skirt" else 0.07 * u) * s ** 1.3
-            p = center + d * radius
-            p[1] = y
-            verts.append(p)
-            uvs.append((c / segs * 8.0, s * 6.0))
-    v = np.array(verts)
+    ss = np.repeat(np.arange(rows + 1) / rows, segs)
+    ang = np.tile(2 * math.pi * np.arange(segs) / segs, rows + 1)
+    ys = top_y + (hem_y - top_y) * ss
+    dirs = np.stack([np.sin(ang), np.zeros_like(ang), np.cos(ang)], 1)
+    lo, hi = np.zeros(len(ss)), np.full(len(ss), 0.5)
+    for _ in range(28):  # vectorized bisection for the body surface along every ray at once
+        mid = (lo + hi) / 2
+        p = center + dirs * mid[:, None]
+        p[:, 1] = ys
+        inside = field.evaluate(p) < 0
+        lo = np.where(inside, mid, lo)
+        hi = np.where(inside, hi, mid)
+    radius = hi + 0.006 * u + (0.10 * u if kind == "skirt" else 0.07 * u) * ss ** 1.3
+    v = center + dirs * radius[:, None]
+    v[:, 1] = ys
+    uvs = list(zip(np.tile(np.arange(segs) / segs * 8.0, rows + 1), ss * 6.0))
     # widen rows monotonically so lower rows never cut inside upper ones (keeps the silhouette conical)
     ring = v.reshape(rows + 1, segs, 3)
     rad = np.linalg.norm((ring - center)[..., [0, 2]], axis=2)
@@ -214,7 +207,7 @@ def loincloth_parts(body_verts, body_normals, tpl, skel_t, skel, field) -> list[
     yh = m["y_hip"]
     belt_mask = region_mask("briefs", tpl, skel_t)
     v = tpl.verts
-    belt_mask &= (v[:, 1] > skel_t.marks["y_hip"] + 0.025 * u)
+    belt_mask &= (v[:, 1] > skel_t.marks["y_hip"] + 0.025 * skel_t.marks["height"] / 1.75)  # template-based: fixed topology
     parts = []
     used, t = _submesh(belt_mask, tpl.tris)
     if len(t):

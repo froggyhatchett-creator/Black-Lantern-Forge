@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import functools
 import math
 
 import numpy as np
@@ -72,9 +73,11 @@ def build_eyes(skel, app: AppearanceParams) -> list[Part]:
     return parts
 
 
-def build_mouth(skel) -> list[Part]:
-    O, h = head_frame(skel)
-    k = h / 0.23
+@functools.lru_cache(maxsize=1)
+def _unit_mouth():
+    """Teeth/gums/tongue meshed once in unit head space (0.23 m reference head, origin at the head frame).
+    Placing them with the head frame keeps their topology identical for every character."""
+    O, k = np.zeros(3), 1.0
 
     def P(x, y, z):
         return tuple(O + _v(x, y, z) * k)
@@ -92,7 +95,6 @@ def build_mouth(skel) -> list[Part]:
                         radius=0.0012 * k, rot=rot, tag="tooth"))
         low.add(RoundBox("jaw", 0.0006 * k, center=P(x * 0.95, mouth_y - 0.0050, z - 0.0012), half=(wdt * 0.92 * k * 0.5, 0.0048 * k, 0.003 * k),
                          radius=0.0012 * k, rot=rot, tag="tooth"))
-    # gums follow the arch
     for fld, y, bone, zoff in ((up, mouth_y + 0.0105, "head", 0.0), (low, mouth_y - 0.0098, "jaw", -0.0012)):
         xs = np.linspace(-0.0195, 0.0195, 9)
         for a, b in zip(xs[:-1], xs[1:]):
@@ -100,19 +102,27 @@ def build_mouth(skel) -> list[Part]:
                               b=P(b, y, 0.0855 - 62 * b * b + zoff - 0.0005), ra=0.0036 * k, rb=0.0036 * k, tag="gum"))
     low.add(Ellipsoid("jaw", 0.004 * k, center=P(0, mouth_y - 0.0075, 0.06), radii=(0.016 * k, 0.0055 * k, 0.024 * k),
                       tag="tongue"))
-    parts = []
+    out = []
     for name, fld, bone in (("teeth_upper", up, "head"), ("teeth_lower", low, "jaw")):
         lo = np.min([p.bounds()[0] for p in fld.prims], axis=0) - 0.004
         hi = np.max([p.bounds()[1] for p in fld.prims], axis=0) + 0.004
-        v, t = mesher.mesh_box(fld.evaluate, lo, hi, 0.0011 * k)
+        v, t = mesher.mesh_box(fld.evaluate, lo, hi, 0.0011)
         v, t, _ = mesher.repair(v, t)
         v = mesher.relax(v, t, fld, iterations=2, strength=0.5)
-        # color: enamel vs gum vs tongue by nearest primitive tag
         tags = _nearest_tag(v, fld)
         col = np.where(tags[:, None] == "tooth", np.array([0.80, 0.76, 0.66]),
                        np.where(tags[:, None] == "gum", np.array([0.55, 0.16, 0.16]), np.array([0.50, 0.14, 0.15])))
+        out.append((name, bone, v, t, col))
+    return tuple(out)
+
+
+def build_mouth(skel) -> list[Part]:
+    O, h = head_frame(skel)
+    k = h / 0.23
+    parts = []
+    for name, bone, v, t, col in _unit_mouth():
         j, w = rigid_weights(len(v), skel.index(bone))
-        parts.append(Part(name, v, t, "teeth", j, w, colors=col))
+        parts.append(Part(name, O + v * k, t.copy(), "teeth", j, w, colors=col.copy()))
     return parts
 
 
@@ -215,6 +225,9 @@ def hair_mask(tpl, skel_tpl) -> np.ndarray:
 def build_hair(body_verts, body_normals, tpl, skel, skel_tpl, app: AppearanceParams, field: Field) -> list[Part]:
     if app.hair_style in ("bald", "buzz"):
         return []
+    from forge_character_forge import hair as hair_styles
+    if app.hair_style in hair_styles.STYLES:  # volumetric styles carry their own scalp coverage
+        return [hair_styles.build_style(skel, app.hair_style)]
     mask = hair_mask(tpl, skel_tpl)
     tri_in = mask[tpl.tris].all(1)
     t = tpl.tris[tri_in]
@@ -249,58 +262,25 @@ def build_hair(body_verts, body_normals, tpl, skel, skel_tpl, app: AppearancePar
     head_j = skel.index("head")
     j, w = rigid_weights(len(v), head_j)
     parts = [Part("hair_cap", v, t, "hair", j, w, uvs=uv, double_sided=True)]
-    if app.hair_style == "long":
-        parts.append(_hair_curtain(skel, field, k, O))
-    elif app.hair_style == "bun":
-        fld = Field()
-        fld.add(Ellipsoid("head", 0.004, center=tuple(O + _v(0, 0.20, -0.095) * k), radii=(0.03 * k, 0.026 * k, 0.026 * k)))
-        lo, hi = O + _v(-0.05, 0.15, -0.14) * k, O + _v(0.05, 0.25, -0.05) * k
-        bv, bt = mesher.mesh_box(fld.evaluate, lo, hi, 0.002 * k)
-        buv = np.stack([np.arctan2(bv[:, 0] - O[0], bv[:, 1] - O[1] - 0.2 * k) * 1.5, (bv[:, 2] - O[2]) / (0.02 * k)], 1)
-        jj, ww = rigid_weights(len(bv), head_j)
-        parts.append(Part("hair_bun", bv, bt, "hair", jj, ww, uvs=buv))
+    if app.hair_style == "bun":
+        parts.append(hair_bun(skel))
     return parts
 
 
-def _hair_curtain(skel, field: Field, k: float, O: np.ndarray) -> Part:
-    """Long hair: a sheet hanging from the back/sides of the head, pushed out of the body."""
-    cols, rows = 30, 22
-    length = 0.36 * k
-    verts, uvs = [], []
-    y_top = 0.13
-    for r in range(rows + 1):
-        s = r / rows
-        for c in range(cols + 1):
-            a = math.radians(-100 + 200 * c / cols)  # 0 = straight back
-            rx = (0.088 + 0.03 * s) * k
-            rz = (0.112 + 0.02 * s) * k
-            p = O + _v(math.sin(a) * rx, y_top * k - length * s, -0.008 * k - math.cos(a) * rz)
-            verts.append(p)
-            uvs.append((c / cols * 3.0, s * 4.0))
-    v = np.array(verts)
-    # push out of the body (shoulders/back) with a small clearance
-    for _ in range(6):
-        d = field.evaluate(v)
-        g = field.gradient(v)
-        g /= np.maximum(np.linalg.norm(g, axis=1, keepdims=True), 1e-9)
-        push = np.clip(0.006 * k - d, 0, None)
-        v = v + g * push[:, None]
-    tris = []
-    for r in range(rows):
-        for c in range(cols):
-            a = r * (cols + 1) + c
-            b, cc, d = a + 1, a + cols + 1, a + cols + 2
-            tris += [(a, cc, d), (a, d, b)]
-    # weights: head at the top blending into neck/upper spine down the back
-    y = v[:, 1]
-    names = skel.names
-    jh, jn, js = names.index("head"), names.index("neck_01"), names.index("spine_03")
-    t = np.clip((O[1] + y_top * k - y) / length, 0, 1)
-    J = np.zeros((len(v), 4), np.int64)
-    W = np.zeros((len(v), 4))
-    J[:, 0], J[:, 1], J[:, 2] = jh, jn, js
-    W[:, 0] = np.clip(1 - 2.2 * t, 0, 1)
-    W[:, 2] = np.clip(2.0 * t - 0.6, 0, 1)
-    W[:, 1] = np.clip(1 - W[:, 0] - W[:, 2], 0, 1)
-    W /= W.sum(1, keepdims=True)
-    return Part("hair_long", v, np.array(tris), "hair", J, W, uvs=np.array(uvs), double_sided=True)
+@functools.lru_cache(maxsize=1)
+def _unit_bun():
+    fld = Field()
+    fld.add(Ellipsoid("head", 0.004, center=(0.0, 0.20, -0.095), radii=(0.03, 0.026, 0.026)))
+    bv, bt = mesher.mesh_box(fld.evaluate, _v(-0.05, 0.15, -0.14), _v(0.05, 0.25, -0.05), 0.002)
+    return bv, bt
+
+
+def hair_bun(skel) -> Part:
+    """Bun meshed once in unit head space, placed with the head frame (fixed topology)."""
+    O, h = head_frame(skel)
+    k = h / 0.23
+    bv, bt = _unit_bun()
+    v = O + bv * k
+    buv = np.stack([np.arctan2(bv[:, 0], bv[:, 1] - 0.2) * 1.5, bv[:, 2] / 0.02], 1)
+    jj, ww = rigid_weights(len(v), skel.index("head"))
+    return Part("hair_bun", v, bt.copy(), "hair", jj, ww, uvs=buv)

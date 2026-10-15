@@ -131,6 +131,64 @@ def clip(name: str, u: float = 1.0) -> Clip:
                "upperarm_r": np.array([_q(40 * c - 80 * a, 0, 30) for c, a in zip(crouch, air)])}
         root = np.stack([np.zeros(T), y + 0.0 * crouch, 0.06 * u * np.clip(crouch, 0, 1)], 1)
         return Clip("jump", t, rot, root, loop=False)
+    if name == "run":
+        T = 20                                   # 0.67 s stride -> 3 steps per second
+        t = np.arange(T) / FPS
+        ph = 2 * np.pi * np.arange(T) / T
+        sw = np.sin(ph)
+        knee = lambda p: 25 + 85 * max(0.0, math.sin(p + 1.6)) ** 1.5
+        rot = {"thigh_l": np.array([_q(-45 * s - 10, 0, 0) for s in sw]),
+               "thigh_r": np.array([_q(45 * s - 10, 0, 0) for s in sw]),
+               "calf_l": np.array([_q(knee(p), 0, 0) for p in ph]),
+               "calf_r": np.array([_q(knee(p + math.pi), 0, 0) for p in ph]),
+               "foot_l": np.array([_q(-15 * math.sin(p - 0.5), 0, 0) for p in ph]),
+               "foot_r": np.array([_q(15 * math.sin(p - 0.5), 0, 0) for p in ph]),
+               "upperarm_l": np.array([_q(38 * s, 0, -55) for s in sw]),
+               "upperarm_r": np.array([_q(-38 * s, 0, 55) for s in sw]),
+               "lowerarm_l": np.array([_q(-80, 0, 0) for _ in sw]), "lowerarm_r": np.array([_q(-80, 0, 0) for _ in sw]),
+               "spine_01": np.array([_q(10, 0, 0) for _ in sw]),
+               "pelvis": np.array([_q(0, 8 * s, 0) for s in sw]),
+               "spine_02": np.array([_q(4, -12 * s, 0) for s in sw])}
+        root = np.stack([np.zeros(T), (0.045 * np.abs(np.cos(ph)) - 0.03) * u, np.zeros(T)], 1)
+        return Clip("run", t, rot, root)
+    if name == "turn":
+        T = 72                                   # two smooth 180-degree turns with small steps
+        t = np.arange(T) / FPS
+        s = np.arange(T) / T
+        def ease(x):
+            x = np.clip(x, 0, 1)
+            return x * x * (3 - 2 * x)
+        yaw = 180 * ease((s - 0.05) / 0.25) + 180 * ease((s - 0.55) / 0.25)
+        step = np.sin(np.clip((s - 0.05) / 0.25, 0, 1) * 2 * np.pi) + np.sin(np.clip((s - 0.55) / 0.25, 0, 1) * 2 * np.pi)
+        rot = {"root": np.array([_q(0, y, 0) for y in yaw]),
+               "thigh_l": np.array([_q(-20 * max(st, 0), 0, 0) for st in step]),
+               "calf_l": np.array([_q(35 * max(st, 0), 0, 0) for st in step]),
+               "thigh_r": np.array([_q(20 * min(st, 0), 0, 0) for st in step]),
+               "calf_r": np.array([_q(-35 * min(st, 0), 0, 0) for st in step]),
+               "upperarm_l": np.array([_q(0, 0, -38) for _ in s]), "upperarm_r": np.array([_q(0, 0, 38) for _ in s]),
+               "spine_02": np.array([_q(0, -10 * (np.gradient(yaw)[i] / 15.0), 0) for i in range(T)]),
+               "head": np.array([_q(0, -14 * (np.gradient(yaw)[i] / 15.0), 0) for i in range(T)])}
+        root = np.zeros((T, 3))
+        return Clip("turn", t, rot, root)
+    if name == "sudden_stop":
+        T = 75                                   # jog forward 1.4 m, decelerate in ~0.13 s (~1.7 g), settle
+        t = np.arange(T) / FPS
+        v_run, t_stop = 2.2 * u, 0.75
+        v = np.where(t < t_stop, v_run * np.clip(t / 0.25, 0, 1), np.maximum(0.0, v_run - (t - t_stop) * 17.0))
+        z = np.concatenate([[0.0], np.cumsum((v[1:] + v[:-1]) * 0.5 / FPS)])
+        moving = np.clip(v / v_run, 0, 1)
+        ph = 2 * np.pi * t / 0.6
+        brake = np.exp(-((t - t_stop - 0.12) / 0.12) ** 2)
+        rot = {"thigh_l": np.array([_q(-35 * m * math.sin(p) - 12 * b, 0, 0) for m, p, b in zip(moving, ph, brake)]),
+               "thigh_r": np.array([_q(35 * m * math.sin(p) + 18 * b, 0, 0) for m, p, b in zip(moving, ph, brake)]),
+               "calf_l": np.array([_q(20 + 55 * m * max(0, math.sin(p + 1.6)) + 25 * b, 0, 0) for m, p, b in zip(moving, ph, brake)]),
+               "calf_r": np.array([_q(20 + 55 * m * max(0, math.sin(p + 1.6 + math.pi)) + 10 * b, 0, 0) for m, p, b in zip(moving, ph, brake)]),
+               "upperarm_l": np.array([_q(30 * m * math.sin(p) - 25 * b, 0, -50) for m, p, b in zip(moving, ph, brake)]),
+               "upperarm_r": np.array([_q(-30 * m * math.sin(p) - 25 * b, 0, 50) for m, p, b in zip(moving, ph, brake)]),
+               "lowerarm_l": np.array([_q(-60 * m - 10, 0, 0) for m in moving]), "lowerarm_r": np.array([_q(-60 * m - 10, 0, 0) for m in moving]),
+               "spine_01": np.array([_q(8 * m - 14 * b, 0, 0) for m, b in zip(moving, brake)])}
+        root = np.stack([np.zeros(T), (0.03 * moving * np.abs(np.cos(ph)) - 0.02 * moving - 0.05 * brake) * u, z], 1)
+        return Clip("sudden_stop", t, rot, root, loop=False)
     if name == "wave":
         T = 40
         t = np.arange(T) / FPS
@@ -145,7 +203,7 @@ def clip(name: str, u: float = 1.0) -> Clip:
     raise ValueError(f"unknown clip {name!r}")
 
 
-CLIPS = ("idle", "walk", "jump", "wave")
+CLIPS = ("idle", "walk", "run", "jump", "turn", "sudden_stop", "wave")
 
 
 def pose_at(c: Clip, frame: int) -> dict:

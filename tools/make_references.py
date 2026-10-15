@@ -97,5 +97,35 @@ def main(out="examples/character_forge_aaa/references"):
     print("wrote", sorted(p.name for p in out.iterdir()))
 
 
+def phase2(out="examples/character_forge_aaa/references"):
+    """Extra references for hairstyle and skirt detection (adds files; never rewrites the phase 1 references)."""
+    out = Path(out)
+    truth = json.loads((out / "ground_truth.json").read_text())
+    b, f, g = preset("female")
+    b = b.with_(hip_width=1.04, body_fat=0.35)
+    app = AppearanceParams(skin_tone=0.25, hair_style="bob", hair_color="#2a1a12", eye_color="green")
+    spec = CharacterSpec(b, f, g, app, ("tshirt", "skirt"), 34.0, "ref_cleo", (("tshirt", "#e0c040"), ("skirt", "#3b4f8a")))
+    full = render_ref(build_character(spec, "public"))
+    Image.fromarray(full).save(out / "ref_bob_skirt.png")
+    truth["ref_bob_skirt.png"] = spec_to_dict(spec)
+    app2 = AppearanceParams(skin_tone=0.6, hair_style="bangs", hair_color="#16100c", eye_color="dark_brown")
+    spec2 = CharacterSpec(b.with_(hip_width=1.0), f.with_(jaw_width=0.95), g, app2, ("tshirt", "pants"), 27.0, "ref_dara",
+                          (("tshirt", "#f0f0f0"), ("pants", "#20242a")))
+    full2 = render_ref(build_character(spec2, "public"))
+    Image.fromarray(full2[30:300, 150:450]).save(out / "ref_bangs_portrait.png")
+    truth["ref_bangs_portrait.png"] = spec_to_dict(spec2)
+    bm, fm, gm = preset("male")
+    app3 = AppearanceParams(skin_tone=0.15, hair_style="long", hair_color="#8a6a3a")
+    spec3 = CharacterSpec(bm, fm, gm, app3, ("tshirt", "pants"), 45.0, "ref_ewan", (("tshirt", "#6a2030"), ("pants", "#2f3a2c")))
+    full3 = render_ref(build_character(spec3, "public"))
+    Image.fromarray(full3).save(out / "ref_long_male.png")
+    truth["ref_long_male.png"] = spec_to_dict(spec3)
+    (out / "ground_truth.json").write_text(json.dumps(truth, indent=1, sort_keys=True))
+    print("wrote phase 2 references")
+
+
 if __name__ == "__main__":
-    main(*sys.argv[1:])
+    if sys.argv[1:2] == ["--phase2"]:
+        phase2(*sys.argv[2:])
+    else:
+        main(*sys.argv[1:])

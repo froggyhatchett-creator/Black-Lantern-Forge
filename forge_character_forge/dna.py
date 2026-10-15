@@ -45,6 +45,26 @@ _DEFAULT_WINDOW = (0.85, 1.15)
 _SKIP_REGEN = {"genital.enabled", "body.femininity"}
 
 
+# Layers keep what a character *is* apart from how it is styled or dressed.  Hair style/color/highlights,
+# brow color and the wardrobe can change freely without changing the anatomical identity.
+STYLING_TRAITS = ("appearance.hair_style", "appearance.hair_color", "appearance.hair_highlight_color",
+                  "appearance.hair_highlight_amount", "appearance.brow_color")
+
+
+def layer_of(key: str) -> str:
+    if key.startswith("wardrobe."):
+        return "wardrobe"
+    if key in STYLING_TRAITS:
+        return "styling"
+    return "anatomy"
+
+
+def anatomy_hash(dna: dict) -> str:
+    """Hash of the anatomy layer only (body, face, genital, skin and eye appearance)."""
+    t = {k: v["value"] for k, v in dna["traits"].items() if layer_of(k) == "anatomy"}
+    return hashlib.sha256(canonical_json(t)).hexdigest()[:16]
+
+
 def spec_to_dict(spec: CharacterSpec) -> dict:
     return {"body": spec.body.to_dict(), "face": spec.face.to_dict(), "genital": spec.genital.to_dict(),
             "appearance": spec.appearance.to_dict(), "outfit": list(spec.outfit), "age_years": float(spec.age_years),

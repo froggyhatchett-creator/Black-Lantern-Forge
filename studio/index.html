@@ -1,0 +1,182 @@
+<title>Black Lantern Character Studio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;600&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+/* Layout: sculptor's workbench — a lit stage on the left, an inspector rail with tabs on the right; the rail stacks below on phones. */
+:root {
+  --bg: #e9ecef; --panel: #f6f7f8; --fg: #1a2027; --muted: #5b6672; --line: #d2d8de; --stage-a: #c9d0d8; --stage-b: #9aa5b1;
+  --accent: #b5701f; --accent-soft: #f2e2cb; --warn: #9a3b1c;
+  --display: "Archivo Narrow", "Arial Narrow", system-ui, sans-serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #111418; --panel: #171b20; --fg: #e2e7ec; --muted: #8f9ba7; --line: #2a3139;
+    --stage-a: #2a3038; --stage-b: #0d1013; --accent: #e3a252; --accent-soft: #3a2a16; --warn: #f08a62; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #111418; --panel: #171b20; --fg: #e2e7ec; --muted: #8f9ba7; --line: #2a3139;
+  --stage-a: #2a3038; --stage-b: #0d1013; --accent: #e3a252; --accent-soft: #3a2a16; --warn: #f08a62; color-scheme: dark; }
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 14px; }
+.app { box-sizing: border-box; height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 10px;
+  padding-left: max(12px, env(safe-area-inset-left, 0px)); padding-right: max(12px, env(safe-area-inset-right, 0px)); padding-block: 10px; }
+header { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+h1 { font-family: var(--display); font-weight: 600; font-size: 1.35rem; margin: 0; letter-spacing: 0.01em; }
+.presets, .actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.actions { margin-left: auto; }
+button, select, input[type=text], input[type=number] { font: inherit; font-size: 0.86rem; padding: 5px 9px; border: 1px solid var(--line);
+  border-radius: 4px; background: var(--panel); color: var(--fg); }
+button { cursor: pointer; }
+button[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.main { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 10px; min-height: 0; }
+@media (max-width: 900px) { .app { height: auto; } .main { grid-template-columns: minmax(0, 1fr); } .stage { height: 62vh; } }
+.stage { position: relative; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; min-height: 320px;
+  background: radial-gradient(120% 90% at 50% 35%, var(--stage-a), var(--stage-b)); }
+#view { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+#view:active { cursor: grabbing; }
+.hud { position: absolute; left: 10px; right: 10px; bottom: 8px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; pointer-events: none; }
+.hud > * { pointer-events: auto; }
+.hud label { display: inline-flex; gap: 4px; align-items: center; font-size: 0.8rem; color: var(--fg); background: var(--panel); padding: 3px 7px;
+  border-radius: 4px; border: 1px solid var(--line); }
+#height-readout { font-family: var(--mono); font-size: 0.8rem; background: var(--panel); padding: 3px 7px; border-radius: 4px; border: 1px solid var(--line); }
+#status { position: absolute; left: 10px; top: 8px; right: 10px; font-size: 0.8rem; color: var(--fg); background: color-mix(in srgb, var(--panel) 85%, transparent);
+  padding: 4px 8px; border-radius: 4px; max-width: 70ch; transition: opacity .6s; pointer-events: none; }
+#status.faded { opacity: 0; }
+.rail { display: grid; grid-template-rows: auto minmax(0, 1fr); min-height: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }
+[role=tablist] { display: flex; flex-wrap: wrap; border-bottom: 1px solid var(--line); }
+[role=tab] { flex: 1 1 auto; border: 0; border-radius: 0; background: transparent; padding: 8px 6px; font-family: var(--display); font-size: 0.86rem;
+  text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); border-bottom: 2px solid transparent; }
+[role=tab][aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); }
+[role=tabpanel] { overflow-y: auto; padding: 8px 12px 14px; min-height: 0; }
+fieldset { border: 0; border-top: 1px solid var(--line); margin: 6px 0 0; padding: 8px 0 2px; display: grid; gap: 6px; }
+legend { font-family: var(--display); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); padding-right: 6px; }
+.slider { display: grid; grid-template-columns: 1fr auto auto; gap: 0 8px; align-items: center; }
+.slider label { font-size: 0.84rem; }
+.slider output { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 4.5ch; text-align: right; }
+.slider input[type=range] { grid-column: 1 / -1; width: 100%; accent-color: var(--accent); margin: 0; }
+.seg { display: inline-flex; }
+.seg button { border-radius: 0; }
+.seg button:first-child { border-radius: 4px 0 0 4px; }
+.seg button:last-child { border-radius: 0 4px 4px 0; border-left: 0; }
+.lock { font-size: 0.7rem; padding: 1px 6px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+.lock[aria-pressed="true"] { color: var(--fg); }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.row label { font-size: 0.84rem; }
+.garment { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 3px 0; }
+.garment label { font-family: var(--mono); font-size: 0.82rem; display: inline-flex; gap: 6px; align-items: center; }
+input[type=color] { width: 40px; height: 26px; padding: 0; border: 1px solid var(--line); border-radius: 4px; background: none; }
+.note { font-size: 0.8rem; color: var(--muted); line-height: 1.45; margin: 6px 0; }
+#coverage-note { color: var(--warn); }
+textarea { width: 100%; box-sizing: border-box; font-family: var(--mono); font-size: 0.72rem; min-height: 160px; background: var(--bg); color: var(--fg); border: 1px solid var(--line); }
+code { font-family: var(--mono); font-size: 0.8em; }
+</style>
+
+<div class="app">
+  <header>
+    <h1>Character Studio</h1>
+    <div class="presets" role="group" aria-label="Body preset">
+      <button type="button" data-preset="female">Female</button>
+      <button type="button" data-preset="male">Male</button>
+      <button type="button" data-preset="neutral">Neutral</button>
+    </div>
+    <div class="actions">
+      <button type="button" id="randomize" title="Re-sample every unlocked trait">Randomize unlocked</button>
+      <button type="button" id="undo" title="Undo (Ctrl+Z)">Undo</button>
+      <button type="button" id="redo" title="Redo (Ctrl+Shift+Z)">Redo</button>
+    </div>
+  </header>
+  <div class="main">
+    <div class="stage">
+      <canvas id="view" aria-label="3D character viewport: drag to rotate, scroll to zoom"></canvas>
+      <div id="status" role="status">Loading…</div>
+      <div class="hud">
+        <button type="button" data-focus="body">Full body</button>
+        <button type="button" data-focus="face">Face</button>
+        <button type="button" data-focus="torso">Torso</button>
+        <button type="button" data-focus="hands">Hands</button>
+        <button type="button" data-focus="feet">Feet</button>
+        <span class="seg" role="group" aria-label="Dragging rotates"><button type="button" data-drag="camera" aria-pressed="true">Orbit camera</button><button type="button" data-drag="character" aria-pressed="false" title="Drag or flick to spin the character itself: hair, cloth and soft tissue react">Spin character</button></span>
+        <label><input type="checkbox" id="turntable"> Turntable</label>
+        <label><input type="checkbox" id="ground" checked> Floor</label>
+        <span id="height-readout">–</span>
+      </div>
+    </div>
+    <div class="rail">
+      <div role="tablist" aria-label="Editor sections">
+        <button type="button" role="tab" aria-selected="true" aria-controls="tab-body" id="t-body">Body</button>
+        <button type="button" role="tab" aria-selected="false" aria-controls="tab-face" id="t-face">Face</button>
+        <button type="button" role="tab" aria-selected="false" aria-controls="tab-look" id="t-look">Look</button>
+        <button type="button" role="tab" aria-selected="false" aria-controls="tab-outfit" id="t-outfit">Outfit</button>
+        <button type="button" role="tab" aria-selected="false" aria-controls="tab-motion" id="t-motion">Motion</button>
+        <button type="button" role="tab" aria-selected="false" aria-controls="tab-file" id="t-file">File</button>
+      </div>
+      <div style="min-height:0;display:grid">
+        <div role="tabpanel" id="tab-body"><p class="note">Every slider moves real vertices of the shared 62,639-vertex body. Locked sliders survive presets and randomizing.</p></div>
+        <div role="tabpanel" id="tab-face" hidden></div>
+        <div role="tabpanel" id="tab-look" hidden>
+          <fieldset><legend>Skin</legend>
+            <div class="slider"><label for="skin">Skin tone (light to deep)</label><output></output><span></span><input type="range" id="skin" min="0" max="1" step="0.01"></div>
+            <div class="slider"><label for="under">Undertone (cool to warm)</label><output></output><span></span><input type="range" id="under" min="-1" max="1" step="0.01"></div>
+          </fieldset>
+          <fieldset><legend>Eyes</legend>
+            <div class="row"><label for="eye">Eye color</label><select id="eye"></select></div>
+          </fieldset>
+          <fieldset><legend>Hair (styling, kept apart from anatomy in the DNA)</legend>
+            <div class="row"><label for="hairstyle">Style</label><select id="hairstyle"></select></div>
+            <div class="row"><label for="haircolor">Color</label><input type="color" id="haircolor">
+              <label for="hlcolor">Highlights</label><input type="color" id="hlcolor"></div>
+            <div class="slider"><label for="hlamount">Highlight amount</label><output id="hlamount-o"></output><span></span><input type="range" id="hlamount" min="0" max="1" step="0.01"></div>
+          </fieldset>
+          <fieldset><legend>Expression (morph targets)</legend><div id="expressions" style="display:grid;gap:6px"></div></fieldset>
+        </div>
+        <div role="tabpanel" id="tab-outfit" hidden>
+          <p class="note">Public characters stay clothed: the hips are always covered, and the chest is covered for feminine or busty builds. The studio adds a garment if a change would leave a required region bare.</p>
+          <p class="note" id="coverage-note" role="status"></p>
+          <div id="outfit"></div>
+        </div>
+        <div role="tabpanel" id="tab-motion" hidden>
+          <fieldset><legend>Pose and animation</legend>
+            <div class="row"><label for="pose">Pose</label><select id="pose"></select></div>
+            <div class="row"><label for="clip">Animation</label><select id="clip"></select>
+              <button type="button" id="play" aria-pressed="true">Pause</button></div>
+          </fieldset>
+          <fieldset><legend>Secondary motion (live simulation)</legend>
+            <div class="row"><label><input type="checkbox" id="physics" checked> Simulate breast and cloth motion</label></div>
+            <div class="slider"><label for="freq">Stiffness (natural frequency)</label><output id="freq-o">2.4 Hz</output><span></span>
+              <input type="range" id="freq" min="1.2" max="6" step="0.1" value="2.4"></div>
+            <div class="slider"><label for="damp">Damping ratio</label><output id="damp-o">0.22</output><span></span>
+              <input type="range" id="damp" min="0.05" max="1" step="0.01" value="0.22"></div>
+            <div class="slider"><label for="intensity">Motion intensity</label><output id="intensity-o">1.00×</output><span></span>
+              <input type="range" id="intensity" min="0" max="2" step="0.05" value="1"></div>
+            <div class="row"><button type="button" id="bounce">Bounce test</button></div>
+            <p class="note">Spring-damper particles on the breast and cloth bones, plus a lagged spring on long hair, driven by the animated skeleton and by spinning the character (camera orbit does not move the character, so it causes no motion). A bra or t-shirt raises stiffness and damping. This is a bone-driven approximation, not a tissue simulation.</p>
+          </fieldset>
+        </div>
+        <div role="tabpanel" id="tab-file" hidden>
+          <fieldset><legend>Character</legend>
+            <div class="row"><label for="name">Name</label><input type="text" id="name" maxlength="40">
+              <label for="age">Age</label><input type="number" id="age" min="18" max="120" style="width:5em"></div>
+          </fieldset>
+          <fieldset><legend>Character DNA</legend>
+            <div class="row"><button type="button" id="dna-copy">Copy DNA</button><button type="button" id="dna-save">Save DNA file</button>
+              <label class="row" style="gap:6px">Load DNA <input type="file" id="dna-load" accept=".json,application/json"></label></div>
+            <textarea id="dna-text" hidden aria-label="Character DNA JSON"></textarea>
+            <p class="note">The DNA records every value, which ones you changed, and your locks. Exact geometry and a rigged GLB come from the Python engine:<br>
+              <code>python3 -m forge_character_forge export ada.dna.json --out ada.glb --physics</code></p>
+          </fieldset>
+          <fieldset><legend>Export</legend>
+            <button type="button" id="glb-export">Export GLB</button>
+            <p class="note">Builds a rigged, animated GLB of the character as shown (skin, expression morph targets, all animation clips). Inside claude.ai it is offered as a .zip containing the .glb.</p>
+          </fieldset>
+          <fieldset><legend>Exact build</legend>
+            <p class="note" id="server-note">Sliders preview a linear blend of exact builds. Run <code>python3 -m forge_character_forge studio</code> locally to get exact rebuilds and GLB export from this page.</p>
+            <button type="button" id="exact" hidden>Build exact GLB</button>
+          </fieldset>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="module" src="studio.js"></script>

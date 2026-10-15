@@ -15,7 +15,7 @@ from forge_character_forge.validate import validate_glb
 
 
 def export_character(dna: dict, out, profile: str = "public", clips=("idle", "walk", "jump", "wave"),
-                     physics: bool = False, body_morphs: bool = False, character=None) -> dict:
+                     physics: bool = False, body_morphs: bool = False, character=None, lods=()) -> dict:
     spec = D.to_spec(dna)
     ch = character or build_character(spec, profile, body_morphs=body_morphs)
     u = ch.skeleton.marks["height"] / 1.75
@@ -38,9 +38,19 @@ def export_character(dna: dict, out, profile: str = "public", clips=("idle", "wa
             "reconstruction_method": (dna.get("reconstruction") or {}).get("method"),
             "physics_baked": sorted(sims)}
     path = write_glb(ch, out, clips=cl, extra_meta=meta)
+    lod_results = []
+    for i, ratio in enumerate(lods, 1):
+        from forge_character_forge.lod import character_lod
+        lch = character_lod(ch, float(ratio))
+        stem = Path(out).name[:-len(".dev.glb")] if str(out).endswith(".dev.glb") else Path(out).stem
+        lpath = Path(out).with_name(f"{stem}_lod{i}" + (".dev.glb" if profile == "developer" else ".glb"))
+        write_glb(lch, lpath, clips=cl, extra_meta=dict(meta, lod={"level": i, "ratio": float(ratio)}))
+        lv = validate_glb(lpath, profile)
+        lod_results.append({"path": str(lpath), "bytes": lpath.stat().st_size, "ratio": float(ratio),
+                            "triangles": int(sum(len(p.tris) for p in lch.parts)), "validation": lv["ok"], "errors": lv["errors"]})
     data = Path(path).read_bytes()
     val = validate_glb(path, profile)
     return {"path": str(path), "bytes": len(data), "sha256": hashlib.sha256(data).hexdigest(),
             "parts": {p.name: {"vertices": int(len(p.verts)), "triangles": int(len(p.tris))} for p in ch.parts},
             "body_quality": ch.quality, "coverage": ch.coverage, "clips": [c.name for c in cl], "physics": sims,
-            "validation": {"ok": val["ok"], "errors": val["errors"], "stats": val["stats"]}}
+            "validation": {"ok": val["ok"], "errors": val["errors"], "stats": val["stats"]}, "lods": lod_results}

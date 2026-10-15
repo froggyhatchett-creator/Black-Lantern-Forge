@@ -144,7 +144,14 @@ def build_character(spec: CharacterSpec, profile: str = "public", *, body_morphs
     parts += accessories.build_eyes(skel, app)
     parts += accessories.build_mouth(skel)
     parts += accessories.build_brows_lashes(skel, bm.field, app, spec.face)
-    parts += accessories.build_hair(bm.verts, bm.normals, tpl, skel, tpl.skeleton, app, bm.field)
+    hair_parts = accessories.build_hair(bm.verts, bm.normals, tpl, skel, tpl.skeleton, app, bm.field)
+    if app.hair_highlight_amount > 0:  # appearance-only streaks, baked as vertex colors
+        from forge_character_forge.anatomy import head_frame
+        O, h = head_frame(skel)
+        for hp in hair_parts:
+            if hp.material == "hair":
+                hp.colors = app.hair_vertex_colors((hp.verts - O) / (h / 0.23))
+    parts += hair_parts
     outfit = resolve_outfit(spec, profile)
     garment_morphs = shape_morphs
     parts += clothing.build_garments(outfit, bm.verts, bm.normals, tpl, tpl.skeleton, skel, bm.field, garment_morphs)

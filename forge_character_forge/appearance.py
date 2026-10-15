@@ -15,7 +15,7 @@ from PIL import Image
 
 from forge_character_forge.params import ParameterError
 
-HAIR_STYLES = ("bald", "buzz", "short", "long", "bun")
+HAIR_STYLES = ("bald", "buzz", "short", "pixie", "bob", "bangs", "long", "bun")
 EYE_COLORS = {"brown": (0.20, 0.09, 0.03), "dark_brown": (0.08, 0.035, 0.015), "hazel": (0.28, 0.20, 0.06),
               "green": (0.12, 0.25, 0.10), "blue": (0.10, 0.22, 0.45), "grey": (0.30, 0.33, 0.36),
               "amber": (0.45, 0.22, 0.03)}
@@ -54,12 +54,14 @@ class AppearanceParams:
     eye_color: str = "brown"
     hair_style: str = "short"
     hair_color: str = "#3b2416"
+    hair_highlight_color: str = "#a47b52"   # streak color (appearance only; never anatomy)
+    hair_highlight_amount: float = 0.0     # 0 none .. 1 strong streaks
     brow_color: str = ""            # empty = derived from hair
     lip_tint: float = 0.5
     skin_roughness: float = 0.5
 
     def __post_init__(self):
-        for name in ("skin_tone", "flush", "lip_tint", "skin_roughness"):
+        for name in ("skin_tone", "flush", "lip_tint", "skin_roughness", "hair_highlight_amount"):
             v = getattr(self, name)
             if not isinstance(v, (int, float)) or isinstance(v, bool) or not 0.0 <= v <= 1.0:
                 raise ParameterError(f"AppearanceParams.{name} must be in [0, 1]; got {v!r}")
@@ -72,6 +74,7 @@ class AppearanceParams:
         if self.hair_style not in HAIR_STYLES:
             raise ParameterError(f"hair_style must be one of {HAIR_STYLES}")
         hex_to_linear(self.hair_color)
+        hex_to_linear(self.hair_highlight_color)
         if self.brow_color:
             hex_to_linear(self.brow_color)
 
@@ -99,8 +102,24 @@ class AppearanceParams:
     def hair_linear(self) -> np.ndarray:
         return hex_to_linear(self.hair_color)
 
+    def hair_vertex_colors(self, unit_verts: np.ndarray) -> np.ndarray | None:
+        """Per-vertex hair color with highlight streaks (None when there are no highlights)."""
+        if self.hair_highlight_amount <= 0:
+            return None
+        m = hair_highlight_mask(unit_verts) * self.hair_highlight_amount
+        return self.hair_linear()[None, :] * (1 - m[:, None]) + hex_to_linear(self.hair_highlight_color)[None, :] * m[:, None]
+
     def brow_linear(self) -> np.ndarray:
         return hex_to_linear(self.brow_color) if self.brow_color else self.hair_linear() * 0.8
+
+
+def hair_highlight_mask(unit_verts: np.ndarray) -> np.ndarray:
+    """Vertical highlight streaks in [0, 1] from head-space positions (deterministic, shared with the studio)."""
+    from forge_character_forge.hair import noise3
+    v = np.asarray(unit_verts, float)
+    n = noise3(v * np.array([70.0, 3.0, 70.0]), 9) * 0.75 + noise3(v * np.array([150.0, 6.0, 150.0]), 10) * 0.25
+    face = np.clip((0.06 - v[:, 2]) / 0.06, 0, 1) * 0.15  # face-framing pieces a little lighter
+    return np.clip((n + face - 0.52) / 0.2, 0, 1)
 
 
 def _value_noise3(p: np.ndarray, scale: float, seed: int = 7) -> np.ndarray:

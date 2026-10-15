@@ -56,6 +56,7 @@ def main(argv=None) -> int:
     p.add_argument("--clips", default="idle,walk,jump,wave")
     p.add_argument("--physics", action="store_true", help="bake secondary motion into *_secondary clips")
     p.add_argument("--body-morphs", action="store_true", help="add runtime body-shape morph targets (slower)")
+    p.add_argument("--lod", default="", help="comma-separated triangle ratios for extra LOD files, e.g. 0.25,0.1")
     p = sub.add_parser("render")
     p.add_argument("dna")
     p.add_argument("--out", required=True)
@@ -80,6 +81,10 @@ def main(argv=None) -> int:
     p.add_argument("--clip", default="jump")
     p.add_argument("--profile", default="developer", choices=["public", "developer"])
     p.add_argument("--outfit-support", action="store_true")
+    p = sub.add_parser("studio", help="serve the interactive Character Studio with exact builds")
+    p.add_argument("--port", type=int, default=8765)
+    p.add_argument("--pack", default=None)
+    p.add_argument("--out", default="studio_exports")
     p = sub.add_parser("info")
     p.add_argument("dna")
     a = ap.parse_args(argv)
@@ -109,6 +114,15 @@ def main(argv=None) -> int:
         D.save_dna(d, a.out or a.dna)
         print(f"regenerated {d['history'][-1]['changed']}")
         return 0
+    if a.cmd == "studio":
+        from forge_character_forge.studio_server import DEFAULT_PACK, serve
+        httpd = serve(a.port, Path(a.pack) if a.pack else DEFAULT_PACK, Path(a.out))
+        print(f"Character Studio: http://127.0.0.1:{a.port}/  (Ctrl+C to stop; exports go to {a.out}/)")
+        try:
+            httpd.serve_forever()
+        except KeyboardInterrupt:
+            pass
+        return 0
     if a.cmd == "info":
         d = D.load_dna(a.dna)
         print(json.dumps({"identity": d["identity"], "provenance": D.provenance_summary(d), "hash": D.dna_hash(d),
@@ -120,9 +134,9 @@ def main(argv=None) -> int:
         from forge_character_forge.pipeline import export_character
         out = export_character(D.load_dna(a.dna), a.out, profile=a.profile,
                                clips=[c for c in a.clips.split(",") if c], physics=a.physics,
-                               body_morphs=a.body_morphs)
+                               body_morphs=a.body_morphs, lods=[float(x) for x in a.lod.split(",") if x])
         print(json.dumps(out, indent=1))
-        return 0 if out["validation"]["ok"] else 1
+        return 0 if out["validation"]["ok"] and all(l["validation"] for l in out["lods"]) else 1
     if a.cmd == "render":
         from forge_character_forge.animation import POSES
         from forge_character_forge.character import build_character

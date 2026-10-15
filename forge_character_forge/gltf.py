@@ -82,17 +82,11 @@ class _Bin:
 
 # ---------------------------------------------------------------- body UVs
 
-def body_uv_layout(tpl, scale: float = 10.0):
+def cylindrical_uv_layout(skel, verts: np.ndarray, tris: np.ndarray, dom: np.ndarray, scale: float = 10.0):
     """Cylindrical UVs around each vertex's dominant bone, with seam vertices duplicated.
 
-    Returns (src_index, tris, uv). Computed on the template, so every character shares it.
-    """
-    cached = getattr(tpl, "_uv_layout", None)
-    if cached is not None:
-        return cached
-    skel = tpl.skeleton
-    v = tpl.verts
-    dom = tpl.joints[:, 0]
+    Returns (src_index, tris, uv): src_index maps every exported vertex to an input vertex."""
+    v = verts
     ang = np.zeros(len(v))
     along = np.zeros(len(v))
     radius = np.zeros(len(v))
@@ -112,7 +106,7 @@ def body_uv_layout(tpl, scale: float = 10.0):
         ang[sel] = np.arctan2(q @ e2, q @ e1)
         along[sel] = q @ ax + j * 0.37  # offset each bone's band in V
         radius[sel] = np.linalg.norm(q - np.outer(q @ ax, ax), axis=1).mean()
-    tris = tpl.tris.copy()
+    tris = np.array(tris, np.int64, copy=True)
     src = list(range(len(v)))
     angs = list(ang)
     extra = {}
@@ -130,8 +124,22 @@ def body_uv_layout(tpl, scale: float = 10.0):
     src = np.array(src)
     angs = np.array(angs)
     uv = np.stack([angs * radius[src], along[src]], 1) * scale
-    tpl._uv_layout = (src, tris, uv)
-    return tpl._uv_layout
+    return src, tris, uv
+
+
+def body_uv_layout(tpl, scale: float = 10.0):
+    """Template body layout (cached on the template object); every character shares it."""
+    cached = getattr(tpl, "_uv_layout", None)
+    if cached is None:
+        cached = cylindrical_uv_layout(tpl.skeleton, tpl.verts, tpl.tris, tpl.joints[:, 0], scale)
+        tpl._uv_layout = cached
+    return cached
+
+
+def part_uv_layout(ch, part):
+    if getattr(part, "uv_layout", None) is not None:
+        return part.uv_layout
+    return body_uv_layout(ch.template)
 
 
 # ---------------------------------------------------------------- materials
@@ -151,7 +159,8 @@ def _materials(ch, bin_: _Bin, images: list, textures: list):
     t_strand = add_image("hair_strands", appx.strand_texture())
     t_card = add_image("hair_cards", appx.strand_texture(alpha_cards=True))
     t_fabric = add_image("fabric_weave", appx.fabric_textures()["fabric_normal"])
-    hair = list(map(float, app.hair_linear())) + [1.0]
+    # with highlights the hair color lives in COLOR_0 (hair + streaks), so the factor is neutral
+    hair = [1.0, 1.0, 1.0, 1.0] if app.hair_highlight_amount > 0 else list(map(float, app.hair_linear())) + [1.0]
     brow = list(map(float, app.brow_linear())) + [1.0]
     mats = {
         "skin": {"name": "skin", "pbrMetallicRoughness": {"baseColorFactor": [1, 1, 1, 1], "metallicFactor": 0.0,
@@ -228,7 +237,7 @@ def character_gltf(ch, clips: list[Clip] = (), extra_meta: dict | None = None) -
         uvs, colors, joints, weights = part.uvs, part.colors, part.joints, part.weights
         morphs = part.morphs
         if part.name == "body":
-            src, tris, uvs = body_uv_layout(ch.template)
+            src, tris, uvs = part_uv_layout(ch, part)
             verts, normals = verts[src], normals[src]
             colors = colors[src] if colors is not None else None
             joints, weights = joints[src], weights[src]
@@ -358,8 +367,8 @@ def pose_check_data(ch, c: Clip, frame: int, count: int = 600) -> dict:
     pose = {j: q[frame] for j, q in c.rotations.items() if j in ch.skeleton.names}
     G = forward_kinematics(ch.skeleton, pose, local_trans={"pelvis": c.root_translation[frame]})
     S = skinning_matrices(ch.skeleton, G)
-    src, _, _ = body_uv_layout(ch.template)
     body = ch.body
+    src, _, _ = part_uv_layout(ch, body)
     v = body.verts[src].astype(np.float32).astype(np.float64)
     w = np.asarray(body.weights[src], np.float32).astype(np.float64)
     w /= w.sum(1, keepdims=True)
