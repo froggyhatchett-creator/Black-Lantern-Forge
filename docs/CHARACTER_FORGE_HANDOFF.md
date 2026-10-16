@@ -135,6 +135,19 @@ adult character in the real studio before expanding. Finite credits: short visua
   `tools/glb_playback.mjs` (independent playback), `tools/v3_phase3d.py` (analysis + sheets).
 - Tests: `tests/test_character_forge_v3_identity_dna.py`.
 
+## Generator v3 Phase 4A: facial deformation and blink quality (corrective; stopped for visual review)
+- Report `docs/CHARACTER_FORGE_V3_PHASE4A.md`; evidence `examples/character_forge_aaa/humanity/v3_phase4a/`.
+- Blink model 2 (`v3/model.py` `blink_closed`, `BLINK_MODEL = 2`): per-column closure about the eyeball centre,
+  anchored fornix, cleaned margins, chord clearance. `evaluate.BLINK_MODEL = 1` reproduces the Phase 3D blink.
+- Lashes in expressions (`v3/lash_contact.py` = studio `lashTurn`/`lashContact`): turn with the smoothed root
+  normal, two-stage capped contact. Studio grooming follows expressions as the linear morph the GLB exports;
+  GLB blink targets now height-scaled.
+- Metrics `v3/blink_quality.py`; matrix `tools/v3_phase4a.py` (18 cases): folds 683 -> 193, all close, lash
+  penetration <= 4 strands (was 16). Every character's blink changed; open geometry/DNA unchanged.
+- Tools: `tools/studio_v3_blink.mjs`, `tools/v3_phase4a_evidence.py`, `tools/v3_phase4a_table.py`.
+  Tests: `tests/test_character_forge_v3_blink.py`. v2 smoke not re-run.
+- Remaining: canthus folds, 2-3 upright corner lashes, eye-size-vs-thin-lid in the open pose (identity basis v2).
+
 ## Open problems / next actions
 1. Commit/push checkpoint; publish the studio artifact (multi-file; `downloads` capability; GLB offered zipped).
 2. Face realism (lips/eyes/brows) and anatomy fixes (hands, knees, feet) need a re-bake (~28 min) to reach the studio.
