@@ -19,6 +19,7 @@ import numpy as np
 
 from forge_character_forge.v3 import controls, identity, model
 
+BLINK_MODEL = model.BLINK_MODEL  # 2 (Phase 4A); set to 1 to reproduce the Phase 1-3 blink for before/after evidence
 BLINK_RESHAPE_M = 0.0003  # a side whose lid region changes shape by more than this gets a blink corrective
 CACHE = Path(__file__).resolve().parents[2] / ".forge_cache"
 
@@ -57,24 +58,57 @@ def _lid_reshape(d: np.ndarray, side: str) -> float:
     return float(np.abs(q).max())
 
 
-@lru_cache(maxsize=None)
+def _model_tag() -> str:
+    """Cache tag of the blink model and its parameters (a changed parameter never reuses stale correctives)."""
+    if BLINK_MODEL == 1:
+        return ""
+    params = (model.BLINK_MODEL, model.CLOSE_AT, model.CLOSE_OVERLAP, model.FORNIX, model.MARGIN_MIN_W, model.CANTHUS_TURN,
+              model.CORRECTIVE_RINGS, model.CHORD_TS)
+    return f"_m{BLINK_MODEL}{hashlib.sha256(repr(params).encode()).hexdigest()[:8]}"
+
+
+def exact_sides(v: np.ndarray):
+    """The blink fitted to character ``v`` itself, per eye: ({side: delta}, info). Model 2: per-column closure
+    (model.blink_closed); model 1: the Phase 1-3 grid fit of one global closing factor."""
+    if BLINK_MODEL == 1:
+        _, fit = model.fit_blink(v)
+        return {s: model.blink_delta(v, s, fit["factor"], lower=fit["lower"]) for s in "lr"}, fit
+    return {s: model.blink_closed(v, s) for s in "lr"}, {"model": 2}
+
+
+def _blink0(m):
+    sides, info = exact_sides(model.neutral())
+    if m != 1:
+        info = {**info, "exposure": _closed_exposure(model.neutral(), sides)}
+    return sides, info
+
+
+_B0 = {}
+
+
 def blink0():
-    _, fit = model.fit_blink(model.neutral())
-    v = model.neutral()
-    return {s: model.blink_delta(v, s, fit["factor"], lower=fit["lower"]) for s in "lr"}, fit
+    if _model_tag() not in _B0:
+        _B0[_model_tag()] = _blink0(BLINK_MODEL)
+    return _B0[_model_tag()]
 
 
 def _corrective(d: np.ndarray, tag: str, per_side: bool = True):
     """Blink corrective per eye side for a shape delta d (None for a side the delta does not reshape). Identity uses a
     per-side reshape test; controls keep the bake's original test on both lid regions together (per_side=False)."""
     key = hashlib.sha256(np.round(d, 7).astype("<f4").tobytes()).hexdigest()[:16]
-    path = CACHE / f"v3_blinkcorr_{tag}_{key}.npz"
+    path = CACHE / f"v3_blinkcorr{_model_tag()}_{tag}_{key}.npz"
+    v = model.neutral() + d
     if path.is_file():
         z = np.load(path)
-        return {s: (z[s] if s in z.files else None) for s in "lr"}, {"factor": float(z["factor"]), "lower": float(z["lower"])}
-    v = model.neutral() + d
+        out = {s: (z[s] if s in z.files else None) for s in "lr"}
+        info = {k: float(z[k]) for k in ("factor", "lower", "exposure") if k in z.files}
+        if BLINK_MODEL != 1 and "exposure" not in info:  # caches written before exposure was recorded
+            b0, _ = blink0()
+            info["exposure"] = _closed_exposure(v, {s: b0[s] + (out[s] if out[s] is not None else 0) for s in "lr"})
+            np.savez_compressed(path, **info, **{s: c for s, c in out.items() if c is not None})
+        return out, info
     b0, _ = blink0()
-    _, fit = model.fit_blink(v)
+    sides, fit = exact_sides(v)
     out = {}
     both = np.concatenate([model.lid_region(s, model.CORRECTIVE_RINGS) for s in "lr"])
     q = d[both] - d[both].mean(0)
@@ -82,11 +116,19 @@ def _corrective(d: np.ndarray, tag: str, per_side: bool = True):
         if (_lid_reshape(d, s) if per_side else float(np.abs(q).max())) <= BLINK_RESHAPE_M:
             out[s] = None
             continue
-        c = model.blink_delta(v, s, fit["factor"], lower=fit["lower"]) - b0[s]
+        c = sides[s] - b0[s]
         out[s] = c if np.abs(c).max() > 1e-4 else None
     CACHE.mkdir(exist_ok=True)
-    np.savez_compressed(path, factor=fit["factor"], lower=fit["lower"], **{s: c for s, c in out.items() if c is not None})
-    return out, {"factor": fit["factor"], "lower": fit["lower"]}
+    info = {k: fit[k] for k in ("factor", "lower", "exposure") if k in fit}
+    if BLINK_MODEL != 1:  # the refitted blink at this end closes the eye (checked by the pack tests)
+        info["exposure"] = _closed_exposure(v, sides)
+    np.savez_compressed(path, **info, **{s: c for s, c in out.items() if c is not None})
+    return out, info
+
+
+def _closed_exposure(v, sides) -> float:
+    from forge_character_forge.v3 import metrics
+    return round(metrics.eye_exposure_pixels(v + sides["l"] + sides["r"]) / max(metrics.eye_exposure_pixels(v), 1), 4)
 
 
 def identity_corrective(key: str, sign: int):
@@ -131,15 +173,15 @@ def preset_residuals() -> dict:
             continue
         vi = shape({}, pr["values"])
         tag = hashlib.sha256(np.round(vi - model.neutral(), 7).astype("<f4").tobytes()).hexdigest()[:16]
-        path = CACHE / f"v3_blinkres_{tag}.npz"
+        path = CACHE / f"v3_blinkres{_model_tag()}_{tag}.npz"
         if not path.is_file():
-            _, fit = model.fit_blink(vi)
+            sides, fit = exact_sides(vi)
             summed = blink_sides({}, pr["values"])
             CACHE.mkdir(exist_ok=True)
-            np.savez_compressed(path, factor=fit["factor"], lower=fit["lower"], **{
-                s: model.blink_delta(vi, s, fit["factor"], lower=fit["lower"]) - summed[s] for s in "lr"})
+            info = {k: fit[k] for k in ("factor", "lower") if k in fit}
+            np.savez_compressed(path, **info, **{s: sides[s] - summed[s] for s in "lr"})
         z = np.load(path)
-        out[name] = {"l": z["l"], "r": z["r"], "fit": {"factor": float(z["factor"]), "lower": float(z["lower"])}}
+        out[name] = {"l": z["l"], "r": z["r"], "fit": {"model": BLINK_MODEL, **{k: float(z[k]) for k in ("factor", "lower") if k in z.files}}}
     return out
 
 

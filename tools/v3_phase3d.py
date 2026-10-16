@@ -8,7 +8,8 @@
    with the blink morph at 0/0.5/1 compared against the studio and the reference, and walk frames rendered with the
    blink applied (Python rasterizer, from the exported file only).
 5. Sheets of the studio screenshots.
-Writes examples/character_forge_aaa/humanity/v3_phase3d/phase3d_report.json and the sheets.
+Writes <outdir>/phase3d_report.json and the sheets (default outdir: examples/character_forge_aaa/humanity/v3_phase3d;
+Phase 4A re-runs it on examples/character_forge_aaa/humanity/v3_phase4a/regression).
 """
 import json
 import subprocess
@@ -24,7 +25,7 @@ from forge_character_forge.render import Camera, DrawItem, label, rasterize, sav
 from forge_character_forge.v3 import evaluate as E, identity, metrics, model  # noqa: E402
 from forge_character_forge.validate import validate_glb  # noqa: E402
 
-OUT = ROOT / "examples/character_forge_aaa/humanity/v3_phase3d"
+OUT = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else ROOT / "examples/character_forge_aaa/humanity/v3_phase3d"
 D = OUT / "dumps"
 SRC = model.body_surface()[0]
 LID = np.concatenate([model.lid_region(s, model.CORRECTIVE_RINGS) for s in "lr"])

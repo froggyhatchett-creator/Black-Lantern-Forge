@@ -126,6 +126,12 @@ def bake(out_path, log=print) -> dict:
                 entry["anchor"]["cage_idx"] = blob.add(np.asarray(A["cage_idx"], "<u4"))
                 entry["anchor"]["cage_w"] = blob.add(np.round(np.asarray(A["cage_w"]) * 65535).astype("<u2"))
             entry["strand_points"] = int(p["strand_points"])
+            if name == "lashes":  # lash contact (v3/lash_contact.py): the studio bends lashes on the lid skin
+                from forge_character_forge.v3 import lash_contact as LC
+                et = LC.eye_tris()
+                entry["contact"] = {"tris_l": blob.add(np.asarray(et["l"], "<u4")), "tris_r": blob.add(np.asarray(et["r"], "<u4")),
+                                    "clear": LC.CLEAR, "max_depth": LC.MAX_DEPTH, "path_ts": list(LC.PATH_TS),
+                                    "first_point": LC.FIRST_POINT}
         if p.get("color") is not None:
             entry["color"] = blob.add(np.clip(np.asarray(p["color"]) * 0.5 * 255, 0, 255).astype("u1"))  # x2 headroom
         if name == "body":
@@ -144,11 +150,10 @@ def bake(out_path, log=print) -> dict:
                 entry["iris_angle"] = man["parts"][f"eye_{name[-1]}"]["iris_angle"]
         man["parts"][name] = entry
     man["textures"] = {k: blob.add(np.frombuffer(b, "u1")) for k, b in textures.png_bytes().items()}
-    # expressions: the corrected blink, fitted to the neutral eye shape
+    # expressions: the blink (model 2, v3/model.blink_closed) of the neutral; correctives from v3/evaluate.py
+    from forge_character_forge.v3 import evaluate
     bsrc = parts["body"]["src"]
-    lid = np.concatenate([model.lid_region(s, model.CORRECTIVE_RINGS) for s in "lr"])
-    _, fit0 = model.fit_blink(v)
-    blink0 = {s: model.blink_delta(v, s, fit0["factor"], lower=fit0["lower"]) for s in "lr"}
+    blink0, fit0 = evaluate.blink0()
     for s in "lr":
         man["expressions"].append({"name": f"blink_{s}", "body": _encode_delta(blob, blink0[s][bsrc])})
     blink_fits = {"neutral": fit0}
@@ -177,15 +182,14 @@ def bake(out_path, log=print) -> dict:
                         se["parts"][name] = enc
                 # blink corrective: where a control reshapes the lids, the blink is refitted at this end and the
                 # difference is stored; the studio adds it scaled by (blink weight x control weight)
-                dl = d[lid] - d[lid].mean(0)
-                if np.abs(dl).max() > BLINK_RESHAPE_M and controls.CONTROLS[key][1] != "scale":  # height: post-scale
-                    _, fit = model.fit_blink(v + d)
-                    blink_fits[f"{key}:{side}"] = fit
+                if controls.CONTROLS[key][1] != "scale":  # height: post-scale
+                    corr, fit = evaluate.control_corrective(key, side)
                     for s in "lr":
-                        corr = model.blink_delta(v + d, s, fit["factor"], lower=fit["lower"]) - blink0[s]
-                        enc = _encode_delta(blob, corr[bsrc])
-                        if enc and np.abs(corr).max() > 1e-4:
-                            se.setdefault("expr", {})[f"blink_{s}"] = enc
+                        if corr[s] is not None:
+                            blink_fits[f"{key}:{side}"] = fit
+                            enc = _encode_delta(blob, corr[s][bsrc])
+                            if enc:
+                                se.setdefault("expr", {})[f"blink_{s}"] = enc
                 pe["sides"][side] = se
             if quality == "direct" and controls.CONTROLS[key][1] == "scale":
                 pe["mode"] = "uniform_scale"  # the studio scales the evaluated character to exactly this height
@@ -201,6 +205,7 @@ def bake(out_path, log=print) -> dict:
         man["clips"][cname] = {"frames": int(len(c.times)), "fps": 30, "loop": bool(c.loop), "rot": rot,
                                "root": blob.add(np.asarray(c.root_translation, "<f4"))}
     man["blink_fits"] = blink_fits
+    man["blink_model"] = model.BLINK_MODEL
     man["rig"] = {**rig.merge_report(), "skin": skin_report, "renderer_joint_limit": 80, "export_joint_limit": 64}
     man["controls"] = controls.summary()
     man["unstable_topology"] = []

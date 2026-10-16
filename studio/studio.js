@@ -143,6 +143,23 @@ const MATERIAL = {
   strand_lash: { kind: 8, double: true, a2c: true, spec: 0.3 },
 };
 
+function closestOnTriangle(p, a, b, c) {  // Ericson, Real-Time Collision Detection 5.1.5
+  const ab = sub(b, a), ac = sub(c, a), ap = sub(p, a), d1 = dot(ab, ap), d2 = dot(ac, ap);
+  if (d1 <= 0 && d2 <= 0) return a;
+  const bp = sub(p, b), d3 = dot(ab, bp), d4 = dot(ac, bp);
+  if (d3 >= 0 && d4 <= d3) return b;
+  const vc = d1 * d4 - d3 * d2;
+  if (vc <= 0 && d1 >= 0 && d3 <= 0) { const v = d1 / (d1 - d3); return [a[0] + ab[0] * v, a[1] + ab[1] * v, a[2] + ab[2] * v]; }
+  const cp = sub(p, c), d5 = dot(ab, cp), d6 = dot(ac, cp);
+  if (d6 >= 0 && d5 <= d6) return c;
+  const vb = d5 * d2 - d1 * d6;
+  if (vb <= 0 && d2 >= 0 && d6 <= 0) { const w = d2 / (d2 - d6); return [a[0] + ac[0] * w, a[1] + ac[1] * w, a[2] + ac[2] * w]; }
+  const va = d3 * d6 - d5 * d4;
+  if (va <= 0 && d4 - d3 >= 0 && d5 - d6 >= 0) { const w = (d4 - d3) / ((d4 - d3) + (d5 - d6)); return [b[0] + (c[0] - b[0]) * w, b[1] + (c[1] - b[1]) * w, b[2] + (c[2] - b[2]) * w]; }
+  const den = 1 / (va + vb + vc), v = vb * den, w = vc * den;
+  return [a[0] + ab[0] * v + ac[0] * w, a[1] + ab[1] * v + ac[1] * w, a[2] + ab[2] * v + ac[2] * w];
+}
+
 // ---------------------------------------------------------------- application
 class Studio {
   constructor(meta, pack, clips) {
@@ -198,7 +215,8 @@ class Studio {
       weld: p.weld ? this.arr(p.weld) : null, uv, sphere: !!p.sphere, texNames: p.textures || null, iris: p.iris || null,
       anchor: p.anchor ? { mode: p.anchor.mode, root: this.arr(p.anchor.root), tri: this.arr(p.anchor.tri), bary: this.arr(p.anchor.bary),
         off: this.arr(p.anchor.off), cageIdx: p.anchor.cage_idx ? this.arr(p.anchor.cage_idx) : null,
-        cageW: p.anchor.cage_w ? Float32Array.from(this.arr(p.anchor.cage_w), (x) => x / 65535) : null } : null, strandPts: p.strand_points || 0 };
+        cageW: p.anchor.cage_w ? Float32Array.from(this.arr(p.anchor.cage_w), (x) => x / 65535) : null } : null, strandPts: p.strand_points || 0,
+      contact: p.contact ? { ...p.contact, tris: { l: this.arr(p.contact.tris_l), r: this.arr(p.contact.tris_r) } } : null };
     if (p.iris_angle) g.irisA = p.iris_angle;
   }
   async loadTextures() {  // v3 maps live in the pack as PNG bytes
@@ -302,6 +320,7 @@ class Studio {
   }
   evaluate() {
     this.updateVisibility();
+    this.shapeKey = JSON.stringify([this.state.params, this.state.identity && this.state.identity.values]);
     const ws = this.weights();
     const pre = this.man.presets[this.state.preset];
     const rest = Float32Array.from(this.restBase);
@@ -323,6 +342,7 @@ class Studio {
       for (const [se, w] of ws) this.addDelta(cur, se.parts[name], w);
       if (pre && pre.parts) this.addDelta(cur, pre.parts[name], 1);
       for (const [pe, w] of ids) this.addDelta(cur, pe.parts[name], w);  // v3 identity (s = -1 is the negative of s = +1)
+      if (name === "body") this.bodyRest = Float32Array.from(cur);  // the body without expressions (grooming base)
       if (name === "body") for (const e of this.man.expressions) {
         const we = this.state.expr[e.name] || 0; if (!we) continue;
         this.addDelta(cur, e.body, we);
@@ -338,17 +358,26 @@ class Studio {
       if (P.material === "cornea") P.g.eyeC = this.parts[`eye_${name.slice(-1)}`].g.eyeC;  // eyes evaluate first
     }
     const hs = Object.entries(this.man.params).find(([, pe]) => pe.mode === "uniform_scale");
+    this.scaleK = 1;
     if (hs) {  // exact height: scale the whole evaluated character (all parts and joints) about the floor origin
       const k = this.state.params[hs[0]] / this.measureHeight();
+      this.scaleK = k;
+      for (let i = 0; i < this.bodyRest.length; i++) this.bodyRest[i] *= k;
       for (const P of Object.values(this.parts)) { if (P.headSpace || P.anchor) continue;
         for (let i = 0; i < P.cur.length; i++) P.cur[i] *= k; this.renderer.update(P.g, "pos", P.cur);
         if (P.material === "eye") P.g.eyeC = P.g.eyeC.map((x) => x * k); }
       for (let i = 0; i < rest.length; i++) rest[i] *= k;
       for (const [name, P] of Object.entries(this.parts)) if (P.material === "cornea") P.g.eyeC = this.parts[`eye_${name.slice(-1)}`].g.eyeC;
     }
-    for (const [name, P] of Object.entries(this.parts)) {  // strands follow the live body (controls, blink, height)
+    const n = this.bodyRest.length / 3, live = this.man.expressions.filter((e) => this.state.expr[e.name]);
+    const exprD = live.map((e) => [e, this.expressionDelta(e, n)]);
+    for (const [name, P] of Object.entries(this.parts)) {  // strands follow the live body (controls, height) ...
       if (!P.anchor || (!P.g.visible && name.startsWith("hair_"))) continue;
-      this.anchorEval(P, this.parts.body.cur, P.cur); this.strandTangents(P, P.cur, P.nrm);
+      this.anchorEval(P, this.bodyRest, P.cur);
+      // ... and expressions as the same linear morph the GLB exports (anchoredDelta), so preview and export agree
+      for (const [e, D] of exprD) { const md = this.anchoredMorph(P, D, `${name}|${e.name}`); if (!md) continue;
+        const we = this.state.expr[e.name]; for (let i = 0; i < P.cur.length; i++) P.cur[i] += we * md[i]; }
+      this.strandTangents(P, P.cur, P.nrm);
       this.renderer.update(P.g, "pos", P.cur); this.renderer.update(P.g, "nrm", P.nrm);
     }
     this.heightNow = this.measureHeight();
@@ -564,15 +593,73 @@ class Studio {
       texPNG: this.texPNG || {}, eyePNG: () => this.eyePNG(), anchoredDelta: (P, e) => this.anchoredDelta(P, e),
       surfaceNormals: (P) => { const o = new Float32Array(P.cur.length); this.normals(P.cur, P.idx, o); return o; } };
   }
-  anchoredDelta(P, e) {  // morph target of a strand part for an expression (lashes ride the blink)
-    const body = this.parts.body, n = body.cur.length / 3, { idx, val } = this.expressionDelta(e, n);
-    if (!idx.length) return null;
-    const moved = Float32Array.from(body.cur);
-    for (let k = 0; k < idx.length; k++) for (let c = 0; c < 3; c++) moved[idx[k] * 3 + c] += val[k * 3 + c];
-    const out = new Float32Array(P.cur.length); this.anchorEval(P, moved, out);
+  anchoredMorph(P, D, key) {  // dense morph of a strand part for a body expression delta D ({idx, val}), from the expression-free body
+    if (!D.idx.length) return null;
+    const ck = key && `${this.shapeKey}|${key}`;  // depends on the shape, not on the expression weight: cached
+    if (ck && P.morphCache && P.morphCache.has(ck)) return P.morphCache.get(ck);
+    const moved = Float32Array.from(this.bodyRest);
+    for (let k = 0; k < D.idx.length; k++) for (let c = 0; c < 3; c++) moved[D.idx[k] * 3 + c] += D.val[k * 3 + c];
+    const a = new Float32Array(P.cur.length), b = new Float32Array(P.cur.length);
+    this.anchorEval(P, this.bodyRest, a); this.anchorEval(P, moved, b);
+    if (P.contact) this.lashContact(P, a, b, this.bodyRest, moved);
+    for (let i = 0; i < a.length; i++) b[i] -= a[i];
+    if (ck) { if (!P.morphCache || P.morphCacheShape !== this.shapeKey) { P.morphCache = new Map(); P.morphCacheShape = this.shapeKey; } P.morphCache.set(ck, b); }
+    return b;
+  }
+  lashContact(P, a, b, Pr, Pc) {  // lashes bend on the lid skin instead of passing through it (v3/lash_contact.py, same rule)
+    const C = P.contact, K = P.strandPts, S = a.length / 3 / (2 * K), cen = (arr, s, k) => { const i = (s * K + k) * 6;
+      return [(arr[i] + arr[i + 3]) / 2, (arr[i + 1] + arr[i + 4]) / 2, (arr[i + 2] + arr[i + 5]) / 2]; };
+    const signed = (p, X, T, t) => {  // signed distance to the nearest skin triangle of positions lerp(Pr, X, t) (X: closed body)
+      let best = Infinity, bq = null, bn = null;
+      const g = (i, c) => Pr[i * 3 + c] + t * (X[i * 3 + c] - Pr[i * 3 + c]);
+      for (let j = 0; j < T.length; j += 3) {
+        const A = [g(T[j], 0), g(T[j], 1), g(T[j], 2)], B = [g(T[j + 1], 0), g(T[j + 1], 1), g(T[j + 1], 2)], Cc = [g(T[j + 2], 0), g(T[j + 2], 1), g(T[j + 2], 2)];
+        const q = closestOnTriangle(p, A, B, Cc), d = Math.hypot(p[0] - q[0], p[1] - q[1], p[2] - q[2]);
+        if (d < best) { best = d; bq = q; bn = norm(cross(sub(B, A), sub(Cc, A))); }
+      }
+      const plane = (p[0] - bq[0]) * bn[0] + (p[1] - bq[1]) * bn[1] + (p[2] - bq[2]) * bn[2];
+      const behind = plane < 0 && Math.abs(plane) >= 0.98 * best && best < C.max_depth;
+      return [behind ? -best : best, bn];
+    };
+    const near = (T, pts) => {  // the strand's eye triangles within 8 mm of its open or closed points (exact nearest: the
+      const out = [];          // skin there is dense, and a point farther than that from every triangle is never pushed)
+      for (let j = 0; j < T.length; j += 3) {
+        let ok = false;
+        for (const X of [Pr, Pc]) { const cx = (X[T[j] * 3] + X[T[j + 1] * 3] + X[T[j + 2] * 3]) / 3, cy = (X[T[j] * 3 + 1] + X[T[j + 1] * 3 + 1] + X[T[j + 2] * 3 + 1]) / 3,
+          cz = (X[T[j] * 3 + 2] + X[T[j + 1] * 3 + 2] + X[T[j + 2] * 3 + 2]) / 3;
+          for (const p of pts) if ((p[0] - cx) ** 2 + (p[1] - cy) ** 2 + (p[2] - cz) ** 2 < 6.4e-5) { ok = true; break; }
+          if (ok) break; }
+        if (ok) out.push(T[j], T[j + 1], T[j + 2]);
+      }
+      return out;
+    };
+    for (let s = 0; s < S; s++) {
+      let moves = false;  // a strand this expression does not move (the other eye's lashes) keeps its rest contact
+      for (let i = s * K * 6; i < (s + 1) * K * 6 && !moves; i++) moves = Math.abs(b[i] - a[i]) > 1e-7;
+      if (!moves) continue;
+      const pts = []; for (let k = 0; k < K; k++) pts.push(cen(a, s, k), cen(b, s, k));
+      const T = near(cen(a, s, 0)[0] > 0 ? C.tris.l : C.tris.r, pts);  // +x = the character's left eye
+      if (!T.length) continue;
+      const carry = [0, 0, 0];
+      for (let k = 0; k < K; k++) {
+        if (k >= C.first_point) {
+          const r = cen(a, s, k), floor = Math.min(signed(r, Pr, T, 0)[0], C.clear), c1 = cen(b, s, k);
+          for (let it = 0; it < 2; it++) for (const t of C.path_ts) {
+            const p = [0, 1, 2].map((c) => r[c] + t * (c1[c] + carry[c] - r[c]));
+            const [sd, n] = signed(p, Pc, T, t), need = Math.max(floor - sd, 0) / t;
+            for (let c = 0; c < 3; c++) carry[c] += need * n[c];
+          }
+        }
+        const i = (s * K + k) * 6; for (let c = 0; c < 3; c++) { b[i + c] += carry[c]; b[i + 3 + c] += carry[c]; }
+      }
+    }
+  }
+  anchoredDelta(P, e) {  // sparse morph target of a strand part for an expression (lashes ride the blink): what the preview shows
+    const md = this.anchoredMorph(P, this.expressionDelta(e, this.bodyRest.length / 3), `${Object.keys(this.parts).find((k) => this.parts[k] === P)}|${e.name}`);
+    if (!md) return null;
     const ii = [], vv = [];
-    for (let v = 0; v < out.length / 3; v++) {
-      const d = [out[v * 3] - P.cur[v * 3], out[v * 3 + 1] - P.cur[v * 3 + 1], out[v * 3 + 2] - P.cur[v * 3 + 2]];
+    for (let v = 0; v < md.length / 3; v++) {
+      const d = [md[v * 3], md[v * 3 + 1], md[v * 3 + 2]];
       if (Math.abs(d[0]) + Math.abs(d[1]) + Math.abs(d[2]) > 1e-7) { ii.push(v); vv.push(...d); }
     }
     return ii.length ? { idx: Uint32Array.from(ii), val: Float32Array.from(vv) } : null;
@@ -598,13 +685,13 @@ class Studio {
     for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
     return out;
   }
-  expressionDelta(e, n) {  // the morph target for this character: base delta plus any per-control correctives (v3)
-    const ws = this.exprTerms(e.name);
-    if (!ws.length) return this.decodeSparse(e.body, n);
-    const d = new Float32Array(n * 3); this.addDelta(d, e.body, 1);
-    for (const [enc, w] of ws) this.addDelta(d, enc, w);
+  expressionDelta(e, n) {  // the morph target for this character: base delta plus correctives, at the character's exact-height scale
+    const ws = this.exprTerms(e.name), k = this.scaleK || 1;
+    if (!ws.length) { const r = this.decodeSparse(e.body, n); if (k !== 1) for (let i = 0; i < r.val.length; i++) r.val[i] *= k; return r; }
+    const d = new Float32Array(n * 3); this.addDelta(d, e.body, k);
+    for (const [enc, w] of ws) this.addDelta(d, enc, w * k);
     const idx = []; for (let v = 0; v < n; v++) if (d[v * 3] || d[v * 3 + 1] || d[v * 3 + 2]) idx.push(v);
-    const val = new Float32Array(idx.length * 3); idx.forEach((v, k) => { for (let c = 0; c < 3; c++) val[k * 3 + c] = d[v * 3 + c]; });
+    const val = new Float32Array(idx.length * 3); idx.forEach((v, k2) => { for (let c = 0; c < 3; c++) val[k2 * 3 + c] = d[v * 3 + c]; });
     return { idx: Uint32Array.from(idx), val };
   }
   decodeSparse(enc, n) {
@@ -614,7 +701,10 @@ class Studio {
     const idx = Uint32Array.from(this.arr(enc.idx)), q = this.arr(enc.val), val = new Float32Array(q.length);
     for (let i = 0; i < q.length; i++) val[i] = q[i] * enc.scale; return { idx, val };
   }
-  exportBytes() { this.evaluate(); return exportGLB(this.exportState()); }
+  exportBytes() {  // the GLB base is the expression-free character; expressions are its morph targets
+    const expr = this.state.expr; this.state.expr = {};
+    try { this.evaluate(); return exportGLB(this.exportState()); } finally { this.state.expr = expr; this.evaluate(); }
+  }
   async offerFile(filename, data, zipName) {
     const dl = window.claude ? await window.claude.use("downloads").catch(() => null) : null;
     if (dl) {
