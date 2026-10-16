@@ -78,7 +78,7 @@ code { font-family: var(--mono); font-size: 0.8em; }
   <header>
     <h1>Character Studio</h1>
     <div class="row"><label for="generator">Generator</label><select id="generator">
-      <option value="v2">v2 (Forge SDF body)</option><option value="v3">v3 realistic human (Phase 1, MakeHuman CC0 base)</option></select></div>
+      <option value="v2">v2 (Forge SDF body)</option><option value="v3">v3 realistic human (MakeHuman CC0 base, Forge identities)</option></select></div>
     <p class="note" id="generator-note"></p>
     <div class="presets" role="group" aria-label="Body preset">
       <button type="button" data-preset="female">Female</button>
@@ -111,6 +111,7 @@ code { font-family: var(--mono); font-size: 0.8em; }
       <div role="tablist" aria-label="Editor sections">
         <button type="button" role="tab" aria-selected="true" aria-controls="tab-body" id="t-body">Body</button>
         <button type="button" role="tab" aria-selected="false" aria-controls="tab-face" id="t-face">Face</button>
+        <button type="button" role="tab" aria-selected="false" aria-controls="tab-identity" id="t-identity" hidden>Identity</button>
         <button type="button" role="tab" aria-selected="false" aria-controls="tab-look" id="t-look">Look</button>
         <button type="button" role="tab" aria-selected="false" aria-controls="tab-outfit" id="t-outfit">Outfit</button>
         <button type="button" role="tab" aria-selected="false" aria-controls="tab-motion" id="t-motion">Motion</button>
@@ -119,6 +120,11 @@ code { font-family: var(--mono); font-size: 0.8em; }
       <div style="min-height:0;display:grid">
         <div role="tabpanel" id="tab-body"><p class="note">Every slider moves real vertices of the shared <span id="body-verts">fixed-topology</span>-vertex body. Locked sliders survive presets and randomizing.</p></div>
         <div role="tabpanel" id="tab-face" hidden></div>
+        <div role="tabpanel" id="tab-identity" hidden>
+          <p class="note">Forge identity (face shape) on the v3 topology: separate from the body and face controls, saved as its own versioned group in the Character DNA. A preset only sets starting values; every slider stays editable. 0 = the neutral face.</p>
+          <div class="presets" role="group" aria-label="Identity preset" id="identity-presets"></div>
+          <p class="note" id="identity-note"></p>
+        </div>
         <div role="tabpanel" id="tab-look" hidden>
           <fieldset><legend>Skin</legend>
             <div class="slider"><label for="skin">Skin tone (light to deep)</label><output></output><span></span><input type="range" id="skin" min="0" max="1" step="0.01"></div>

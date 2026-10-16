@@ -21,7 +21,7 @@ from forge_character_forge.params import preset
 from forge_character_forge.skeleton import HUMANOID_MAP
 from forge_character_forge.studio_bake import (BODY_RANGES, FACE_RANGES, PACK_MAGIC, PACK_VERSION, _Blob, _encode_delta,
                                                base_params, compact_pack)
-from forge_character_forge.v3 import GENERATOR, controls, garments, grooming, mh, model, rig, textures
+from forge_character_forge.v3 import GENERATOR, controls, garments, grooming, identity, identity_dna, mh, model, rig, textures
 
 BLINK_RESHAPE_M = 0.0003  # a control side whose lid-region shape changes by more than this gets a blink corrective
 
@@ -190,6 +190,7 @@ def bake(out_path, log=print) -> dict:
             if quality == "direct" and controls.CONTROLS[key][1] == "scale":
                 pe["mode"] = "uniform_scale"  # the studio scales the evaluated character to exactly this height
             man["params"][key] = pe
+    man["identity"] = _identity_pack(blob, parts, v, j0, eyes0, log)
     for pname in ("male", "female", "neutral"):
         pb, pf, _ = preset(pname)
         man["presets"][pname] = {"values": {k: float(getattr(pb if k.startswith("body.") else pf, k.split(".")[1]))
@@ -212,6 +213,65 @@ def bake(out_path, log=print) -> dict:
     compact_pack(out_path)
     log(f"wrote {out_path} ({out_path.stat().st_size / 1e6:.2f} MB) in {time.time() - t0:.0f}s")
     return man
+
+
+IDENTITY_GROUPS = [
+    ("Skull & forehead", ["skull_length", "skull_width", "forehead_height", "forehead_slope"]),
+    ("Brow & eyes", ["brow_ridge", "eye_depth", "eye_spacing", "eye_size", "eye_tilt", "eye_height", "eye_aperture",
+                     "eye_outer_corner", "eye_length"]),
+    ("Nose", ["nose_length", "nose_width", "nose_projection", "nose_bridge", "nose_tip_size", "nose_tip_angle"]),
+    ("Cheeks", ["cheekbone_width", "cheekbone_height", "cheek_fullness", "midface_projection"]),
+    ("Mouth & lips", ["mouth_width", "mouth_height", "upper_lip", "lower_lip", "lip_projection"]),
+    ("Jaw & chin", ["jaw_width", "jaw_angle", "jaw_taper", "chin_width", "chin_height", "chin_projection"]),
+    ("Overall", ["face_length", "face_width"]),
+]
+
+
+def _identity_pack(blob, parts, v, j0, eyes0, log=print) -> dict:
+    """Identity basis for the studio (Phase 3D): per parameter the delta at s = +1 for every part (s = -1 is its
+    negative: identity is exactly linear), the joint delta, and blink correctives at both ends (the blink refitted at
+    s = +1 and s = -1; the studio scales the one on the side of s by |s|). Each preset also carries a blink residual
+    (exact blink fit at the preset minus the summed correctives), faded by ``identity_dna.preset_affinity``."""
+    from forge_character_forge.v3 import evaluate
+    assert tuple(identity.KEYS) == identity_dna.KEYS_V1
+    bsrc = parts["body"]["src"]
+    labels = {p.key: p.label for p in identity.PARAMS}
+    assert sorted(k for _, ks in IDENTITY_GROUPS for k in ks) == sorted(identity.KEYS)
+    out = {"schema": identity_dna.SCHEMA, "version": identity_dna.VERSION, "keys": list(identity.KEYS),
+           "labels": labels, "groups": IDENTITY_GROUPS, "range": list(identity_dna.RANGE), "params": {}, "presets": {},
+           "fingerprints": identity_dna.recorded()["sha256"]}
+    for key in identity.KEYS:
+        d = identity.basis(key)
+        ed = mh.fit_eyes(v + d) - eyes0
+        pe = {"parts": {}, "joints": blob.add((rig.joint_rest(v + d) - j0).astype("<f4")), "expr": {}}
+        for name, p in parts.items():
+            if p.get("anchor") is not None:
+                continue
+            enc = _encode_delta(blob, _part_delta(p, d, ed))
+            if enc:
+                pe["parts"][name] = enc
+        for sign, side in ((1, "hi"), (-1, "lo")):
+            corr, _ = evaluate.identity_corrective(key, sign)
+            for s in "lr":
+                if corr[s] is not None:
+                    enc = _encode_delta(blob, corr[s][bsrc])
+                    if enc:
+                        pe["expr"].setdefault(side, {})[f"blink_{s}"] = enc
+        out["params"][key] = pe
+    res = evaluate.preset_residuals()
+    for name, pr in identity_dna.presets().items():
+        entry = {"label": identity_dna.PRESET_LABELS.get(name, name), "values": {k: float(x) for k, x in pr["values"].items()},
+                 "controls": pr["controls"]}
+        if name in res:
+            entry["blink_fit"] = res[name]["fit"]
+            entry["residual"] = {}
+            for s in "lr":
+                enc = _encode_delta(blob, res[name][s][bsrc])
+                if enc:
+                    entry["residual"][f"blink_{s}"] = enc
+        out["presets"][name] = entry
+        log(f"identity preset {name}: {entry.get('blink_fit')}")
+    return out
 
 
 def studio_meta_v3() -> dict:

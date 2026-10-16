@@ -181,7 +181,8 @@ class Studio {
     for (const [k, pe] of Object.entries(this.man.params)) params[k] = pe.default;
     return { params, locks: {}, preset: "neutral", name: "studio_character", age: 30,
       skin_tone: 0.3, undertone: 0.0, eye: "brown", hair_style: "long", hair_color: "#3b2416", hl_color: "#a47b52", hl_amount: 0,
-      outfit: ["tshirt", "shorts"].filter((g) => this.meta.garments.includes(g)), colors: {}, expr: {}, pose: "A-pose (rest)", clip: "idle" };
+      outfit: ["tshirt", "shorts"].filter((g) => this.meta.garments.includes(g)), colors: {}, expr: {}, pose: "A-pose (rest)", clip: "idle",
+      identity: { preset: "neutral", values: {}, locks: {} } };
   }
   buildPart(name, p) {
     const pos = this.arr(p.pos), idx = this.arr(p.idx);
@@ -270,6 +271,30 @@ class Studio {
     }
     return out;
   }
+  identityTerms() {  // [[param entry, s]] for every nonzero identity value (v3; exactly linear in s)
+    const I = this.man.identity; if (!I) return [];
+    const vals = this.state.identity.values, out = [];
+    for (const k of I.keys) { const s = vals[k] || 0; if (s) out.push([I.params[k], s]); }
+    return out;
+  }
+  presetAffinity() {  // weight of each identity preset's blink residual (same formula as v3/identity_dna.py)
+    const I = this.man.identity, out = {}; if (!I) return out;
+    const vals = this.state.identity.values;
+    for (const [name, p] of Object.entries(I.presets)) {
+      if (!p.residual) continue;
+      let d2 = 0, n2 = 0;
+      for (const k of I.keys) { const sp = p.values[k] || 0, sv = vals[k] || 0; d2 += (sv - sp) ** 2; n2 += sp * sp; }
+      const a = Math.max(0, 1 - Math.sqrt(d2) / Math.sqrt(n2)); if (a > 0) out[name] = a;
+    }
+    return out;
+  }
+  exprTerms(name) {  // extra morph terms of an expression for this character: control and identity correctives, preset residuals
+    const out = [];
+    for (const [se, wp] of this.weights()) if (se.expr && se.expr[name]) out.push([se.expr[name], wp]);
+    for (const [pe, s] of this.identityTerms()) { const c = pe.expr[s > 0 ? "hi" : "lo"]; if (c && c[name]) out.push([c[name], Math.abs(s)]); }
+    for (const [p, a] of Object.entries(this.presetAffinity())) { const r = this.man.identity.presets[p].residual; if (r[name]) out.push([r[name], a]); }
+    return out;
+  }
   headFrame(rest) {  // the engine's head_frame recovered from the head and jaw joints (exact, see skeleton.py)
     const n = this.skel.names, h = n.indexOf("head") * 3, j = n.indexOf("jaw") * 3;
     const hh = (rest[j + 1] - rest[h + 1]) / 0.1;
@@ -282,6 +307,8 @@ class Studio {
     const rest = Float32Array.from(this.restBase);
     for (const [se, w] of ws) { const d = this.arr(se.joints); for (let i = 0; i < d.length; i++) rest[i] += d[i] * w; }
     if (pre && pre.joints) { const d = this.arr(pre.joints); for (let i = 0; i < d.length; i++) rest[i] += d[i]; }
+    const ids = this.identityTerms();
+    for (const [pe, w] of ids) { const d = this.arr(pe.joints); for (let i = 0; i < d.length; i++) rest[i] += d[i] * w; }
     this.rest = rest;
     const { O, k } = this.headFrame(rest);
     for (const [name, P] of Object.entries(this.parts)) {
@@ -295,10 +322,11 @@ class Studio {
       cur.set(P.base);
       for (const [se, w] of ws) this.addDelta(cur, se.parts[name], w);
       if (pre && pre.parts) this.addDelta(cur, pre.parts[name], 1);
+      for (const [pe, w] of ids) this.addDelta(cur, pe.parts[name], w);  // v3 identity (s = -1 is the negative of s = +1)
       if (name === "body") for (const e of this.man.expressions) {
         const we = this.state.expr[e.name] || 0; if (!we) continue;
         this.addDelta(cur, e.body, we);
-        for (const [se, wp] of ws) if (se.expr && se.expr[e.name]) this.addDelta(cur, se.expr[e.name], we * wp);  // v3 blink correctives
+        for (const [enc, w] of this.exprTerms(e.name)) this.addDelta(cur, enc, we * w);  // v3 blink correctives
       }
       this.normals(cur, P.idx, P.nrm, P.weld);
       this.renderer.update(P.g, "pos", cur); this.renderer.update(P.g, "nrm", P.nrm);
@@ -571,10 +599,10 @@ class Studio {
     return out;
   }
   expressionDelta(e, n) {  // the morph target for this character: base delta plus any per-control correctives (v3)
-    const ws = this.weights().filter(([se]) => se.expr && se.expr[e.name]);
+    const ws = this.exprTerms(e.name);
     if (!ws.length) return this.decodeSparse(e.body, n);
     const d = new Float32Array(n * 3); this.addDelta(d, e.body, 1);
-    for (const [se, wp] of ws) this.addDelta(d, se.expr[e.name], wp);
+    for (const [enc, w] of ws) this.addDelta(d, enc, w);
     const idx = []; for (let v = 0; v < n; v++) if (d[v * 3] || d[v * 3 + 1] || d[v * 3 + 2]) idx.push(v);
     const val = new Float32Array(idx.length * 3); idx.forEach((v, k) => { for (let c = 0; c < 3; c++) val[k * 3 + c] = d[v * 3 + c]; });
     return { idx: Uint32Array.from(idx), val };
@@ -657,6 +685,49 @@ class Studio {
     this._resetPhys = true;
     this.syncUI(); this.dirtyGeo = true;
   }
+  setIdentity(k, v, { record = true } = {}) {
+    if (record && !this._before) this._before = this.snapshot();
+    const r = this.man.identity.range; this.state.identity.values[k] = Math.max(r[0], Math.min(r[1], v));
+    this.dirtyGeo = true;
+  }
+  applyIdentityPreset(name, record = true) {  // starting values only: every slider stays editable; locked sliders are kept
+    const I = this.man.identity, p = I.presets[name];
+    if (record) this._before = this.snapshot();
+    const st = this.state.identity;
+    for (const k of I.keys) if (!st.locks[k]) st.values[k] = p.values[k] || 0;
+    st.preset = name;
+    for (const [k, v] of Object.entries(p.controls || {})) if (this.man.params[k] && !this.state.locks[k]) this.setParam(k, v, { record: false });
+    $("#identity-note").textContent = Object.keys(p.controls || {}).length
+      ? `${p.label} also sets ${Object.entries(p.controls).map(([k, v]) => `${k} = ${v}`).join(", ")} (a body control, editable in Body).` : "";
+    if (record) this.commit();
+    this.syncUI(); this.dirtyGeo = true;
+  }
+  buildIdentityUI() {
+    const I = this.man.identity; if (!I) return;
+    $("#t-identity").hidden = false;
+    const host = $("#tab-identity"), pr = $("#identity-presets");
+    for (const [name, p] of Object.entries(I.presets)) {
+      const b = document.createElement("button"); b.type = "button"; b.dataset.identity = name; b.textContent = p.label;
+      b.addEventListener("click", () => this.applyIdentityPreset(name)); pr.append(b);
+    }
+    for (const [title, keys] of I.groups) {
+      const fs = document.createElement("fieldset"); fs.innerHTML = `<legend>${title}</legend>`;
+      for (const k of keys) {
+        const row = document.createElement("div"); row.className = "slider";
+        row.innerHTML = `<label for="si-${k}">${I.labels[k]}</label><output id="oi-${k}"></output>
+          <button type="button" class="lock" id="li-${k}" aria-pressed="false" title="Lock: identity presets keep this value">lock</button>
+          <input type="range" id="si-${k}" min="${I.range[0]}" max="${I.range[1]}" step="0.01">`;
+        fs.append(row);
+        const inp = row.querySelector("input");
+        inp.addEventListener("input", () => { this.setIdentity(k, +inp.value); row.querySelector("output").textContent = (+inp.value).toFixed(2); });
+        inp.addEventListener("change", () => this.commit());
+        inp.addEventListener("dblclick", () => { this.setIdentity(k, 0); this.commit(); this.syncUI(); });
+        row.querySelector(".lock").addEventListener("click", (e) => {
+          this.state.identity.locks[k] = !this.state.identity.locks[k]; e.target.setAttribute("aria-pressed", !!this.state.identity.locks[k]); });
+      }
+      host.append(fs);
+    }
+  }
   randomize() {
     this._before = this.snapshot();
     const seed = Math.floor(Math.random() * 1e6); let x = seed;
@@ -694,16 +765,38 @@ class Studio {
     for (const [k, dv] of Object.entries(d.appearance)) traits[`appearance.${k}`] = tr(app[k], dv, `appearance.${k}`);
     traits["wardrobe.outfit"] = tr([...s.outfit], [], "wardrobe.outfit");
     traits["wardrobe.colors"] = tr({ ...s.colors }, {}, "wardrobe.colors");
-    return { schema: this.meta.dna.schema, version: this.meta.dna.version,
+    const dna = { schema: this.meta.dna.schema, version: this.meta.dna.version,
       identity: { name: s.name || "studio_character", age_years: Math.max(18, +s.age || 30), preset: s.preset,
         ...(this.man.generator ? { generator: { id: this.man.generator.id, version: this.man.generator.version } } : {}) },
       traits, sources: [], regions: {}, reconstruction: null,
       history: [{ op: "character_studio_export", note: "values edited interactively; regenerate exact geometry with the Python engine" }] };
+    const I = this.man.identity;
+    if (I) dna.face_identity = { schema: I.schema, version: I.version, generator: { id: this.man.generator.id, version: this.man.generator.version },
+      preset: s.identity.preset, values: Object.fromEntries(I.keys.map((k) => [k, +(+(s.identity.values[k] || 0)).toFixed(4)])),
+      locked: I.keys.filter((k) => s.identity.locks[k]) };
+    return dna;
+  }
+  readIdentity(dna) {  // validated identity group of a DNA -> {preset, values, locks, note}; throws rather than reinterpreting
+    const I = this.man.identity, g = dna.face_identity;
+    if (!I) return { note: g ? " Its face identity group is for generator v3 and is not shown on this generator." : "" };
+    if (g === undefined) return { preset: "neutral", values: {}, locks: {}, note: " No identity group: neutral identity (its original appearance)." };
+    if (!g || g.schema !== I.schema) throw new Error(`face_identity schema ${g && g.schema} is not ${I.schema}`);
+    if (g.version !== I.version) throw new Error(`face_identity version ${g.version} is not supported (this studio reads version ${I.version})`);
+    const vals = g.values || {}, unknown = Object.keys(vals).filter((k) => !I.keys.includes(k));
+    if (unknown.length) throw new Error(`face_identity has unknown parameters: ${unknown.join(", ")}`);
+    for (const [k, v] of Object.entries(vals)) {
+      if (typeof v !== "number" || !isFinite(v)) throw new Error(`face_identity.${k} is not a number`);
+      if (v < I.range[0] || v > I.range[1]) throw new Error(`face_identity.${k} = ${v} is outside [${I.range}]`);
+    }
+    const locks = {}; for (const k of g.locked || []) { if (!I.keys.includes(k)) throw new Error(`face_identity.locked has unknown ${k}`); locks[k] = true; }
+    return { preset: typeof g.preset === "string" ? g.preset : "custom", values: { ...vals }, locks, note: "" };
   }
   fromDNA(dna) {
     if (dna.schema !== this.meta.dna.schema) throw new Error("This file is not Character DNA (forge.character-dna).");
     if (!(dna.identity && dna.identity.age_years >= 18)) throw new Error("Character DNA must describe an adult (age 18 or older).");
+    const idn = this.readIdentity(dna);  // validate before changing anything
     this._before = this.snapshot();
+    if (this.man.identity) this.state.identity = { preset: idn.preset, values: idn.values, locks: idn.locks };
     const dg = dna.identity.generator, mine = this.man.generator;
     const genNote = dg && mine && dg.version !== mine.version
       ? ` Note: this DNA was made with generator v${dg.version}; it is shown on v${mine.version} geometry, which differs.` : "";
@@ -725,7 +818,7 @@ class Studio {
     this.enforceCoverage(); this.commit(); this.syncUI(); this.dirtyGeo = true; this._resetPhys = true;
     const prov = {}; for (const v of Object.values(t)) prov[v.provenance] = (prov[v.provenance] || 0) + 1;
     setStatus(`Loaded ${s.name}: ${Object.entries(prov).map(([k, v]) => `${v} ${k}`).join(", ")}` +
-      (clamped.length ? `. ${clamped.length} value(s) were outside the studio range and were clamped.` : ".") + genNote);
+      (clamped.length ? `. ${clamped.length} value(s) were outside the studio range and were clamped.` : ".") + genNote + idn.note);
   }
   // -------------------------------------------------------------- UI
   buildUI() {
@@ -833,6 +926,7 @@ class Studio {
       e.target.value = "";
     });
     $("#exact").addEventListener("click", () => this.exactBuild());
+    this.buildIdentityUI();
     this.syncUI();
     this.probeServer();
   }
@@ -852,6 +946,14 @@ class Studio {
       const c = this.state.colors[g] || lin2hex(this.meta.garment_colors[g]); document.getElementById(`c-${g}`).value = c;
     }
     document.querySelectorAll("[data-preset]").forEach((b) => b.setAttribute("aria-pressed", b.dataset.preset === this.state.preset));
+    const I = this.man.identity;
+    if (I) {
+      const st = this.state.identity;
+      for (const k of I.keys) { const v = st.values[k] || 0, inp = document.getElementById(`si-${k}`); if (!inp) continue;
+        inp.value = v; document.getElementById(`oi-${k}`).textContent = v.toFixed(2);
+        document.getElementById(`li-${k}`).setAttribute("aria-pressed", !!st.locks[k]); }
+      document.querySelectorAll("[data-identity]").forEach((b) => b.setAttribute("aria-pressed", b.dataset.identity === st.preset));
+    }
     $("#name").value = this.state.name; $("#age").value = this.state.age;
     $("#pose").value = this.state.pose; $("#clip").value = this.state.clip;
   }
@@ -884,7 +986,7 @@ class Studio {
     const v3 = location.hash === "#v3" || new URLSearchParams(location.search).get("gen") === "3";
     const sel = $("#generator"); sel.value = v3 ? "v3" : "v2";
     sel.addEventListener("change", () => { location.hash = sel.value === "v3" ? "v3" : ""; location.reload(); });
-    $("#generator-note").textContent = v3 ? "v3 Phase 1: one realistic adult body; v3-fitted basic garments only, no hair yet. Sliders marked approx. use the nearest MakeHuman targets." : "";
+    $("#generator-note").textContent = v3 ? "v3: realistic adult on the MakeHuman CC0 base with Forge identities (Identity tab). Sliders marked approx. use the nearest MakeHuman targets." : "";
     const meta = await (await fetch(v3 ? "studio_meta_v3.json" : "studio_meta.json")).json();
     const pack = await loadPack(v3 ? "studio_pack_v3.bin" : "studio_pack.bin");
     let clips = null;

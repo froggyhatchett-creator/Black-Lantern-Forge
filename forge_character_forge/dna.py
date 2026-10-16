@@ -62,7 +62,14 @@ def layer_of(key: str) -> str:
 def anatomy_hash(dna: dict) -> str:
     """Hash of the anatomy layer only (body, face, genital, skin and eye appearance)."""
     t = {k: v["value"] for k, v in dna["traits"].items() if layer_of(k) == "anatomy"}
+    if "face_identity" in dna:  # only when present: DNA without the group keeps its hash
+        t["face_identity"] = _identity_values(dna)
     return hashlib.sha256(canonical_json(t)).hexdigest()[:16]
+
+
+def _identity_values(dna: dict) -> dict:
+    g = dna["face_identity"]
+    return {"version": g["version"], "values": {k: v for k, v in sorted(g["values"].items()) if v}}
 
 
 def spec_to_dict(spec: CharacterSpec) -> dict:
@@ -129,6 +136,9 @@ def validate_dna(dna: dict) -> None:
     outfit = dna["traits"]["wardrobe.outfit"]["value"]
     if any(g not in GARMENTS for g in outfit):
         raise ValueError("unknown garment in wardrobe.outfit")
+    if "face_identity" in dna:  # optional generator-v3 identity group (absent = neutral identity)
+        from forge_character_forge.v3.identity_dna import validate_group
+        validate_group(dna["face_identity"])
 
 
 def set_trait(dna: dict, key: str, value, *, lock: bool | None = None, note: str = "user edit") -> dict:
@@ -234,7 +244,10 @@ def load_dna(path) -> dict:
 def dna_hash(dna: dict) -> str:
     """Hash of everything that affects geometry/appearance (values only, not provenance)."""
     vals = {k: t["value"] for k, t in dna["traits"].items()}
-    return hashlib.sha256(canonical_json({"identity": dna["identity"], "values": vals})).hexdigest()
+    doc = {"identity": dna["identity"], "values": vals}
+    if "face_identity" in dna:  # only when present: DNA without the group keeps its hash
+        doc["face_identity"] = _identity_values(dna)
+    return hashlib.sha256(canonical_json(doc)).hexdigest()
 
 
 def provenance_summary(dna: dict) -> dict:

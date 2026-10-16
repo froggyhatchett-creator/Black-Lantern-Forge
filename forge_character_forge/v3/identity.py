@@ -52,6 +52,8 @@ REGIONS = {
     "lower_face": ((0.0, -0.105, -0.025), (0.08, 0.05, 0.085), 0.8),
     "gonion": ((0.062, -0.095, -0.062), (0.026, 0.026, 0.03), 1.3),
     "chin": ((0.0, -0.118, 0.008), (0.031, 0.026, 0.026), 0.6),
+    # Phase 3D addition (a new key only; earlier regions and parameters are unchanged)
+    "lips": ((0.0, -0.069, 0.027), (0.026, 0.014, 0.012), 0.9),
 }
 MIRRORED = {"eye", "cheekbone", "cheek", "gonion"}
 
@@ -125,6 +127,8 @@ PARAMS = [
     Param("eye_aperture", "lids", label="Eye opening: almond (+) / round (-)"),
     Param("eye_outer_corner", "lids", label="Outer eye corner lift"),
     Param("eye_length", "lids", label="Eye opening length"),
+    # 11 Phase 3D: lip projection (fixes the Phase 3C pout without changing parameters 1-35)
+    Param("lip_projection", "lips", t=(0, 0, 0.004), label="Lip projection (both lips as a unit)"),
 ]
 LID_OPS = {  # key: (upper-lid rotation about x, lower-lid rotation about x, outer-corner rotation about z, x stretch)
     "eye_aperture": (0.11, -0.07, 0.0, 0.0),   # rad at s = 1: upper lid down, lower lid up (narrower, almond)
@@ -336,10 +340,10 @@ STYLIZED = {
         "eye_aperture": 0.6, "eye_outer_corner": 1.0, "eye_length": 0.7, "eye_size": 0.8, "eye_tilt": 0.35,
         "eye_spacing": 0.1, "eye_depth": -0.2, "eye_height": 0.15, "brow_ridge": -0.9, "forehead_slope": -0.3,
         "forehead_height": 0.15, "nose_length": -0.6, "nose_width": -0.7, "nose_projection": -0.35, "nose_bridge": -0.3,
-        "nose_tip_size": -0.6, "nose_tip_angle": 0.45, "mouth_width": -0.3, "mouth_height": 0.35, "upper_lip": 0.15,
-        "lower_lip": 0.1, "cheekbone_width": 0.45, "cheekbone_height": 0.6, "cheek_fullness": -0.35,
-        "midface_projection": 0.15, "jaw_width": -0.7, "jaw_angle": -0.7, "jaw_taper": 0.8, "chin_width": -0.7,
-        "chin_projection": 0.15, "chin_height": -0.45, "face_width": -0.25, "skull_width": -0.1, "face_length": -0.6,
+        "nose_tip_size": -0.6, "nose_tip_angle": 0.45, "mouth_width": -0.3, "mouth_height": 0.35, "upper_lip": -0.25,
+        "lower_lip": -0.1, "lip_projection": -0.8, "cheekbone_width": 0.45, "cheekbone_height": 0.6, "cheek_fullness": -0.35,
+        "midface_projection": 0.15, "jaw_width": -0.7, "jaw_angle": 0.0, "jaw_taper": 0.8, "chin_width": -0.7,
+        "chin_projection": 0.15, "chin_height": -0.6, "face_width": -0.25, "skull_width": -0.1, "face_length": -0.3,
     },
 }
 
