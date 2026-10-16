@@ -965,7 +965,11 @@ class Studio {
     } catch { setStatus("Download unavailable here: use Copy DNA."); }
   }
   async probeServer() {
-    try { const r = await fetch("api/health", { cache: "no-store" }); if (r.ok) { this.server = true; $("#exact").hidden = false; $("#server-note").textContent = "Engine server connected: exact build and GLB export available."; } }
+    try { const r = await fetch("api/health", { cache: "no-store" }); if (!r.ok) return;
+      this.server = true;
+      if (this.man.generator && this.man.generator.version >= 3) {  // the exact build is the v2 engine: v3 exports from Export GLB
+        $("#server-note").textContent = "Engine server connected. Generator v3 characters export with Export GLB (the exact build is generator v2 only)."; return; }
+      $("#exact").hidden = false; $("#server-note").textContent = "Engine server connected: exact build and GLB export available."; }
     catch { /* static hosting: no engine server */ }
   }
   async exactBuild() {

@@ -68,6 +68,30 @@ class IdentityDNATest(unittest.TestCase):
         self.assertTrue(all(a == 0 for a in I.preset_affinity({}).values()))
 
 
+class ExactBuildRefusesV3Test(unittest.TestCase):
+    def test_server_refuses_v3_and_identity_dna(self):
+        """The Python exact build is the v2 engine: a v3 character must not silently come back as v2 geometry."""
+        import threading
+        import urllib.error
+        import urllib.request
+        from forge_character_forge.studio_server import DEFAULT_PACK, serve
+        with tempfile.TemporaryDirectory() as td:
+            httpd = serve(0, DEFAULT_PACK, Path(td))
+            threading.Thread(target=httpd.serve_forever, daemon=True).start()
+            try:
+                v3 = D.new_dna("female", name="v3")
+                v3["identity"]["generator"] = {"id": "forge.character-forge", "version": 3}
+                for dna in (v3, I.set_identity(D.new_dna("female", name="idn"), {"nose_width": 0.5}, "custom")):
+                    req = urllib.request.Request(f"http://127.0.0.1:{httpd.server_address[1]}/api/export", data=json.dumps(dna).encode(),
+                                                 headers={"Content-Type": "application/json"}, method="POST")
+                    with self.assertRaises(urllib.error.HTTPError) as cm:
+                        urllib.request.urlopen(req, timeout=30)
+                    self.assertEqual(cm.exception.code, 400)
+                    self.assertIn("generator v2 only", json.loads(cm.exception.read())["error"])
+            finally:
+                httpd.shutdown()
+
+
 HEAD = None
 
 

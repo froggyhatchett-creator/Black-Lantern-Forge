@@ -123,6 +123,18 @@ adult character in the real studio before expanding. Finite credits: short visua
   `eye_length`) in `identity.py`; `identity.STYLIZED`; proof `tools/identity_stylized.py`; evidence `humanity/v3_phase3c/`.
 - Structural stylisation works with healthy anatomy and lids; remaining: pouty mouth, jaw-angle kink, no likeness.
 
+## Generator v3 Phase 3D/3E: identities in DNA and the Studio (milestone; stopped for review)
+- Report `docs/CHARACTER_FORGE_V3_PHASE3D.md`; evidence `examples/character_forge_aaa/humanity/v3_phase3d/`.
+- 36 identity parameters (35 + `lip_projection`); Mercy pout and jaw kink fixed (retuned; no jaw operator added).
+- DNA: optional `face_identity` group (`v3/identity_dna.py`, schema `forge.v3-face-identity` v1); absent = neutral;
+  strict validation; basis v1 frozen in `v3/identity_basis_v1.json` (a new operator geometry needs version 2).
+- Pack: identity basis, joints, blink correctives (+1/-1), preset blink residuals (faded by preset affinity).
+  Studio: Identity tab (4 presets, 36 sliders, locks), DNA save/load; exact build refuses v3 (v2 engine only).
+- `v3/evaluate.py` = Python reference of the studio evaluation (tests, GLB comparison).
+- Tools: `tools/studio_v3_identity.mjs` (UI checks, dumps, GLBs, shots), `tools/studio_v3_identity_bald.mjs`,
+  `tools/glb_playback.mjs` (independent playback), `tools/v3_phase3d.py` (analysis + sheets).
+- Tests: `tests/test_character_forge_v3_identity_dna.py`.
+
 ## Open problems / next actions
 1. Commit/push checkpoint; publish the studio artifact (multi-file; `downloads` capability; GLB offered zipped).
 2. Face realism (lips/eyes/brows) and anatomy fixes (hands, knees, feet) need a re-bake (~28 min) to reach the studio.

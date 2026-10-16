@@ -4,8 +4,9 @@ Independent of generators v1/v2 (their code, studio pack, garments and DNA are u
 pack written by ``v3.bake``; see docs/CHARACTER_FORGE_V3_PLAN.md, docs/CHARACTER_FORGE_V3_PHASE1.md and
 docs/CHARACTER_FORGE_V3_PHASE2.md (surface maps, eyes, grooming: ``v3.textures``, ``v3.grooming``).
 
-Identity extension point: ``IDENTITY_LAYERS`` is where Forge-owned identity morphs (per-character shape layers on
-this topology) and alternative body templates will register. Phase 1 registers none and applies none.
+Identity: Forge-owned facial identity lives in ``v3.identity`` (operators) and ``v3.identity_dna`` (the versioned
+``face_identity`` DNA group); see docs/CHARACTER_FORGE_V3_PHASE3D.md. ``IDENTITY_LAYERS`` remains the extension point
+for alternative body templates (none registered).
 """
 
 GENERATOR_ID = "forge.character-forge"

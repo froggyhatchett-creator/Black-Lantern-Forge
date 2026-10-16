@@ -30,6 +30,9 @@ SRC = model.body_surface()[0]
 LID = np.concatenate([model.lid_region(s, model.CORRECTIVE_RINGS) for s in "lr"])
 WEIGHTS = (0, 0.25, 0.5, 0.75, 1)
 PRESETS = ("neutral", "ID-A", "ID-B", "MERCY-INSPIRED")
+MESHES = ("body", "eye_l", "eye_r", "basic_top", "basic_shorts", "brows", "lashes", "hair_shoulder")  # everything but the clear corneas
+COLORS = {"eye_l": (0.75, 0.72, 0.68), "eye_r": (0.75, 0.72, 0.68), "basic_top": (0.33, 0.4, 0.5), "basic_shorts": (0.22, 0.24, 0.28),
+          "brows": (0.1, 0.07, 0.05), "lashes": (0.05, 0.04, 0.03), "hair_shoulder": (0.16, 0.1, 0.06)}
 GLBS = {"ID-A": "v3_identity_id_a", "ID-B": "v3_identity_id_b", "MERCY-INSPIRED": "v3_identity_mercy_inspired"}
 
 
@@ -80,7 +83,8 @@ def node(*args):
 
 def playback(glb, tag, frames, w, anim=None):
     out = OUT / "playback" / f"{tag}"
-    a = [ROOT / "tools/glb_playback.mjs", glb, out, "--frames", ",".join(map(str, frames)), "--morph", f"blink_l={w},blink_r={w}"]
+    a = [ROOT / "tools/glb_playback.mjs", glb, out, "--frames", ",".join(map(str, frames)), "--morph", f"blink_l={w},blink_r={w}",
+         "--meshes", ",".join(MESHES)]
     if anim:
         a += ["--anim", anim]
     idx = node(*a)
@@ -92,13 +96,13 @@ def playback(glb, tag, frames, w, anim=None):
 
 
 def render_posed(pos, tris, cam, W=360, H=420):
+    """Everything the GLB carries (clothed, as exported): refuses to draw a body without its garments."""
+    if not any(m.startswith("basic_") for m in pos):
+        raise RuntimeError("garments missing from the playback: public renders stay clothed")
     items = [DrawItem(pos["body"].astype(float), tris["body"].astype(np.int64), color=(0.62, 0.48, 0.41), roughness=0.55, specular=0.15, sss=0.6)]
-    for m in ("eye_l", "eye_r"):
+    for m, c in COLORS.items():
         if m in pos:
-            items.append(DrawItem(pos[m].astype(float), tris[m].astype(np.int64), color=(0.75, 0.72, 0.68), roughness=0.2, specular=0.5, double_sided=True))
-    for m in ("brows", "lashes"):
-        if m in pos:
-            items.append(DrawItem(pos[m].astype(float), tris[m].astype(np.int64), color=(0.08, 0.06, 0.05), roughness=0.8, specular=0.05, double_sided=True))
+            items.append(DrawItem(pos[m].astype(float), tris[m].astype(np.int64), color=c, roughness=0.6, specular=0.2, double_sided=True))
     return rasterize(items, cam, W=W, H=H, background=(0.8, 0.82, 0.85), ground_y=None)
 
 
@@ -164,8 +168,8 @@ def main():
                                      "bbox_min": [round(float(x), 3) for x in b.min(0)], "bbox_max": [round(float(x), 3) for x in b.max(0)]}
                 hw = np.array(fr["head_world"])
                 close = fr["frame"] == 10
-                cam = Camera(yaw_deg=20 if close else 40, pitch_deg=4, target=tuple(hw + ([0, 0.06, 0.06] if close else [0, -0.75, 0])),
-                             distance=0.42 if close else 3.2, fov_deg=26)
+                cam = (Camera(yaw_deg=20, pitch_deg=4, target=tuple(hw + [0, 0.01, 0.06]), distance=0.52, fov_deg=26) if close else
+                       Camera(yaw_deg=40, pitch_deg=4, target=(hw[0], 0.86, hw[2]), distance=4.6, fov_deg=26))
                 play_tiles.append((p, fr["frame"], label(render_posed(pos[fr["frame"]], tris, cam), f"{p} GLB walk f{fr['frame']} blink {w}", size=13)))
         heads = [np.array(walk[f]["head_world"]) for f in (0, 10, 20)]
         g["walk_playback"] = {"frames": walk, "head_travel_m": round(float(np.linalg.norm(heads[2] - heads[0])), 3)}
@@ -175,6 +179,8 @@ def main():
     save(sheet([t[2] for t in play_tiles], 3), OUT / "glb_playback_sheet.png")
     shots_sheet([f"face_{p}_{y}" for p in PRESETS for y in (0, 35, 90)], 3, "studio_faces_sheet.png",
                 [f"{p}: {['front', 'three-quarter', 'profile'][i]}" for p in PRESETS for i in range(3)])
+    shots_sheet([f"bald_{p}_{y}" for y in (0, 35, 90) for p in PRESETS], 4, "studio_faces_bald_sheet.png",
+                [f"{p}: {v} (hair style bald)" for v in ("front", "three-quarter", "profile") for p in PRESETS])
     shots_sheet([f"blink_{p}_{w}" for p in GLBS for w in (0, 0.5, 1)], 3, "studio_blink_sheet.png",
                 [f"{p}: blink {w}" for p in GLBS for w in (0, 0.5, 1)])
     shots_sheet([f"walk_blink_{p}" for p in GLBS], 3, "studio_walk_blink_sheet.png", [f"{p}: walk frame 10, blinking" for p in GLBS])
