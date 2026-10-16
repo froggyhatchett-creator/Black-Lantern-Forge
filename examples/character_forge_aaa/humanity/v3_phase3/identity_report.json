@@ -1,0 +1,125 @@
+{
+ "identity_version": 1,
+ "parameters": 32,
+ "faces": {
+  "neutral (v3 default)": {
+   "health_vs_neutral": {
+    "triangles": 8786,
+    "flipped": 0,
+    "max_area_ratio": 1.0,
+    "p99_area_ratio": 1.0,
+    "min_angle_p1_deg": 7.63,
+    "degenerate_lt_2deg": 0,
+    "laplacian_mean_mm": 0.805,
+    "laplacian_mean_neutral_mm": 0.805,
+    "laplacian_max_ratio_vs_neutral": 1.0,
+    "lid_vertices_inside_cornea": 108,
+    "eye_joint_to_eyeball_centre_mm": 0.72
+   },
+   "blink": {
+    "factor": 1.2,
+    "lower": 0.0,
+    "exposure": 0.0,
+    "flipped": 4,
+    "half_exposure": 0.467,
+    "closed_quality": {
+     "triangles": 2170,
+     "flipped": 4,
+     "max_area_ratio": 13.74,
+     "p99_area_ratio": 3.46
+    }
+   },
+   "displacement_mm": {
+    "mean": 0.0,
+    "p95": 0.0,
+    "max": 0.0
+   }
+  },
+  "ID-A": {
+   "health_vs_neutral": {
+    "triangles": 8786,
+    "flipped": 0,
+    "max_area_ratio": 3.27,
+    "p99_area_ratio": 1.54,
+    "min_angle_p1_deg": 6.38,
+    "degenerate_lt_2deg": 0,
+    "laplacian_mean_mm": 0.826,
+    "laplacian_mean_neutral_mm": 0.805,
+    "laplacian_max_ratio_vs_neutral": 6.96,
+    "lid_vertices_inside_cornea": 216,
+    "eye_joint_to_eyeball_centre_mm": 0.76
+   },
+   "blink": {
+    "factor": 1.1,
+    "lower": 0.5,
+    "exposure": 0.0,
+    "flipped": 22,
+    "half_exposure": 0.458,
+    "closed_quality": {
+     "triangles": 2170,
+     "flipped": 22,
+     "max_area_ratio": 9.39,
+     "p99_area_ratio": 4.17
+    }
+   },
+   "displacement_mm": {
+    "mean": 6.3,
+    "p95": 11.19,
+    "max": 17.71
+   }
+  },
+  "ID-B": {
+   "health_vs_neutral": {
+    "triangles": 8786,
+    "flipped": 0,
+    "max_area_ratio": 2.08,
+    "p99_area_ratio": 1.62,
+    "min_angle_p1_deg": 7.99,
+    "degenerate_lt_2deg": 0,
+    "laplacian_mean_mm": 0.836,
+    "laplacian_mean_neutral_mm": 0.805,
+    "laplacian_max_ratio_vs_neutral": 8.3,
+    "lid_vertices_inside_cornea": 76,
+    "eye_joint_to_eyeball_centre_mm": 1.74
+   },
+   "blink": {
+    "factor": 1.0,
+    "lower": 0.5,
+    "exposure": 0.0038,
+    "flipped": 0,
+    "half_exposure": 0.52,
+    "closed_quality": {
+     "triangles": 2170,
+     "flipped": 0,
+     "max_area_ratio": 10.11,
+     "p99_area_ratio": 3.4
+    }
+   },
+   "displacement_mm": {
+    "mean": 7.25,
+    "p95": 12.06,
+    "max": 19.06
+   }
+  }
+ },
+ "distances_mm": {
+  "neutral (v3 default) vs ID-A": {
+   "mean": 6.54,
+   "p95": 11.44
+  },
+  "neutral (v3 default) vs ID-B": {
+   "mean": 7.92,
+   "p95": 12.65
+  },
+  "ID-A vs ID-B": {
+   "mean": 14.41,
+   "p95": 24.08
+  }
+ },
+ "reference_distances_mm": {
+  "MakeHuman female variants (identity_proof.py, 2026-10-15)": "0.0-2.8",
+  "MakeHuman female vs male macro": "5.2-5.7",
+  "earlier regional identity experiment (identity_regions.py)": "1.28 mean"
+ },
+ "seconds": 30.1
+}

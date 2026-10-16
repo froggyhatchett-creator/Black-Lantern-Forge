@@ -112,6 +112,12 @@ adult character in the real studio before expanding. Finite credits: short visua
 - SwiftShader is slow with the hair (close-ups take 2-3 min per frame); tools use a 1000x700 viewport.
 - MakeHuman's skins/brows/lashes/hair (repo `makehuman-assets`, LFS) are unreachable from this environment.
 
+## Generator v3 Phase 3A/3B: identity foundation (stopped at the review gate)
+- Report `docs/CHARACTER_FORGE_V3_PHASE3.md`; code `forge_character_forge/v3/identity.py` (32 linear regional
+  parameters, smoothing, rigid ears, eyes follow lids); proof `tools/identity_proof.py`, `tools/identity_closeups.py`;
+  evidence `examples/character_forge_aaa/humanity/v3_phase3/`; tests `tests/test_character_forge_v3_identity.py`.
+- Not started (await approval): 3C Mercy-inspired stylisation, 3D animation/DNA, 3E studio integration.
+
 ## Open problems / next actions
 1. Commit/push checkpoint; publish the studio artifact (multi-file; `downloads` capability; GLB offered zipped).
 2. Face realism (lips/eyes/brows) and anatomy fixes (hands, knees, feet) need a re-bake (~28 min) to reach the studio.
