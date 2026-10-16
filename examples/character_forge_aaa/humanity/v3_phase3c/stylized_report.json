@@ -1,0 +1,241 @@
+{
+ "identity_version": 1,
+ "values": {
+  "eye_aperture": 0.6,
+  "eye_outer_corner": 1.0,
+  "eye_length": 0.7,
+  "eye_size": 0.8,
+  "eye_tilt": 0.35,
+  "eye_spacing": 0.1,
+  "eye_depth": -0.2,
+  "eye_height": 0.15,
+  "brow_ridge": -0.9,
+  "forehead_slope": -0.3,
+  "forehead_height": 0.15,
+  "nose_length": -0.6,
+  "nose_width": -0.7,
+  "nose_projection": -0.35,
+  "nose_bridge": -0.3,
+  "nose_tip_size": -0.6,
+  "nose_tip_angle": 0.45,
+  "mouth_width": -0.3,
+  "mouth_height": 0.35,
+  "upper_lip": 0.15,
+  "lower_lip": 0.1,
+  "cheekbone_width": 0.45,
+  "cheekbone_height": 0.6,
+  "cheek_fullness": -0.35,
+  "midface_projection": 0.15,
+  "jaw_width": -0.7,
+  "jaw_angle": -0.7,
+  "jaw_taper": 0.8,
+  "chin_width": -0.7,
+  "chin_projection": 0.15,
+  "chin_height": -0.45,
+  "face_width": -0.25,
+  "skull_width": -0.1,
+  "face_length": -0.6
+ },
+ "controls": {
+  "body.femininity": 1.0
+ },
+ "faces": {
+  "neutral (v3 default)": {
+   "health_vs_neutral": {
+    "triangles": 8786,
+    "flipped": 0,
+    "max_area_ratio": 1.0,
+    "p99_area_ratio": 1.0,
+    "min_angle_p1_deg": 7.63,
+    "degenerate_lt_2deg": 0,
+    "laplacian_mean_mm": 0.805,
+    "laplacian_mean_neutral_mm": 0.805,
+    "laplacian_max_ratio_vs_neutral": 1.0,
+    "lid_vertices_inside_cornea": 108,
+    "eye_joint_to_eyeball_centre_mm": 0.72
+   },
+   "blink_fit": {
+    "factor": 1.2,
+    "lower": 0.0,
+    "exposure": 0.0,
+    "flipped": 4
+   },
+   "states": {
+    "open": {
+     "blink_weight": 0.0,
+     "eyeball_exposure": 1.0
+    },
+    "half-lidded": {
+     "blink_weight": 0.35,
+     "eyeball_exposure": 0.6338,
+     "lid_quality": {
+      "triangles": 2170,
+      "flipped": 0,
+      "max_area_ratio": 2.22,
+      "p99_area_ratio": 1.51
+     }
+    },
+    "50% blink": {
+     "blink_weight": 0.5,
+     "eyeball_exposure": 0.4666,
+     "lid_quality": {
+      "triangles": 2170,
+      "flipped": 0,
+      "max_area_ratio": 2.78,
+      "p99_area_ratio": 1.8
+     }
+    },
+    "closed": {
+     "blink_weight": 1.0,
+     "eyeball_exposure": 0.0,
+     "lid_quality": {
+      "triangles": 2170,
+      "flipped": 4,
+      "max_area_ratio": 13.74,
+      "p99_area_ratio": 3.46
+     }
+    }
+   },
+   "open_eye_pixels": 1256,
+   "displacement_mm": {
+    "mean": 0.0,
+    "max": 0.0
+   }
+  },
+  "Mercy-inspired": {
+   "health_vs_neutral": {
+    "triangles": 8786,
+    "flipped": 0,
+    "max_area_ratio": 3.85,
+    "p99_area_ratio": 1.89,
+    "min_angle_p1_deg": 6.71,
+    "degenerate_lt_2deg": 0,
+    "laplacian_mean_mm": 0.84,
+    "laplacian_mean_neutral_mm": 0.805,
+    "laplacian_max_ratio_vs_neutral": 9.35,
+    "lid_vertices_inside_cornea": 76,
+    "eye_joint_to_eyeball_centre_mm": 0.35
+   },
+   "blink_fit": {
+    "factor": 1.1,
+    "lower": 0.0,
+    "exposure": 0.0,
+    "flipped": 36
+   },
+   "states": {
+    "open": {
+     "blink_weight": 0.0,
+     "eyeball_exposure": 1.0
+    },
+    "half-lidded": {
+     "blink_weight": 0.35,
+     "eyeball_exposure": 0.6132,
+     "lid_quality": {
+      "triangles": 2170,
+      "flipped": 2,
+      "max_area_ratio": 17.3,
+      "p99_area_ratio": 1.71
+     }
+    },
+    "50% blink": {
+     "blink_weight": 0.5,
+     "eyeball_exposure": 0.4413,
+     "lid_quality": {
+      "triangles": 2170,
+      "flipped": 6,
+      "max_area_ratio": 2.87,
+      "p99_area_ratio": 2.1
+     }
+    },
+    "closed": {
+     "blink_weight": 1.0,
+     "eyeball_exposure": 0.0,
+     "lid_quality": {
+      "triangles": 2170,
+      "flipped": 36,
+      "max_area_ratio": 19.93,
+      "p99_area_ratio": 4.55
+     }
+    }
+   },
+   "open_eye_pixels": 1396,
+   "displacement_mm": {
+    "mean": 7.96,
+    "max": 23.74
+   }
+  },
+  "identity only (no femininity control)": {
+   "health_vs_neutral": {
+    "triangles": 8786,
+    "flipped": 0,
+    "max_area_ratio": 2.51,
+    "p99_area_ratio": 1.67,
+    "min_angle_p1_deg": 6.89,
+    "degenerate_lt_2deg": 0,
+    "laplacian_mean_mm": 0.826,
+    "laplacian_mean_neutral_mm": 0.805,
+    "laplacian_max_ratio_vs_neutral": 7.01,
+    "lid_vertices_inside_cornea": 64,
+    "eye_joint_to_eyeball_centre_mm": 0.22
+   },
+   "blink_fit": {
+    "factor": 1.0,
+    "lower": 0.0,
+    "exposure": 0.0,
+    "flipped": 22
+   },
+   "states": {
+    "open": {
+     "blink_weight": 0.0,
+     "eyeball_exposure": 1.0
+    },
+    "half-lidded": {
+     "blink_weight": 0.35,
+     "eyeball_exposure": 0.6184,
+     "lid_quality": {
+      "triangles": 2170,
+      "flipped": 0,
+      "max_area_ratio": 2.49,
+      "p99_area_ratio": 1.5
+     }
+    },
+    "50% blink": {
+     "blink_weight": 0.5,
+     "eyeball_exposure": 0.4441,
+     "lid_quality": {
+      "triangles": 2170,
+      "flipped": 4,
+      "max_area_ratio": 2.19,
+      "p99_area_ratio": 1.84
+     }
+    },
+    "closed": {
+     "blink_weight": 1.0,
+     "eyeball_exposure": 0.0,
+     "lid_quality": {
+      "triangles": 2170,
+      "flipped": 22,
+      "max_area_ratio": 14.12,
+      "p99_area_ratio": 3.05
+     }
+    }
+   },
+   "open_eye_pixels": 1216,
+   "displacement_mm": {
+    "mean": 3.37,
+    "max": 15.95
+   }
+  }
+ },
+ "shape_distance_mm": {
+  "Mercy-inspired": {
+   "mean": 7.85,
+   "p95": 16.43
+  },
+  "identity only (no femininity control)": {
+   "mean": 3.34,
+   "p95": 8.8
+  }
+ },
+ "seconds": 82.7
+}

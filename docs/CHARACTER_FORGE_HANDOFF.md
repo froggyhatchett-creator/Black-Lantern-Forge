@@ -118,6 +118,11 @@ adult character in the real studio before expanding. Finite credits: short visua
   evidence `examples/character_forge_aaa/humanity/v3_phase3/`; tests `tests/test_character_forge_v3_identity.py`.
 - Not started (await approval): 3C Mercy-inspired stylisation, 3D animation/DNA, 3E studio integration.
 
+## Generator v3 Phase 3C: Mercy-inspired stylisation proof (stopped for review)
+- Report `docs/CHARACTER_FORGE_V3_PHASE3C.md`; lid-only eye operators (`eye_aperture`, `eye_outer_corner`,
+  `eye_length`) in `identity.py`; `identity.STYLIZED`; proof `tools/identity_stylized.py`; evidence `humanity/v3_phase3c/`.
+- Structural stylisation works with healthy anatomy and lids; remaining: pouty mouth, jaw-angle kink, no likeness.
+
 ## Open problems / next actions
 1. Commit/push checkpoint; publish the studio artifact (multi-file; `downloads` capability; GLB offered zipped).
 2. Face realism (lips/eyes/brows) and anatomy fixes (hands, knees, feet) need a re-bake (~28 min) to reach the studio.

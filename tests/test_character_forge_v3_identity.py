@@ -63,5 +63,35 @@ class IdentityLayerTests(unittest.TestCase):
             self.assertLess(float(np.ptp(d, axis=0).max()), 1e-6)  # rigid translation only
 
 
+class EyeApertureTests(unittest.TestCase):
+    """Phase 3C lid-only operators: the opening changes shape, the eyeball does not move."""
+
+    def test_eyeball_stays_put_and_lids_keep_their_distance(self):
+        v0 = model.neutral()
+        for k in ("eye_aperture", "eye_outer_corner", "eye_length"):
+            v = identity.identity_mesh({k: 1.0})
+            for s in "lr":
+                ids = model.eye_parts()[f"eye_{s}"][0]
+                np.testing.assert_allclose(mh.fit_eyes(v)[ids], mh.fit_eyes(v0)[ids], atol=1e-9, err_msg=k)
+            if k != "eye_length":  # rotations about the eyeball centre (linearised): radius preserved to < 0.2 mm
+                for side, (c, wu, wl) in identity._lid_weights().items():
+                    lid = np.nonzero((wu + wl) > 0.5)[0]
+                    dr = np.linalg.norm(v[lid] - c, axis=1) - np.linalg.norm(v0[lid] - c, axis=1)
+                    self.assertLess(float(np.abs(dr).max()), 0.0002, k)
+
+    def test_aperture_narrows_the_opening(self):
+        v0 = model.neutral()
+        o = metrics.eye_exposure_pixels(v0)
+        self.assertLess(metrics.eye_exposure_pixels(identity.identity_mesh({"eye_aperture": 1.0})), 0.9 * o)
+        self.assertGreater(metrics.eye_exposure_pixels(identity.identity_mesh({"eye_aperture": -1.0})), 1.05 * o)
+
+    def test_stylized_identity_is_healthy_and_blinks(self):
+        v = identity.identity_mesh(identity.STYLIZED["MERCY-INSPIRED"])
+        q = metrics.tri_quality(model.neutral(), v, model.body_vertex_ids())
+        self.assertEqual(q["flipped"], 0)
+        _, fit = model.fit_blink(v)
+        self.assertLessEqual(fit["exposure"], 0.005)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -121,7 +121,16 @@ PARAMS = [
     # 9 overall
     Param("face_length", "face", _d(y=0.085), pivot=(0, 0.02, 0), gate="below_brow", label="Face length"),
     Param("face_width", "face", _d(x=0.07), label="Face width"),
+    # 10 eye aperture (Phase 3C): lid-only operators; the eyeball does not move (see _lid_op)
+    Param("eye_aperture", "lids", label="Eye opening: almond (+) / round (-)"),
+    Param("eye_outer_corner", "lids", label="Outer eye corner lift"),
+    Param("eye_length", "lids", label="Eye opening length"),
 ]
+LID_OPS = {  # key: (upper-lid rotation about x, lower-lid rotation about x, outer-corner rotation about z, x stretch)
+    "eye_aperture": (0.11, -0.07, 0.0, 0.0),   # rad at s = 1: upper lid down, lower lid up (narrower, almond)
+    "eye_outer_corner": (0.0, 0.0, 0.12, 0.0),  # outer half of both lids turns up about the eye centre
+    "eye_length": (0.0, 0.0, 0.0, 0.10),        # opening 10 % longer, mostly toward the outer corner
+}
 KEYS = [p.key for p in PARAMS]
 
 
@@ -243,6 +252,8 @@ def _rigid_ears(delta, rel):
 def basis(key: str) -> np.ndarray:
     """Delta of one identity parameter at s = 1 over all base vertices (V,3)."""
     p = next(q for q in PARAMS if q.key == key)
+    if p.region == "lids":
+        return _lid_op(key)
     v = model.neutral()
     rel = v - frame()
     out = np.zeros_like(v)
@@ -257,6 +268,47 @@ def basis(key: str) -> np.ndarray:
             A, t, piv = M @ A @ M, M @ t, M @ piv
         out += w[:, None] * ((rel - piv) @ A.T + t)
     return _eyes_follow_lids(_rigid_ears(smooth_field(out), rel), rel)
+
+
+@lru_cache(maxsize=None)
+def _lid_weights():
+    """Per side: eyeball centre (sphere fit), upper-lid and lower-lid skin weights (MakeHuman's lid-bone weights)."""
+    W = mh.skin_weights()
+    v = model.neutral()
+    out = {}
+    for s, S, side in (("l", "L", 1.0), ("r", "R", -1.0)):
+        c, _ = model.sphere_fit(mh.fit_eyes(v)[model.eye_parts()[f"eye_{s}"][0]])
+        wu, wl = np.zeros(len(v)), np.zeros(len(v))
+        for b, w in ((f"orbicularis03.{S}", wu), (f"orbicularis04.{S}", wl)):
+            q = np.asarray(W[b], float)
+            w[q[:, 0].astype(np.int64)] = q[:, 1]
+        out[side] = (c, wu, wl)
+    return out
+
+
+def _lid_op(key: str) -> np.ndarray:
+    """Eye-opening shape (lids only). Lid vertices turn about the eyeball centre (linearised small rotations), so lid
+    skin stays at its distance from the eyeball: the opening changes shape while the eyeball and socket stay put."""
+    au, al, az, sx = LID_OPS[key]
+    v = model.neutral()
+    out = np.zeros_like(v)
+    _, hid_all = zip(*_eye_helpers().values())
+    for side, (c, wu, wl) in _lid_weights().items():
+        r = v - c
+        near = 1 - _smooth(np.linalg.norm(r, axis=1), 0.018, 0.03)  # the eyelids proper, not the brow
+        wu, wl = wu * near, wl * near
+        ex = np.array([1.0, 0, 0])
+        if au or al:  # rotation about x: d = theta * (x_axis cross r)
+            out += (wu * au)[:, None] * np.cross(ex, r) + (wl * al)[:, None] * np.cross(ex, r)
+        lateral = _smooth(r[:, 0] * side, -0.004, 0.012)  # outer half of the opening
+        if az:  # outer corner up: rotation about z (mirrored on the right)
+            out += ((wu + wl) * lateral * az * side)[:, None] * np.cross(np.array([0, 0, 1.0]), r)
+        if sx:
+            out[:, 0] += (wu + wl) * (0.4 + 0.6 * lateral) * sx * r[:, 0]
+    out = smooth_field(out)
+    for hid in hid_all:  # the eyeball and eye joint never move with the lids
+        out[hid] = 0
+    return out
 
 
 def identity_delta(values: dict) -> np.ndarray:
@@ -276,6 +328,22 @@ def identity_mesh(values: dict) -> np.ndarray:
     """Neutral v3 vertices with an identity applied; soles stay on the floor (the head never reaches it)."""
     return model.neutral() + identity_delta(values)
 
+
+# Phase 3C: a stylised adult inspired by REF-001 (geometry only; not a likeness). The character also sets the existing
+# body control femininity = 1 (separate from identity; see STYLIZED_CONTROLS).
+STYLIZED = {
+    "MERCY-INSPIRED": {
+        "eye_aperture": 0.6, "eye_outer_corner": 1.0, "eye_length": 0.7, "eye_size": 0.8, "eye_tilt": 0.35,
+        "eye_spacing": 0.1, "eye_depth": -0.2, "eye_height": 0.15, "brow_ridge": -0.9, "forehead_slope": -0.3,
+        "forehead_height": 0.15, "nose_length": -0.6, "nose_width": -0.7, "nose_projection": -0.35, "nose_bridge": -0.3,
+        "nose_tip_size": -0.6, "nose_tip_angle": 0.45, "mouth_width": -0.3, "mouth_height": 0.35, "upper_lip": 0.15,
+        "lower_lip": 0.1, "cheekbone_width": 0.45, "cheekbone_height": 0.6, "cheek_fullness": -0.35,
+        "midface_projection": 0.15, "jaw_width": -0.7, "jaw_angle": -0.7, "jaw_taper": 0.8, "chin_width": -0.7,
+        "chin_projection": 0.15, "chin_height": -0.45, "face_width": -0.25, "skull_width": -0.1, "face_length": -0.6,
+    },
+}
+
+STYLIZED_CONTROLS = {"MERCY-INSPIRED": {"body.femininity": 1.0}}
 
 # Two deliberately different original adults (Phase 3B), and nothing else: identity values only.
 IDENTITIES = {
