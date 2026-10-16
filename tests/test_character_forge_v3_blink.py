@@ -64,7 +64,7 @@ class BlinkModel2Test(unittest.TestCase):
 
 
 class LashTest(unittest.TestCase):
-    def test_contact_never_moves_the_open_pose_and_clears_the_closed_lid(self):
+    def test_contact_bends_lashes_within_its_limits_and_only_helps(self):
         from forge_character_forge.v3 import lash_contact as LC
         v = model.neutral()
         d = model.blink(v)[0]
@@ -72,13 +72,21 @@ class LashTest(unittest.TestCase):
         c0, c1 = Q.lash_points(v), Q.lash_points(v, d)
         off = LC.apply(c0, v[src], c1, (v + d)[src])
         self.assertEqual(np.abs(off[:, 0]).max(), 0.0)  # roots stay on their triangle
-        closed = c1 + off
-        for side in "lr":  # as blink_quality measures it: points past the root's neighbour, 0.15 mm tolerance
+        push = np.linalg.norm(off, axis=2)
+        reach = LC.BEND_RATIO * np.linalg.norm(c1 - c1[:, :1], axis=2)
+        self.assertTrue((push <= np.minimum(LC.MAX_BEND + LC.MAX_BEND_OWN, reach * 2) + 1e-9).all())
+        self.assertLessEqual(push.max(), LC.MAX_BEND + LC.MAX_BEND_OWN)
+        for side in "lr":  # strands through the skin at full blink: fewer with contact, and at most 5 per eye
             m = LC.strand_sides(c0) == side
-            sd0 = LC.signed_to_skin(c0[m, 2:].reshape(-1, 3), v[src], LC.eye_tris()[side])[0]
-            sd1 = LC.signed_to_skin(closed[m, 2:].reshape(-1, 3), (v + d)[src], LC.eye_tris()[side])[0]
-            new = (sd1 < np.minimum(sd0, 0) - Q.LASH_TOL_M)
-            self.assertLessEqual(int(new.sum()), 1, (side, float(sd1.min())))
+            sd0 = LC.signed_to_skin(c0[m, 2:].reshape(-1, 3), v[src], LC.eye_tris()[side])[0].reshape(m.sum(), -1)
+            clear = ~(sd0 < -Q.LASH_TOL_M).any(1)  # as blink_quality counts: strands clear of the skin when open
+
+            def strands(c):
+                sd = LC.signed_to_skin(c[m, 2:].reshape(-1, 3), (v + d)[src], LC.eye_tris()[side])[0].reshape(m.sum(), -1)
+                return int(((sd < -Q.LASH_TOL_M).any(1) & clear).sum())
+            rigid, bent = strands(c1), strands(c1 + off)
+            self.assertLessEqual(bent, rigid, side)
+            self.assertLessEqual(bent, 5, side)
 
     def test_lashes_stay_out_of_the_lid_mid_blink(self):
         """The reported ID-A defect: lashes through the lid at intermediate weights."""
@@ -103,9 +111,10 @@ class PackTest(unittest.TestCase):
         man, blob = read_pack(Path(__file__).resolve().parents[1] / "examples/character_forge_aaa/studio/studio_pack_v3.bin")
         self.assertEqual(man["blink_model"], 2)
         c = man["parts"]["lashes"]["contact"]
-        for side in "lr":
-            np.testing.assert_array_equal(pack_array(c[f"tris_{side}"], blob).reshape(-1, 3), LC.eye_tris()[side])
-        self.assertEqual((c["clear"], c["max_depth"], tuple(c["path_ts"])), (LC.CLEAR, LC.MAX_DEPTH, LC.PATH_TS))
+        for (side, up), t in LC.lid_tris().items():
+            np.testing.assert_array_equal(pack_array(c[f"tris_{side}_{'up' if up else 'lo'}"], blob).reshape(-1, 3), t)
+        self.assertEqual((c["clear"], c["max_depth"], tuple(c["path_ts"]), c["max_bend"], c["max_bend_own"], c["bend_ratio"]),
+                         (LC.CLEAR, LC.MAX_DEPTH, LC.PATH_TS, LC.MAX_BEND, LC.MAX_BEND_OWN, LC.BEND_RATIO))
         # the pack's neutral blink is blink model 2 of the neutral (the encoder drops deltas under 0.05 mm)
         src, *_ = model.body_surface()
         b0, _ = E.blink0()

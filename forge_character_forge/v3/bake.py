@@ -128,10 +128,10 @@ def bake(out_path, log=print) -> dict:
             entry["strand_points"] = int(p["strand_points"])
             if name == "lashes":  # lash contact (v3/lash_contact.py): the studio bends lashes on the lid skin
                 from forge_character_forge.v3 import lash_contact as LC
-                et = LC.eye_tris()
-                entry["contact"] = {"tris_l": blob.add(np.asarray(et["l"], "<u4")), "tris_r": blob.add(np.asarray(et["r"], "<u4")),
+                entry["contact"] = {**{f"tris_{s}_{'up' if up else 'lo'}": blob.add(np.asarray(t, "<u4")) for (s, up), t in LC.lid_tris().items()},
                                     "clear": LC.CLEAR, "max_depth": LC.MAX_DEPTH, "path_ts": list(LC.PATH_TS),
-                                    "first_point": LC.FIRST_POINT}
+                                    "max_path_step": LC.MAX_PATH_STEP, "max_bend": LC.MAX_BEND, "max_bend_own": LC.MAX_BEND_OWN,
+                                    "bend_ratio": LC.BEND_RATIO, "first_point": LC.FIRST_POINT}
         if p.get("color") is not None:
             entry["color"] = blob.add(np.clip(np.asarray(p["color"]) * 0.5 * 255, 0, 255).astype("u1"))  # x2 headroom
         if name == "body":

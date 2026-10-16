@@ -53,6 +53,30 @@ def parity():
     return out
 
 
+def studio_quality():
+    """blink_quality measured on the studio's own geometry: its body (dumped open and closed) and its lashes; the
+    eyeballs come from the (linear) helper vertices of the scaled reference."""
+    out = {}
+    for tag in CASES:
+        g = {}
+        for w in (0, 1):
+            name = f"blink_{tag}_{w}"
+            meta = json.loads((OUT / "dumps" / f"{name}.json").read_text())
+            g[w] = (np.fromfile(OUT / "dumps" / f"{name}.f4", "<f4").reshape(-1, 3).astype(float),
+                    np.fromfile(OUT / "dumps" / f"{name}_lashes.f4", "<f4").reshape(-1, 5, 2, 3).mean(2).astype(float), meta)
+        ctl, iv = g[0][2]["params"], g[0][2]["identity"]["values"]
+        v = E.shape(ctl, iv)
+        k = E.height_scale(v, ctl)
+        v0 = v * k
+        v0[SRC] = g[0][0]
+        d = np.zeros_like(v0)
+        d[SRC] = g[1][0] - g[0][0]
+        m = Q.measure(v0, d, lashes=(g[0][1], g[1][1]))
+        out[tag] = {"summary": Q.summary(m), "detail": m}
+        print(tag, "studio geometry", json.dumps(Q.summary(m)), flush=True)
+    return out
+
+
 def shots_sheet():
     for yaw in (10, 50):
         tiles = []
@@ -99,7 +123,7 @@ def glb_walk():
 
 
 def main():
-    rep = {"parity": parity()}
+    rep = {"parity": parity(), "studio_geometry_quality": studio_quality()}
     shots_sheet()
     rep["glb_walk"] = glb_walk()
     (OUT / "phase4a_evidence.json").write_text(json.dumps(rep, indent=1))

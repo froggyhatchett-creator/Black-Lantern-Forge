@@ -216,7 +216,7 @@ class Studio {
       anchor: p.anchor ? { mode: p.anchor.mode, root: this.arr(p.anchor.root), tri: this.arr(p.anchor.tri), bary: this.arr(p.anchor.bary),
         off: this.arr(p.anchor.off), cageIdx: p.anchor.cage_idx ? this.arr(p.anchor.cage_idx) : null,
         cageW: p.anchor.cage_w ? Float32Array.from(this.arr(p.anchor.cage_w), (x) => x / 65535) : null } : null, strandPts: p.strand_points || 0,
-      contact: p.contact ? { ...p.contact, tris: { l: this.arr(p.contact.tris_l), r: this.arr(p.contact.tris_r) } } : null };
+      contact: p.contact ? { ...p.contact, tris: Object.fromEntries(["l_up", "l_lo", "r_up", "r_lo"].map((k) => [k, this.arr(p.contact[`tris_${k}`])])) } : null };
     if (p.iris_angle) g.irisA = p.iris_angle;
   }
   async loadTextures() {  // v3 maps live in the pack as PNG bytes
@@ -601,10 +601,25 @@ class Studio {
     for (let k = 0; k < D.idx.length; k++) for (let c = 0; c < 3; c++) moved[D.idx[k] * 3 + c] += D.val[k * 3 + c];
     const a = new Float32Array(P.cur.length), b = new Float32Array(P.cur.length);
     this.anchorEval(P, this.bodyRest, a); this.anchorEval(P, moved, b);
-    if (P.contact) this.lashContact(P, a, b, this.bodyRest, moved);
+    if (P.contact) { this.lashTurn(P, a, b, this.bodyRest, moved); this.lashContact(P, a, b, this.bodyRest, moved); }
     for (let i = 0; i < a.length; i++) b[i] -= a[i];
     if (ck) { if (!P.morphCache || P.morphCacheShape !== this.shapeKey) { P.morphCache = new Map(); P.morphCacheShape = this.shapeKey; } P.morphCache.set(ck, b); }
     return b;
+  }
+  lashTurn(P, a, b, Pr, Pc) {  // in an expression a lash turns with the smoothed surface normal at its root (lash_contact.py)
+    const B = this.parts.body, n0 = new Float32Array(Pr.length), n1 = new Float32Array(Pc.length);
+    this.normals(Pr, B.idx, n0, B.weld); this.normals(Pc, B.idx, n1, B.weld);
+    const A = P.anchor, K = P.strandPts, S = a.length / 3 / (2 * K);
+    for (let s = 0; s < S; s++) {
+      const t = [A.tri[s * 3], A.tri[s * 3 + 1], A.tri[s * 3 + 2]];
+      const sum = (n) => norm([0, 1, 2].map((c) => n[t[0] * 3 + c] + n[t[1] * 3 + c] + n[t[2] * 3 + c]));
+      const q = rotBetween(sum(n0), sum(n1)), o = s * K * 6;
+      const r0 = [0, 1, 2].map((c) => (a[o + c] + a[o + 3 + c]) / 2), r1 = [0, 1, 2].map((c) => (b[o + c] + b[o + 3 + c]) / 2);
+      for (let v = 0; v < 2 * K; v++) {
+        const i = o + v * 3, rel = qrot(q, [a[i] - r0[0], a[i + 1] - r0[1], a[i + 2] - r0[2]]);
+        for (let c = 0; c < 3; c++) b[i + c] = r1[c] + rel[c];
+      }
+    }
   }
   lashContact(P, a, b, Pr, Pc) {  // lashes bend on the lid skin instead of passing through it (v3/lash_contact.py, same rule)
     const C = P.contact, K = P.strandPts, S = a.length / 3 / (2 * K), cen = (arr, s, k) => { const i = (s * K + k) * 6;
@@ -637,21 +652,36 @@ class Studio {
       let moves = false;  // a strand this expression does not move (the other eye's lashes) keeps its rest contact
       for (let i = s * K * 6; i < (s + 1) * K * 6 && !moves; i++) moves = Math.abs(b[i] - a[i]) > 1e-7;
       if (!moves) continue;
+      const side = cen(a, s, 0)[0] > 0 ? "l" : "r", upper = cen(a, s, K - 1)[1] > cen(a, s, 0)[1];  // +x = left eye
       const pts = []; for (let k = 0; k < K; k++) pts.push(cen(a, s, k), cen(b, s, k));
-      const T = near(cen(a, s, 0)[0] > 0 ? C.tris.l : C.tris.r, pts);  // +x = the character's left eye
-      if (!T.length) continue;
-      const carry = [0, 0, 0];
-      for (let k = 0; k < K; k++) {
-        if (k >= C.first_point) {
-          const r = cen(a, s, k), floor = Math.min(signed(r, Pr, T, 0)[0], C.clear), c1 = cen(b, s, k);
-          for (let it = 0; it < 2; it++) for (const t of C.path_ts) {
-            const p = [0, 1, 2].map((c) => r[c] + t * (c1[c] + carry[c] - r[c]));
-            const [sd, n] = signed(p, Pc, T, t), need = Math.max(floor - sd, 0) / t;
-            for (let c = 0; c < 3; c++) carry[c] += need * n[c];
+      // stage 1: between the lids (upper lashes on the lower lid and the reverse); stage 2: upper lashes on their
+      // own lid's fold with a smaller allowance (lash_contact.apply)
+      const stages = [[near(C.tris[`${side}_${upper ? "lo" : "up"}`], pts), C.max_bend]];
+      if (upper) stages.push([near(C.tris[`${side}_up`], pts), C.max_bend_own]);
+      const off = Array.from({ length: K }, () => [0, 0, 0]);
+      for (const [T, maxBend] of stages) {
+        if (!T.length) continue;
+        const base = off.map((o) => o.slice()), carry = [0, 0, 0], root = cen(b, s, 0);
+        for (let k = 0; k < K; k++) {
+          if (k >= C.first_point) {
+            const r = cen(a, s, k), floor = Math.min(signed(r, Pr, T, 0)[0], C.clear), c1 = cen(b, s, k);
+            const reach = C.bend_ratio * Math.hypot(c1[0] - root[0], c1[1] - root[1], c1[2] - root[2]);
+            for (let it = 0; it < 2; it++) {
+              for (const t of C.path_ts) {
+                const p = [0, 1, 2].map((c) => r[c] + t * (c1[c] + base[k][c] + carry[c] - r[c]));
+                const [sd, n] = signed(p, Pc, T, t);
+                let need = Math.max(floor - sd, 0) / t;
+                if (t < 1) need = Math.min(need, C.max_path_step);  // path corrections must not fling the lash off the lid
+                for (let c = 0; c < 3; c++) carry[c] += need * n[c];
+              }
+              const L = Math.hypot(...carry), f = Math.min(1, Math.min(maxBend, reach) / Math.max(L, 1e-12));  // bend, not detachment
+              for (let c = 0; c < 3; c++) carry[c] *= f;
+            }
           }
+          for (let c = 0; c < 3; c++) off[k][c] = base[k][c] + carry[c];
         }
-        const i = (s * K + k) * 6; for (let c = 0; c < 3; c++) { b[i + c] += carry[c]; b[i + 3 + c] += carry[c]; }
       }
+      for (let k = 0; k < K; k++) { const i = (s * K + k) * 6; for (let c = 0; c < 3; c++) { b[i + c] += off[k][c]; b[i + 3 + c] += off[k][c]; } }
     }
   }
   anchoredDelta(P, e) {  // sparse morph target of a strand part for an expression (lashes ride the blink): what the preview shows

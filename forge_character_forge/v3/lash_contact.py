@@ -23,6 +23,10 @@ from forge_character_forge.v3 import grooming, mh, model
 CLEAR = 0.0001   # m outside the skin
 FIRST_POINT = 1  # the root point stays on its triangle
 PATH_TS = (1.0, 0.75, 0.5, 0.25)
+MAX_PATH_STEP = 0.001  # m: largest single push for an in-between weight (divided by t it would grow 4x at t = 0.25)
+MAX_BEND = 0.0025      # m: largest total push of a lash point (lashes bend over the lid; they do not jump off it)
+BEND_RATIO = 0.5       # and at most this fraction of its distance from the root (about a 27 degree bend)
+MAX_BEND_OWN = 0.001   # m: smaller allowance against the lash's own lid (its folded skin would fling the lash off)
 MAX_DEPTH = 0.003  # a point counts as behind the skin only directly behind a triangle (its nearest point inside the
                    # triangle) and within the lid's thickness; past the patch edge or deeper, it is beside the lid
 
@@ -49,10 +53,29 @@ def centres(pos: np.ndarray, K: int) -> np.ndarray:
 
 @lru_cache(maxsize=None)
 def eye_tris() -> dict:
-    """{side: split-body outer-skin triangles of that eye}; a strand is tested against its own eye's skin."""
+    """{side: split-body outer-skin triangles of that eye} (the lash penetration measurement tests all of them)."""
     src, *_ = model.body_surface()
     t = outer_skin_tris()
     return {s: t[np.isin(src[t], model.lid_region(s, model.CORRECTIVE_RINGS)).all(1)] for s in "lr"}
+
+
+@lru_cache(maxsize=None)
+def lid_tris() -> dict:
+    """{(side, upper): outer-skin triangles of that eye's upper or lower lid (by MakeHuman's lid-bone weights)}.
+    Contact acts between the lids: upper lashes meet the lower lid's skin and lower lashes the upper lid's. A lash
+    is rigid on its own lid, and the folded skin near the corners there would push it off the lid, not bend it."""
+    src, *_ = model.body_surface()
+    out = {}
+    for s, t in eye_tris().items():
+        wu, wl = model._lid_bone_weights(s)
+        up = (wu[src[t]] - wl[src[t]]).mean(1) > 0
+        out[(s, True)], out[(s, False)] = t[up], t[~up]
+    return out
+
+
+def strand_upper(c_rest: np.ndarray) -> np.ndarray:
+    """Upper-lid strands: the tip above the root in the open pose (upper lashes curl up, lower lashes down)."""
+    return c_rest[:, -1, 1] > c_rest[:, 0, 1]
 
 
 def strand_sides(c_rest: np.ndarray) -> np.ndarray:
@@ -60,25 +83,75 @@ def strand_sides(c_rest: np.ndarray) -> np.ndarray:
     return np.where(c_rest[:, 0, 0] > 0, "l", "r")
 
 
-def apply(c_rest, P_rest, c_closed, P_closed) -> np.ndarray:
-    """Contact offsets (S, K, 3) for the closed lash point centres (split-body positions open and closed)."""
+def _contact(off, m, tris, c_rest, P_rest, c_closed, P_closed, max_bend):
+    """One contact stage for strands ``m`` against ``tris``: its push starts at the root and is carried to the tip
+    (the lash bends), on top of earlier stages' pushes already in ``off`` (S, K, 3); capped at ``max_bend`` and at
+    BEND_RATIO x the point's distance from the root."""
     S, K, _ = c_closed.shape
+    base = off[m].copy()
+    carry = np.zeros((int(m.sum()), 3))
+    for k in range(K):
+        if k >= FIRST_POINT:
+            sd0, _ = signed_to_skin(c_rest[m, k], P_rest, tris)
+            floor = np.minimum(sd0, CLEAR)
+            reach = BEND_RATIO * np.linalg.norm(c_closed[m, k] - c_closed[m, 0], axis=1)
+            for _ in range(2):  # the nearest triangle may change after a push
+                for t in PATH_TS:  # the closed end and the straight morph path to it (see model._clear_chords)
+                    c = c_rest[m, k] + t * (c_closed[m, k] + base[:, k] + carry - c_rest[m, k])
+                    sd, n = signed_to_skin(c, P_rest + t * (P_closed - P_rest), tris)
+                    step = np.maximum(floor - sd, 0) / t
+                    if t < 1:  # path corrections are capped: they must not fling the lash away from the lid
+                        step = np.minimum(step, MAX_PATH_STEP)
+                    carry = carry + step[:, None] * n
+                L = np.linalg.norm(carry, axis=1, keepdims=True)  # bend, not detachment
+                carry = carry * np.minimum(1.0, np.minimum(max_bend, reach)[:, None] / np.maximum(L, 1e-12))
+        off[m, k] = base[:, k] + carry
+
+
+def apply(c_rest, P_rest, c_closed, P_closed) -> np.ndarray:
+    """Contact offsets (S, K, 3) for the closed lash point centres (split-body positions open and closed): first
+    between the lids (upper lashes on the lower lid's skin and the reverse), then upper lashes on their own lid's fold
+    with a smaller allowance (``MAX_BEND_OWN``: near the inner corner that skin folds over the lashes as it closes)."""
     off = np.zeros_like(c_closed)
-    sides = strand_sides(c_rest)
-    for side, tris in eye_tris().items():
-        m = sides == side
-        carry = np.zeros((m.sum(), 3))
-        for k in range(K):
-            if k >= FIRST_POINT:
-                sd0, _ = signed_to_skin(c_rest[m, k], P_rest, tris)
-                floor = np.minimum(sd0, CLEAR)
-                for _ in range(2):  # the nearest triangle may change after a push
-                    for t in PATH_TS:  # the closed end and the straight morph path to it (see model._clear_chords)
-                        c = c_rest[m, k] + t * (c_closed[m, k] + carry - c_rest[m, k])
-                        sd, n = signed_to_skin(c, P_rest + t * (P_closed - P_rest), tris)
-                        carry = carry + (np.maximum(floor - sd, 0) / t)[:, None] * n
-            off[m, k] = carry
+    sides, upper = strand_sides(c_rest), strand_upper(c_rest)
+    for (side, up_lid), tris in lid_tris().items():
+        _contact(off, (sides == side) & (upper != up_lid), tris, c_rest, P_rest, c_closed, P_closed, MAX_BEND)
+    for side in "lr":
+        _contact(off, (sides == side) & upper, lid_tris()[(side, True)], c_rest, P_rest, c_closed, P_closed, MAX_BEND_OWN)
     return off
+
+
+def _rotation_between(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    """Minimal rotations (S, 3, 3) taking unit vectors a (S, 3) onto b (Rodrigues)."""
+    v = np.cross(a, b)
+    c = (a * b).sum(1)
+    K = np.zeros((len(a), 3, 3))
+    K[:, 0, 1], K[:, 0, 2], K[:, 1, 0], K[:, 1, 2], K[:, 2, 0], K[:, 2, 1] = -v[:, 2], v[:, 1], v[:, 2], -v[:, 0], -v[:, 1], v[:, 0]
+    return np.eye(3)[None] + K + np.einsum("sij,sjk->sik", K, K) / (1 + c)[:, None, None]
+
+
+def root_normals(P: np.ndarray, tri: np.ndarray) -> np.ndarray:
+    """Smoothed surface normal at each lash root (S, 3): the vertex normals (area-weighted over every body triangle
+    at the vertex) of its root triangle's corners, averaged. Split-body positions P."""
+    _, _, tris, weld = model.body_surface()
+    fn = np.cross(P[tris[:, 1]] - P[tris[:, 0]], P[tris[:, 2]] - P[tris[:, 0]])
+    n = np.zeros_like(P)
+    for k in range(3):
+        np.add.at(n, np.asarray(weld)[tris[:, k]], fn)  # accumulate on the first UV-seam copy (as the studio does)
+    n = n[np.asarray(weld)]
+    n /= np.linalg.norm(n, axis=1, keepdims=True) + 1e-30  # unit vertex normals, as the studio's normals()
+    r = n[tri].sum(1)
+    return r / np.linalg.norm(r, axis=1, keepdims=True)
+
+
+def expression_lashes(c_rest: np.ndarray, root_closed: np.ndarray, P_rest: np.ndarray, P_closed: np.ndarray) -> np.ndarray:
+    """Closed lash point centres (S, K, 3): the root stays on its triangle (``root_closed``) and the lash turns with
+    the smoothed surface normal at its root. (Rigid in the root triangle's own frame, a lash stood upright on the
+    closed lid wherever blink model 2 shears that one margin triangle while the lid around it turns.)"""
+    tri = np.asarray(grooming.parts()["lashes"]["anchor"]["tri"])
+    R = _rotation_between(root_normals(P_rest, tri), root_normals(P_closed, tri))
+    rel = c_rest - c_rest[:, :1]
+    return root_closed[:, None, :] + np.einsum("sij,skj->ski", R, rel)
 
 
 def point_triangle(p: np.ndarray, a: np.ndarray, b: np.ndarray, c: np.ndarray):

@@ -84,13 +84,14 @@ def lash_points(v: np.ndarray, d: np.ndarray | None = None) -> np.ndarray:
 
 
 def lash_closed(v: np.ndarray, d: np.ndarray, contact: bool = True) -> np.ndarray:
-    """Lash point centres at the closed end of expression ``d``, with lash contact (v3/lash_contact.py): what the
-    studio's lash morph (and so the GLB's lash morph target) holds."""
+    """Lash point centres at the closed end of expression ``d``: turned with their root patch and with lash contact
+    (v3/lash_contact.py): what the studio's lash morph (and so the GLB's lash morph target) holds."""
     from forge_character_forge.v3 import lash_contact as LC
     src, *_ = model.body_surface()
     c0, c1 = lash_points(v), lash_points(v, d)
-    if not contact:  # Phase 1-3: rigid lashes
+    if not contact:  # Phase 1-3: rigid lashes in their root triangle's frame
         return c1
+    c1 = LC.expression_lashes(c0, c1[:, 0], v[src], (v + d)[src])  # Phase 4A: turned with their root patch
     off = LC.apply(c0, v[src], c1, (v + d)[src])
     return c1 + off
 
@@ -135,11 +136,13 @@ def _lash_sd(pts, p, side):
     return LC.signed_to_skin(pts, p[src], _skin_tris(side))[0]
 
 
-def measure(v: np.ndarray, d: np.ndarray, weights=(0.0, 0.25, 0.5, 0.75, 1.0), lash_contact: bool = True) -> dict:
+def measure(v: np.ndarray, d: np.ndarray, weights=(0.0, 0.25, 0.5, 0.75, 1.0), lash_contact: bool = True,
+            lashes=None) -> dict:
+    """``lashes`` = (open, closed) lash point centres (S, K, 3) to measure instead of evaluating them here (e.g. the
+    studio's own lash geometry)."""
     nb = model._neighbours()
     open_px = exposure_per_eye(v)
-    lash0 = lash_points(v)
-    lash1 = lash_closed(v, d, lash_contact)  # lashes follow the blink as a linear morph (with contact), as the studio and the GLB do
+    lash0, lash1 = lashes if lashes is not None else (lash_points(v), lash_closed(v, d, lash_contact))  # lashes follow the blink as a linear morph (with contact), as the studio and the GLB do
     out = {"weights": {}}
     info = {}
     for s in "lr":

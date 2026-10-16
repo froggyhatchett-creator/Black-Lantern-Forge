@@ -1,0 +1,1093 @@
+{
+ "parity": {
+  "neutral": {
+   "0": {
+    "body_max_mm": 0.0017,
+    "lashes_max_mm": 0.0266
+   },
+   "0.5": {
+    "body_max_mm": 0.0296,
+    "lashes_max_mm": 1.0523
+   },
+   "1": {
+    "body_max_mm": 0.0579,
+    "lashes_max_mm": 2.1068
+   }
+  },
+  "ID-A": {
+   "0": {
+    "body_max_mm": 0.0872,
+    "lashes_max_mm": 0.5284
+   },
+   "0.5": {
+    "body_max_mm": 0.089,
+    "lashes_max_mm": 0.9722
+   },
+   "1": {
+    "body_max_mm": 0.1524,
+    "lashes_max_mm": 1.9556
+   }
+  },
+  "ID-B": {
+   "0": {
+    "body_max_mm": 0.1194,
+    "lashes_max_mm": 0.3778
+   },
+   "0.5": {
+    "body_max_mm": 0.1194,
+    "lashes_max_mm": 1.397
+   },
+   "1": {
+    "body_max_mm": 0.2011,
+    "lashes_max_mm": 2.7808
+   }
+  },
+  "MERCY-INSPIRED": {
+   "0": {
+    "body_max_mm": 0.0834,
+    "lashes_max_mm": 0.7022
+   },
+   "0.5": {
+    "body_max_mm": 0.0944,
+    "lashes_max_mm": 0.9012
+   },
+   "1": {
+    "body_max_mm": 0.1695,
+    "lashes_max_mm": 1.7794
+   }
+  },
+  "MERCY-INSPIRED_eye0.8": {
+   "0": {
+    "body_max_mm": 0.0834,
+    "lashes_max_mm": 0.8104
+   },
+   "0.5": {
+    "body_max_mm": 0.0914,
+    "lashes_max_mm": 0.8626
+   },
+   "1": {
+    "body_max_mm": 0.1696,
+    "lashes_max_mm": 1.7075
+   }
+  }
+ },
+ "studio_geometry_quality": {
+  "neutral": {
+   "summary": {
+    "exposure_closed_max": 0.0,
+    "folds_visible_max": 1,
+    "folds_total_closed": 2,
+    "folds_visible_closed": 2,
+    "folds_hidden_closed": 0,
+    "lid_in_eye_max_mm": 0.445,
+    "lash_penetrating_max": 2,
+    "smooth_p99_ratio_max": 2.43,
+    "symmetry_exposure_diff_max": 0.0011,
+    "half_exposure": [
+     0.4541,
+     0.4552
+    ]
+   },
+   "detail": {
+    "weights": {
+     "0.0": {
+      "l": {
+       "exposure": 1.0,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 11,
+       "lash_strands_penetrating": 0,
+       "lash_strands_measured": 83,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.0,
+       "smooth_max_ratio": 1.0
+      },
+      "r": {
+       "exposure": 1.0,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 11,
+       "lash_strands_penetrating": 0,
+       "lash_strands_measured": 83,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.0,
+       "smooth_max_ratio": 1.0
+      },
+      "symmetry": {
+       "exposure_diff": 0.0,
+       "mirrored_disp_diff_mm": 0.0
+      }
+     },
+     "0.25": {
+      "l": {
+       "exposure": 0.7394,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 11,
+       "lash_strands_penetrating": 1,
+       "lash_strands_measured": 83,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.14,
+       "smooth_max_ratio": 1.54
+      },
+      "r": {
+       "exposure": 0.7392,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 11,
+       "lash_strands_penetrating": 0,
+       "lash_strands_measured": 83,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.14,
+       "smooth_max_ratio": 1.54
+      },
+      "symmetry": {
+       "exposure_diff": 0.0002,
+       "mirrored_disp_diff_mm": 0.012
+      }
+     },
+     "0.5": {
+      "l": {
+       "exposure": 0.4541,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 1,
+       "lid_in_eye_max_mm": 0.445,
+       "lid_in_eye_open_pose_vertices": 11,
+       "lash_strands_penetrating": 1,
+       "lash_strands_measured": 83,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.44,
+       "smooth_max_ratio": 2.23
+      },
+      "r": {
+       "exposure": 0.4552,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 1,
+       "lid_in_eye_max_mm": 0.445,
+       "lid_in_eye_open_pose_vertices": 11,
+       "lash_strands_penetrating": 0,
+       "lash_strands_measured": 83,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.44,
+       "smooth_max_ratio": 2.23
+      },
+      "symmetry": {
+       "exposure_diff": 0.0011,
+       "mirrored_disp_diff_mm": 0.024
+      }
+     },
+     "0.75": {
+      "l": {
+       "exposure": 0.1509,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 1,
+       "lid_in_eye_max_mm": 0.444,
+       "lid_in_eye_open_pose_vertices": 11,
+       "lash_strands_penetrating": 0,
+       "lash_strands_measured": 83,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 2.01,
+       "smooth_max_ratio": 2.96
+      },
+      "r": {
+       "exposure": 0.151,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 1,
+       "lid_in_eye_max_mm": 0.444,
+       "lid_in_eye_open_pose_vertices": 11,
+       "lash_strands_penetrating": 0,
+       "lash_strands_measured": 83,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 2.01,
+       "smooth_max_ratio": 2.96
+      },
+      "symmetry": {
+       "exposure_diff": 0.0001,
+       "mirrored_disp_diff_mm": 0.036
+      }
+     },
+     "1.0": {
+      "l": {
+       "exposure": 0.0,
+       "folds_visible": 1,
+       "folds_hidden_lining": 0,
+       "folds_total": 1,
+       "lid_in_eye_vertices": 1,
+       "lid_in_eye_max_mm": 0.439,
+       "lid_in_eye_open_pose_vertices": 11,
+       "lash_strands_penetrating": 2,
+       "lash_strands_measured": 83,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 2.43,
+       "smooth_max_ratio": 3.72
+      },
+      "r": {
+       "exposure": 0.0,
+       "folds_visible": 1,
+       "folds_hidden_lining": 0,
+       "folds_total": 1,
+       "lid_in_eye_vertices": 1,
+       "lid_in_eye_max_mm": 0.439,
+       "lid_in_eye_open_pose_vertices": 11,
+       "lash_strands_penetrating": 1,
+       "lash_strands_measured": 83,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 2.43,
+       "smooth_max_ratio": 3.72
+      },
+      "symmetry": {
+       "exposure_diff": 0.0,
+       "mirrored_disp_diff_mm": 0.048
+      }
+     }
+    }
+   }
+  },
+  "ID-A": {
+   "summary": {
+    "exposure_closed_max": 0.0,
+    "folds_visible_max": 3,
+    "folds_total_closed": 18,
+    "folds_visible_closed": 5,
+    "folds_hidden_closed": 13,
+    "lid_in_eye_max_mm": 0.461,
+    "lash_penetrating_max": 4,
+    "smooth_p99_ratio_max": 2.38,
+    "symmetry_exposure_diff_max": 0.0009,
+    "half_exposure": [
+     0.4517,
+     0.4512
+    ]
+   },
+   "detail": {
+    "weights": {
+     "0.0": {
+      "l": {
+       "exposure": 1.0,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 21,
+       "lash_strands_penetrating": 0,
+       "lash_strands_measured": 87,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.0,
+       "smooth_max_ratio": 1.0
+      },
+      "r": {
+       "exposure": 1.0,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 21,
+       "lash_strands_penetrating": 0,
+       "lash_strands_measured": 86,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.0,
+       "smooth_max_ratio": 1.0
+      },
+      "symmetry": {
+       "exposure_diff": 0.0,
+       "mirrored_disp_diff_mm": 0.0
+      }
+     },
+     "0.25": {
+      "l": {
+       "exposure": 0.7324,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 21,
+       "lash_strands_penetrating": 0,
+       "lash_strands_measured": 87,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.19,
+       "smooth_max_ratio": 1.42
+      },
+      "r": {
+       "exposure": 0.7315,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 21,
+       "lash_strands_penetrating": 0,
+       "lash_strands_measured": 86,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.19,
+       "smooth_max_ratio": 1.42
+      },
+      "symmetry": {
+       "exposure_diff": 0.0009,
+       "mirrored_disp_diff_mm": 0.012
+      }
+     },
+     "0.5": {
+      "l": {
+       "exposure": 0.4517,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 2,
+       "lid_in_eye_max_mm": 0.461,
+       "lid_in_eye_open_pose_vertices": 21,
+       "lash_strands_penetrating": 0,
+       "lash_strands_measured": 87,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.47,
+       "smooth_max_ratio": 2.06
+      },
+      "r": {
+       "exposure": 0.4512,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 2,
+       "lid_in_eye_max_mm": 0.461,
+       "lid_in_eye_open_pose_vertices": 21,
+       "lash_strands_penetrating": 0,
+       "lash_strands_measured": 86,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.47,
+       "smooth_max_ratio": 2.06
+      },
+      "symmetry": {
+       "exposure_diff": 0.0005,
+       "mirrored_disp_diff_mm": 0.024
+      }
+     },
+     "0.75": {
+      "l": {
+       "exposure": 0.1633,
+       "folds_visible": 0,
+       "folds_hidden_lining": 1,
+       "folds_total": 1,
+       "lid_in_eye_vertices": 2,
+       "lid_in_eye_max_mm": 0.221,
+       "lid_in_eye_open_pose_vertices": 21,
+       "lash_strands_penetrating": 1,
+       "lash_strands_measured": 87,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.9,
+       "smooth_max_ratio": 2.79
+      },
+      "r": {
+       "exposure": 0.1631,
+       "folds_visible": 0,
+       "folds_hidden_lining": 1,
+       "folds_total": 1,
+       "lid_in_eye_vertices": 2,
+       "lid_in_eye_max_mm": 0.221,
+       "lid_in_eye_open_pose_vertices": 21,
+       "lash_strands_penetrating": 0,
+       "lash_strands_measured": 86,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.9,
+       "smooth_max_ratio": 2.79
+      },
+      "symmetry": {
+       "exposure_diff": 0.0002,
+       "mirrored_disp_diff_mm": 0.036
+      }
+     },
+     "1.0": {
+      "l": {
+       "exposure": 0.0,
+       "folds_visible": 2,
+       "folds_hidden_lining": 6,
+       "folds_total": 8,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 21,
+       "lash_strands_penetrating": 2,
+       "lash_strands_measured": 87,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 2.38,
+       "smooth_max_ratio": 3.55
+      },
+      "r": {
+       "exposure": 0.0,
+       "folds_visible": 3,
+       "folds_hidden_lining": 7,
+       "folds_total": 10,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 21,
+       "lash_strands_penetrating": 4,
+       "lash_strands_measured": 86,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 2.38,
+       "smooth_max_ratio": 3.55
+      },
+      "symmetry": {
+       "exposure_diff": 0.0,
+       "mirrored_disp_diff_mm": 0.048
+      }
+     }
+    }
+   }
+  },
+  "ID-B": {
+   "summary": {
+    "exposure_closed_max": 0.0,
+    "folds_visible_max": 2,
+    "folds_total_closed": 3,
+    "folds_visible_closed": 3,
+    "folds_hidden_closed": 0,
+    "lid_in_eye_max_mm": 0.0,
+    "lash_penetrating_max": 2,
+    "smooth_p99_ratio_max": 2.24,
+    "symmetry_exposure_diff_max": 0.001,
+    "half_exposure": [
+     0.4593,
+     0.4593
+    ]
+   },
+   "detail": {
+    "weights": {
+     "0.0": {
+      "l": {
+       "exposure": 1.0,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 13,
+       "lash_strands_penetrating": 0,
+       "lash_strands_measured": 85,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.0,
+       "smooth_max_ratio": 1.0
+      },
+      "r": {
+       "exposure": 1.0,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 13,
+       "lash_strands_penetrating": 0,
+       "lash_strands_measured": 86,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.0,
+       "smooth_max_ratio": 1.0
+      },
+      "symmetry": {
+       "exposure_diff": 0.0,
+       "mirrored_disp_diff_mm": 0.0
+      }
+     },
+     "0.25": {
+      "l": {
+       "exposure": 0.7417,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 13,
+       "lash_strands_penetrating": 1,
+       "lash_strands_measured": 85,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.15,
+       "smooth_max_ratio": 1.68
+      },
+      "r": {
+       "exposure": 0.7407,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 13,
+       "lash_strands_penetrating": 0,
+       "lash_strands_measured": 86,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.15,
+       "smooth_max_ratio": 1.68
+      },
+      "symmetry": {
+       "exposure_diff": 0.001,
+       "mirrored_disp_diff_mm": 0.012
+      }
+     },
+     "0.5": {
+      "l": {
+       "exposure": 0.4593,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 13,
+       "lash_strands_penetrating": 1,
+       "lash_strands_measured": 85,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.38,
+       "smooth_max_ratio": 2.48
+      },
+      "r": {
+       "exposure": 0.4593,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 13,
+       "lash_strands_penetrating": 0,
+       "lash_strands_measured": 86,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.38,
+       "smooth_max_ratio": 2.48
+      },
+      "symmetry": {
+       "exposure_diff": 0.0,
+       "mirrored_disp_diff_mm": 0.025
+      }
+     },
+     "0.75": {
+      "l": {
+       "exposure": 0.1676,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 13,
+       "lash_strands_penetrating": 1,
+       "lash_strands_measured": 85,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.74,
+       "smooth_max_ratio": 3.32
+      },
+      "r": {
+       "exposure": 0.1667,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 13,
+       "lash_strands_penetrating": 1,
+       "lash_strands_measured": 86,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.74,
+       "smooth_max_ratio": 3.32
+      },
+      "symmetry": {
+       "exposure_diff": 0.0009,
+       "mirrored_disp_diff_mm": 0.037
+      }
+     },
+     "1.0": {
+      "l": {
+       "exposure": 0.0,
+       "folds_visible": 1,
+       "folds_hidden_lining": 0,
+       "folds_total": 1,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 13,
+       "lash_strands_penetrating": 1,
+       "lash_strands_measured": 85,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 2.24,
+       "smooth_max_ratio": 4.18
+      },
+      "r": {
+       "exposure": 0.0,
+       "folds_visible": 2,
+       "folds_hidden_lining": 0,
+       "folds_total": 2,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 13,
+       "lash_strands_penetrating": 2,
+       "lash_strands_measured": 86,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 2.24,
+       "smooth_max_ratio": 4.18
+      },
+      "symmetry": {
+       "exposure_diff": 0.0,
+       "mirrored_disp_diff_mm": 0.05
+      }
+     }
+    }
+   }
+  },
+  "MERCY-INSPIRED": {
+   "summary": {
+    "exposure_closed_max": 0.0,
+    "folds_visible_max": 7,
+    "folds_total_closed": 12,
+    "folds_visible_closed": 12,
+    "folds_hidden_closed": 0,
+    "lid_in_eye_max_mm": 0.0,
+    "lash_penetrating_max": 2,
+    "smooth_p99_ratio_max": 2.15,
+    "symmetry_exposure_diff_max": 0.0,
+    "half_exposure": [
+     0.44,
+     0.44
+    ]
+   },
+   "detail": {
+    "weights": {
+     "0.0": {
+      "l": {
+       "exposure": 1.0,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 10,
+       "lash_strands_penetrating": 0,
+       "lash_strands_measured": 91,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.0,
+       "smooth_max_ratio": 1.0
+      },
+      "r": {
+       "exposure": 1.0,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 10,
+       "lash_strands_penetrating": 0,
+       "lash_strands_measured": 94,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.0,
+       "smooth_max_ratio": 1.0
+      },
+      "symmetry": {
+       "exposure_diff": 0.0,
+       "mirrored_disp_diff_mm": 0.0
+      }
+     },
+     "0.25": {
+      "l": {
+       "exposure": 0.7324,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 10,
+       "lash_strands_penetrating": 0,
+       "lash_strands_measured": 91,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.13,
+       "smooth_max_ratio": 2.16
+      },
+      "r": {
+       "exposure": 0.7324,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 10,
+       "lash_strands_penetrating": 0,
+       "lash_strands_measured": 94,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.13,
+       "smooth_max_ratio": 2.16
+      },
+      "symmetry": {
+       "exposure_diff": 0.0,
+       "mirrored_disp_diff_mm": 0.012
+      }
+     },
+     "0.5": {
+      "l": {
+       "exposure": 0.44,
+       "folds_visible": 1,
+       "folds_hidden_lining": 0,
+       "folds_total": 1,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 10,
+       "lash_strands_penetrating": 1,
+       "lash_strands_measured": 91,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.31,
+       "smooth_max_ratio": 3.36
+      },
+      "r": {
+       "exposure": 0.44,
+       "folds_visible": 3,
+       "folds_hidden_lining": 0,
+       "folds_total": 3,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 10,
+       "lash_strands_penetrating": 1,
+       "lash_strands_measured": 94,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.29,
+       "smooth_max_ratio": 3.36
+      },
+      "symmetry": {
+       "exposure_diff": 0.0,
+       "mirrored_disp_diff_mm": 0.024
+      }
+     },
+     "0.75": {
+      "l": {
+       "exposure": 0.1402,
+       "folds_visible": 3,
+       "folds_hidden_lining": 0,
+       "folds_total": 3,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 10,
+       "lash_strands_penetrating": 2,
+       "lash_strands_measured": 91,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.66,
+       "smooth_max_ratio": 4.57
+      },
+      "r": {
+       "exposure": 0.1402,
+       "folds_visible": 3,
+       "folds_hidden_lining": 0,
+       "folds_total": 3,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 10,
+       "lash_strands_penetrating": 1,
+       "lash_strands_measured": 94,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.66,
+       "smooth_max_ratio": 4.57
+      },
+      "symmetry": {
+       "exposure_diff": 0.0,
+       "mirrored_disp_diff_mm": 0.036
+      }
+     },
+     "1.0": {
+      "l": {
+       "exposure": 0.0,
+       "folds_visible": 5,
+       "folds_hidden_lining": 0,
+       "folds_total": 5,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 10,
+       "lash_strands_penetrating": 1,
+       "lash_strands_measured": 91,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 2.15,
+       "smooth_max_ratio": 5.79
+      },
+      "r": {
+       "exposure": 0.0,
+       "folds_visible": 7,
+       "folds_hidden_lining": 0,
+       "folds_total": 7,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 10,
+       "lash_strands_penetrating": 1,
+       "lash_strands_measured": 94,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 2.15,
+       "smooth_max_ratio": 5.79
+      },
+      "symmetry": {
+       "exposure_diff": 0.0,
+       "mirrored_disp_diff_mm": 0.048
+      }
+     }
+    }
+   }
+  },
+  "MERCY-INSPIRED_eye0.8": {
+   "summary": {
+    "exposure_closed_max": 0.0,
+    "folds_visible_max": 13,
+    "folds_total_closed": 26,
+    "folds_visible_closed": 26,
+    "folds_hidden_closed": 0,
+    "lid_in_eye_max_mm": 0.236,
+    "lash_penetrating_max": 1,
+    "smooth_p99_ratio_max": 2.02,
+    "symmetry_exposure_diff_max": 0.0,
+    "half_exposure": [
+     0.422,
+     0.422
+    ]
+   },
+   "detail": {
+    "weights": {
+     "0.0": {
+      "l": {
+       "exposure": 1.0,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 24,
+       "lash_strands_penetrating": 0,
+       "lash_strands_measured": 91,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.0,
+       "smooth_max_ratio": 1.0
+      },
+      "r": {
+       "exposure": 1.0,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 0,
+       "lid_in_eye_max_mm": 0.0,
+       "lid_in_eye_open_pose_vertices": 24,
+       "lash_strands_penetrating": 0,
+       "lash_strands_measured": 94,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.0,
+       "smooth_max_ratio": 1.0
+      },
+      "symmetry": {
+       "exposure_diff": 0.0,
+       "mirrored_disp_diff_mm": 0.0
+      }
+     },
+     "0.25": {
+      "l": {
+       "exposure": 0.7139,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 2,
+       "lid_in_eye_max_mm": 0.174,
+       "lid_in_eye_open_pose_vertices": 24,
+       "lash_strands_penetrating": 0,
+       "lash_strands_measured": 91,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.12,
+       "smooth_max_ratio": 1.29
+      },
+      "r": {
+       "exposure": 0.7139,
+       "folds_visible": 0,
+       "folds_hidden_lining": 0,
+       "folds_total": 0,
+       "lid_in_eye_vertices": 2,
+       "lid_in_eye_max_mm": 0.174,
+       "lid_in_eye_open_pose_vertices": 24,
+       "lash_strands_penetrating": 1,
+       "lash_strands_measured": 94,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.12,
+       "smooth_max_ratio": 1.29
+      },
+      "symmetry": {
+       "exposure_diff": 0.0,
+       "mirrored_disp_diff_mm": 0.008
+      }
+     },
+     "0.5": {
+      "l": {
+       "exposure": 0.422,
+       "folds_visible": 1,
+       "folds_hidden_lining": 0,
+       "folds_total": 1,
+       "lid_in_eye_vertices": 2,
+       "lid_in_eye_max_mm": 0.231,
+       "lid_in_eye_open_pose_vertices": 24,
+       "lash_strands_penetrating": 0,
+       "lash_strands_measured": 91,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.3,
+       "smooth_max_ratio": 1.69
+      },
+      "r": {
+       "exposure": 0.422,
+       "folds_visible": 1,
+       "folds_hidden_lining": 0,
+       "folds_total": 1,
+       "lid_in_eye_vertices": 2,
+       "lid_in_eye_max_mm": 0.231,
+       "lid_in_eye_open_pose_vertices": 24,
+       "lash_strands_penetrating": 1,
+       "lash_strands_measured": 94,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.3,
+       "smooth_max_ratio": 1.69
+      },
+      "symmetry": {
+       "exposure_diff": 0.0,
+       "mirrored_disp_diff_mm": 0.016
+      }
+     },
+     "0.75": {
+      "l": {
+       "exposure": 0.1135,
+       "folds_visible": 4,
+       "folds_hidden_lining": 0,
+       "folds_total": 4,
+       "lid_in_eye_vertices": 2,
+       "lid_in_eye_max_mm": 0.236,
+       "lid_in_eye_open_pose_vertices": 24,
+       "lash_strands_penetrating": 0,
+       "lash_strands_measured": 91,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.62,
+       "smooth_max_ratio": 2.41
+      },
+      "r": {
+       "exposure": 0.1135,
+       "folds_visible": 4,
+       "folds_hidden_lining": 0,
+       "folds_total": 4,
+       "lid_in_eye_vertices": 2,
+       "lid_in_eye_max_mm": 0.236,
+       "lid_in_eye_open_pose_vertices": 24,
+       "lash_strands_penetrating": 1,
+       "lash_strands_measured": 94,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 1.62,
+       "smooth_max_ratio": 2.41
+      },
+      "symmetry": {
+       "exposure_diff": 0.0,
+       "mirrored_disp_diff_mm": 0.024
+      }
+     },
+     "1.0": {
+      "l": {
+       "exposure": 0.0,
+       "folds_visible": 13,
+       "folds_hidden_lining": 0,
+       "folds_total": 13,
+       "lid_in_eye_vertices": 2,
+       "lid_in_eye_max_mm": 0.19,
+       "lid_in_eye_open_pose_vertices": 24,
+       "lash_strands_penetrating": 0,
+       "lash_strands_measured": 91,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 2.02,
+       "smooth_max_ratio": 3.18
+      },
+      "r": {
+       "exposure": 0.0,
+       "folds_visible": 13,
+       "folds_hidden_lining": 0,
+       "folds_total": 13,
+       "lid_in_eye_vertices": 2,
+       "lid_in_eye_max_mm": 0.19,
+       "lid_in_eye_open_pose_vertices": 24,
+       "lash_strands_penetrating": 1,
+       "lash_strands_measured": 94,
+       "lash_strands": 131,
+       "smooth_p99_ratio": 2.02,
+       "smooth_max_ratio": 3.18
+      },
+      "symmetry": {
+       "exposure_diff": 0.0,
+       "mirrored_disp_diff_mm": 0.032
+      }
+     }
+    }
+   }
+  }
+ },
+ "glb_walk": {
+  "before (Phase 3D export) blink 0.5": {
+   "head_world": [
+    0.019865611605291118,
+    1.4827553653964338,
+    0.06590107857018641
+   ],
+   "morphs": {
+    "blink_l": 0.5,
+    "blink_r": 0.5
+   },
+   "lash_morphs": {
+    "blink_l": 0.5,
+    "blink_r": 0.5
+   }
+  },
+  "before (Phase 3D export) blink 1": {
+   "head_world": [
+    0.019865611605291118,
+    1.4827553653964338,
+    0.06590107857018641
+   ],
+   "morphs": {
+    "blink_l": 1,
+    "blink_r": 1
+   },
+   "lash_morphs": {
+    "blink_l": 1,
+    "blink_r": 1
+   }
+  },
+  "after (this build's export) blink 0.5": {
+   "head_world": [
+    0.019865611605291118,
+    1.4827553653964338,
+    0.06590107857018641
+   ],
+   "morphs": {
+    "blink_l": 0.5,
+    "blink_r": 0.5
+   },
+   "lash_morphs": {
+    "blink_l": 0.5,
+    "blink_r": 0.5
+   }
+  },
+  "after (this build's export) blink 1": {
+   "head_world": [
+    0.019865611605291118,
+    1.4827553653964338,
+    0.06590107857018641
+   ],
+   "morphs": {
+    "blink_l": 1,
+    "blink_r": 1
+   },
+   "lash_morphs": {
+    "blink_l": 1,
+    "blink_r": 1
+   }
+  }
+ }
+}
