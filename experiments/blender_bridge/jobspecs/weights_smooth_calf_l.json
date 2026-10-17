@@ -1,0 +1,16 @@
+{
+ "schema": "forge.blender-job",
+ "schema_version": 1,
+ "operation": "weights_smooth_copy",
+ "input": "../../../examples/character_forge_aaa/humanity/v3_phase4a/regression/v3_identity_id_a.glb",
+ "input_sha256": "c257a6b17218a55b15bcfd06678ee226a768338e07f92434af30e85fccdafbd3",
+ "output": "id_a_calf_l_smoothed.glb",
+ "params": {
+  "scene_fps": 30,
+  "mesh": "body",
+  "group": "calf_l",
+  "factor": 0.5,
+  "repeat": 2
+ },
+ "note": "Non-destructive rigging op: on a copy of the body, smooth the calf_l (left knee) weights, renormalize, limit to 4 influences."
+}

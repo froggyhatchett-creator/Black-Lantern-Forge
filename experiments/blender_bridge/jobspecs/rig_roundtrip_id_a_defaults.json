@@ -1,0 +1,10 @@
+{
+ "schema": "forge.blender-job",
+ "schema_version": 1,
+ "operation": "rig_roundtrip",
+ "input": "../../../examples/character_forge_aaa/humanity/v3_phase4a/regression/v3_identity_id_a.glb",
+ "input_sha256": "c257a6b17218a55b15bcfd06678ee226a768338e07f92434af30e85fccdafbd3",
+ "output": "id_a_rt_defaults.glb",
+ "params": {},
+ "note": "Blender defaults: scene 24 fps, importer bone heuristic default."
+}

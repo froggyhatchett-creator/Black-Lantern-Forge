@@ -13,6 +13,11 @@ Written for the documented bpy API; other Blender versions are untested.
 Operations
   inspect          objects, transforms, mesh counts, UV layers, materials/textures, armatures, shape keys, bounds
   roundtrip        import and export everything with no edits (tests the importer/exporter pair)
+  rig_roundtrip    the same for a skinned, animated character: rig report (bones, hierarchy, rest matrices, weights,
+                   shape keys, actions, NLA, materials), then export meshes + armature with skins, morphs and
+                   animations. params: scene_fps (set before import), import_options, export_options (recorded)
+  weights_smooth_copy  duplicate one skinned mesh, smooth ONE bone's weights on the copy (Smooth, Normalize All,
+                   Limit Total 4), export the character with the copy in place of the original; report what changed
   simplify         params {"ratio": 0..1}: Decimate (collapse) on every mesh, then export
   extract_region   params {"boxes": [{"centre": [x,y,z], "axes": [[3],[3],[3]], "half": [hx,hy,hz]}, ...],
                            "keep_largest": true}: copy the faces whose three vertices lie in any oriented box into a
@@ -29,7 +34,7 @@ from pathlib import Path
 
 import bpy  # first: with the pip bpy module, bmesh and mathutils exist only after bpy is imported
 import bmesh  # noqa: E402
-from mathutils import Vector  # noqa: E402
+from mathutils import Matrix, Vector  # noqa: E402
 
 T0 = time.time()
 argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else sys.argv[1:]
@@ -95,14 +100,65 @@ def scene_report():
             "actions": [a.name for a in bpy.data.actions]}
 
 
-def export(objs, name):
+def export(objs, name, **options):
     bpy.ops.object.select_all(action="DESELECT")
     for o in objs:
         o.select_set(True)
     bpy.context.view_layer.objects.active = objs[0]
     path = OUT / name
-    bpy.ops.export_scene.gltf(filepath=str(path), export_format="GLB", use_selection=True, export_yup=True, export_apply=True)
-    return {"file": name, "bytes": path.stat().st_size}
+    opts = {"export_format": "GLB", "use_selection": True, "export_yup": True, "export_apply": True, **options}
+    bpy.ops.export_scene.gltf(filepath=str(path), **opts)
+    return {"file": name, "bytes": path.stat().st_size, "options": {k: v for k, v in opts.items()}}
+
+
+def r6(v):
+    return [round(float(x), 6) for x in v]
+
+
+def rig_report():
+    """Armatures (bones, hierarchy, rest matrices in glTF axes), skin weights, shape keys, actions/NLA, materials."""
+    C = Matrix(((1, 0, 0, 0), (0, 0, 1, 0), (0, -1, 0, 0), (0, 0, 0, 1)))  # Blender Z-up -> glTF Y-up
+    out = {"scene_fps": bpy.context.scene.render.fps / bpy.context.scene.render.fps_base, "armatures": {}, "meshes": {}, "actions": {}, "materials": {}}
+    for ob in bpy.data.objects:
+        if ob.type == "ARMATURE":
+            bones = ob.data.bones
+            out["armatures"][ob.name] = {
+                "bones": len(bones), "roots": [b.name for b in bones if not b.parent],
+                "parents": {b.name: (b.parent.name if b.parent else None) for b in bones},
+                "rest_world_gltf": {b.name: [r6(r) for r in (C @ ob.matrix_world @ b.matrix_local)] for b in bones},
+                "nla_tracks": [{"name": t.name, "strips": [st.action.name for st in t.strips if st.action]} for t in (ob.animation_data.nla_tracks if ob.animation_data else [])],
+                "active_action": ob.animation_data.action.name if ob.animation_data and ob.animation_data.action else None}
+        if ob.type == "MESH":
+            me = ob.data
+            groups = {g.index: g.name for g in ob.vertex_groups}
+            infl = [len([g for g in v.groups if g.weight > 0]) for v in me.vertices]
+            sums = [sum(g.weight for g in v.groups) for v in me.vertices]
+            keys = {}
+            if me.shape_keys:
+                basis = me.shape_keys.reference_key
+                for k in me.shape_keys.key_blocks:
+                    if k == basis:
+                        continue
+                    d = [(a.co - b.co).length for a, b in zip(k.data, basis.data)]
+                    keys[k.name] = {"moved_vertices": sum(1 for x in d if x > 1e-7), "max_m": round(max(d), 6)}
+            out["meshes"][ob.name] = {"vertices": len(me.vertices), "vertex_groups": len(groups),
+                                      "armature_modifier": [m.object.name if m.object else None for m in ob.modifiers if m.type == "ARMATURE"],
+                                      "max_influences": max(infl) if infl else 0, "weight_sum_min_max": [round(min(sums), 6), round(max(sums), 6)] if sums else None,
+                                      "shape_keys": keys, "color_attributes": [a.name for a in me.color_attributes], "uv_layers": [u.name for u in me.uv_layers]}
+    for a in bpy.data.actions:
+        curves = [fc for layer in getattr(a, "layers", []) for strip in layer.strips for bag in strip.channelbags for fc in bag.fcurves] or list(getattr(a, "fcurves", []))
+        out["actions"][a.name] = {"frame_range": r6(a.frame_range), "fcurves": len(curves),
+                                  "keyframes": sum(len(fc.keyframe_points) for fc in curves),
+                                  "interpolations": sorted({k.interpolation for fc in curves for k in fc.keyframe_points})}
+    for m in bpy.data.materials:
+        texs = {}
+        if m.node_tree:
+            for n in m.node_tree.nodes:
+                if n.type == "TEX_IMAGE" and n.image:
+                    texs[n.image.name] = [l.to_socket.name for o in n.outputs for l in o.links]
+        out["materials"][m.name] = {"textures": texs, "render_method": getattr(m, "surface_render_method", None)}
+    out["images"] = {i.name: list(i.size) for i in bpy.data.images}
+    return out
 
 
 def in_boxes(p, boxes):
@@ -213,7 +269,10 @@ try:
     # UV layout; UVs survive because Blender stores them per face corner
     # (simplify too: decimating the seam-split import cracked the closed shell into 4,240 pieces; measured)
     merge = job["operation"] in ("extract_region", "simplify") and job.get("params", {}).get("merge_vertices", True)
-    bpy.ops.import_scene.gltf(filepath=str(JOB_DIR / job["input"]), merge_vertices=merge)
+    params = job.get("params", {})
+    if "scene_fps" in params:  # set before import: the importer converts key times to frames at the scene rate
+        bpy.context.scene.render.fps, bpy.context.scene.render.fps_base = int(params["scene_fps"]), 1.0
+    bpy.ops.import_scene.gltf(filepath=str(JOB_DIR / job["input"]), merge_vertices=merge, **params.get("import_options", {}))
     report["import_merge_vertices"] = merge
     if merge:  # the importer's merge keeps vertices whose normals/UVs differ (measured: 504,919 -> 487,197, still
         # 383,648 open edges); weld by position explicitly. UVs live on face corners, so they are kept.
@@ -231,7 +290,64 @@ try:
     report["scene"] = scene_report()
     meshes = [o for o in bpy.data.objects if o.type == "MESH"]
     op, params = job["operation"], job.get("params", {})
-    if op == "roundtrip":
+    if op == "weights_smooth_copy":
+        # non-destructive: the mesh is duplicated, the ORIGINAL object is renamed and left out of the export, and only
+        # the copy's weights are edited (smooth one bone's group, renormalize, limit to 4 influences)
+        src = bpy.data.objects[params.get("mesh", "body")]
+        arm = src.find_armature()
+        before = {v.index: {src.vertex_groups[g.group].name: g.weight for g in v.groups} for v in src.data.vertices}
+        cp = src.copy()
+        cp.data = src.data.copy()
+        bpy.context.scene.collection.objects.link(cp)
+        src.name, src.data.name = src.name + "_original", src.data.name + "_original"
+        cp.name, cp.data.name = params.get("mesh", "body"), params.get("mesh", "body")
+        bpy.ops.object.select_all(action="DESELECT")
+        cp.select_set(True)
+        bpy.context.view_layer.objects.active = cp
+        cp.vertex_groups.active_index = cp.vertex_groups[params["group"]].index
+        if params.get("weld_before"):  # optional mitigation: glTF seam copies are separate vertices to Blender's weight
+            # tools, so smoothing gives the two sides of a UV seam different weights and the posed mesh cracks (measured)
+            bm = bmesh.new()
+            bm.from_mesh(cp.data)
+            n0 = len(bm.verts)
+            bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-6)
+            bm.to_mesh(cp.data)
+            bm.free()
+            cp.data.update()
+            report["weld"] = {"vertices_before": n0, "vertices_after": len(cp.data.vertices)}
+        bpy.ops.object.mode_set(mode="WEIGHT_PAINT")  # the vertex-group tools refuse Object mode when headless (measured)
+        t = time.time()
+        bpy.ops.object.vertex_group_smooth(group_select_mode="ACTIVE", factor=float(params.get("factor", 0.5)), repeat=int(params.get("repeat", 2)))
+        bpy.ops.object.vertex_group_normalize_all(group_select_mode="BONE_DEFORM", lock_active=False)
+        bpy.ops.object.vertex_group_limit_total(group_select_mode="BONE_DEFORM", limit=4)
+        bpy.ops.object.vertex_group_normalize_all(group_select_mode="BONE_DEFORM", lock_active=False)
+        bpy.ops.object.mode_set(mode="OBJECT")
+        report["op_seconds"] = round(time.time() - t, 3)
+        pos = {tuple(round(c, 6) for c in v.co): v.index for v in cp.data.vertices}
+        after_cp = {v.index: {cp.vertex_groups[g.group].name: g.weight for g in v.groups if g.weight > 0} for v in cp.data.vertices}
+        after = {v.index: after_cp[pos[tuple(round(c, 6) for c in v.co)]] for v in src.data.vertices}  # per ORIGINAL vertex
+        diff = [max(abs(after[i].get(k, 0) - before[i].get(k, 0)) for k in set(before[i]) | set(after[i])) for i in before]
+        report["weights"] = {"group": params["group"], "vertices": len(diff), "changed_vertices": sum(1 for d in diff if d > 1e-6),
+                             "max_change": round(max(diff), 6), "groups_touched": sorted({k for i in before for k in set(before[i]) | set(after[i])
+                                                                                          if abs(after[i].get(k, 0) - before[i].get(k, 0)) > 1e-6}),
+                             "max_influences_after": max(len(a) for a in after.values()),
+                             "weight_sum_min_max_after": [round(min(sum(a.values()) for a in after.values()), 6), round(max(sum(a.values()) for a in after.values()), 6)],
+                             "original_object_unchanged": all({src.vertex_groups[g.group].name: g.weight for g in v.groups} == before[v.index] for v in src.data.vertices)}
+        shapes = {pb.custom_shape for a in bpy.data.objects if a.type == "ARMATURE" for pb in a.pose.bones if pb.custom_shape}
+        allobs = [o for o in bpy.data.objects if o.type in ("MESH", "ARMATURE") and o not in shapes and o is not src]
+        opts = {"export_apply": False, "export_skins": True, "export_morph": True, "export_animations": True, "export_animation_mode": "ACTIONS", **params.get("export_options", {})}
+        report["export"] = export(allobs, job["output"], **opts)
+    elif op == "rig_roundtrip":
+        report["rig"] = rig_report()
+        # the importer adds bone display shapes (an "Icosphere" mesh used as pose-bone custom shapes); they are not
+        # part of the character and must not be exported
+        shapes = {pb.custom_shape for a in bpy.data.objects if a.type == "ARMATURE" for pb in a.pose.bones if pb.custom_shape}
+        allobs = [o for o in bpy.data.objects if o.type in ("MESH", "ARMATURE", "EMPTY") and o not in shapes]
+        report["excluded_import_helpers"] = sorted(o.name for o in shapes)
+        opts = {"export_apply": False, "export_skins": True, "export_morph": True, "export_animations": True,
+                "export_animation_mode": "ACTIONS", **params.get("export_options", {})}
+        report["export"] = export(allobs, job["output"], **opts)
+    elif op == "roundtrip":
         report["export"] = export(meshes, job["output"])
     elif op == "simplify":
         t = time.time()

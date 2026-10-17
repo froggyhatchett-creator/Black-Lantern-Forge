@@ -54,3 +54,7 @@ OpenVDB, USD, Embree, oneTBB, MaterialX, Draco, meshoptimizer, OpenImageDenoise,
   (assets, studio lights) include their own licence texts.
 - The same rule applies: do not redistribute it.
 - If that ever changes, the notices would have to be assembled from upstream.
+
+**5. Draco and meshoptimizer are not usable** in this wheel. The glTF add-on logs that `libbf_intern_draco_bridge.so`
+and `libbf_intern_meshopt_bridge.so` are missing (Phase 1). Compressed glTF export or import is unavailable; nothing
+here uses it.

@@ -1,0 +1,879 @@
+{
+ "ok": true,
+ "blender_version": "5.2.2 LTS",
+ "operation": "weights_smooth_copy",
+ "params": {
+  "scene_fps": 30,
+  "mesh": "body",
+  "group": "calf_l",
+  "factor": 0.5,
+  "repeat": 2,
+  "weld_before": true
+ },
+ "import_merge_vertices": false,
+ "import_seconds": 0.75,
+ "scene": {
+  "objects": [
+   {
+    "name": "basic_shorts",
+    "type": "MESH",
+    "parent": "id_a",
+    "matrix_world": [
+     [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      1.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "mesh": {
+     "vertices": 784,
+     "edges": 2166,
+     "polygons": 1381,
+     "triangles": 1381,
+     "boundary_edges": 189,
+     "nonmanifold_edges": 0,
+     "uv_layers": [],
+     "materials": [
+      "cloth_basic_shorts"
+     ],
+     "shape_keys": [],
+     "vertex_groups": 62,
+     "bbox_gltf_min": [
+      -0.20061,
+      0.62045,
+      -0.10866
+     ],
+     "bbox_gltf_max": [
+      0.20061,
+      0.96596,
+      0.15845
+     ]
+    }
+   },
+   {
+    "name": "basic_top",
+    "type": "MESH",
+    "parent": "id_a",
+    "matrix_world": [
+     [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      1.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "mesh": {
+     "vertices": 1846,
+     "edges": 5267,
+     "polygons": 3419,
+     "triangles": 3419,
+     "boundary_edges": 277,
+     "nonmanifold_edges": 0,
+     "uv_layers": [],
+     "materials": [
+      "cloth_basic_top"
+     ],
+     "shape_keys": [],
+     "vertex_groups": 62,
+     "bbox_gltf_min": [
+      -0.24168,
+      0.8995,
+      -0.08864
+     ],
+     "bbox_gltf_max": [
+      0.24168,
+      1.39331,
+      0.18823
+     ]
+    }
+   },
+   {
+    "name": "body",
+    "type": "MESH",
+    "parent": "id_a",
+    "matrix_world": [
+     [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      1.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "mesh": {
+     "vertices": 14517,
+     "edges": 41267,
+     "polygons": 26756,
+     "triangles": 26756,
+     "boundary_edges": 2266,
+     "nonmanifold_edges": 0,
+     "uv_layers": [
+      "UVMap"
+     ],
+     "materials": [
+      "skin_textured"
+     ],
+     "shape_keys": [
+      "Basis",
+      "blink_l",
+      "blink_r"
+     ],
+     "vertex_groups": 62,
+     "bbox_gltf_min": [
+      -0.46044,
+      -5e-05,
+      -0.10085
+     ],
+     "bbox_gltf_max": [
+      0.46044,
+      1.65995,
+      0.27965
+     ]
+    }
+   },
+   {
+    "name": "brows",
+    "type": "MESH",
+    "parent": "id_a",
+    "matrix_world": [
+     [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      1.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "mesh": {
+     "vertices": 8320,
+     "edges": 13520,
+     "polygons": 6240,
+     "triangles": 6240,
+     "boundary_edges": 8320,
+     "nonmanifold_edges": 0,
+     "uv_layers": [
+      "UVMap"
+     ],
+     "materials": [
+      "strand_brow"
+     ],
+     "shape_keys": [
+      "Basis",
+      "blink_l",
+      "blink_r"
+     ],
+     "vertex_groups": 62,
+     "bbox_gltf_min": [
+      -0.04206,
+      1.54269,
+      0.12595
+     ],
+     "bbox_gltf_max": [
+      0.04295,
+      1.57124,
+      0.14759
+     ]
+    }
+   },
+   {
+    "name": "cornea_l",
+    "type": "MESH",
+    "parent": "id_a",
+    "matrix_world": [
+     [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      1.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "mesh": {
+     "vertices": 256,
+     "edges": 745,
+     "polygons": 490,
+     "triangles": 490,
+     "boundary_edges": 20,
+     "nonmanifold_edges": 0,
+     "uv_layers": [],
+     "materials": [
+      "cornea"
+     ],
+     "shape_keys": [],
+     "vertex_groups": 62,
+     "bbox_gltf_min": [
+      0.00952,
+      1.52704,
+      0.10566
+     ],
+     "bbox_gltf_max": [
+      0.03841,
+      1.55707,
+      0.13155
+     ]
+    }
+   },
+   {
+    "name": "cornea_r",
+    "type": "MESH",
+    "parent": "id_a",
+    "matrix_world": [
+     [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      1.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "mesh": {
+     "vertices": 256,
+     "edges": 745,
+     "polygons": 490,
+     "triangles": 490,
+     "boundary_edges": 20,
+     "nonmanifold_edges": 0,
+     "uv_layers": [],
+     "materials": [
+      "cornea"
+     ],
+     "shape_keys": [],
+     "vertex_groups": 62,
+     "bbox_gltf_min": [
+      -0.03841,
+      1.52704,
+      0.10566
+     ],
+     "bbox_gltf_max": [
+      -0.00952,
+      1.55707,
+      0.13155
+     ]
+    }
+   },
+   {
+    "name": "eye_l",
+    "type": "MESH",
+    "parent": "id_a",
+    "matrix_world": [
+     [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      1.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "mesh": {
+     "vertices": 276,
+     "edges": 805,
+     "polygons": 530,
+     "triangles": 530,
+     "boundary_edges": 20,
+     "nonmanifold_edges": 0,
+     "uv_layers": [
+      "UVMap"
+     ],
+     "materials": [
+      "eye_textured"
+     ],
+     "shape_keys": [],
+     "vertex_groups": 62,
+     "bbox_gltf_min": [
+      0.00996,
+      1.52745,
+      0.10586
+     ],
+     "bbox_gltf_max": [
+      0.03797,
+      1.55665,
+      0.1297
+     ]
+    }
+   },
+   {
+    "name": "eye_r",
+    "type": "MESH",
+    "parent": "id_a",
+    "matrix_world": [
+     [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      1.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "mesh": {
+     "vertices": 276,
+     "edges": 805,
+     "polygons": 530,
+     "triangles": 530,
+     "boundary_edges": 20,
+     "nonmanifold_edges": 0,
+     "uv_layers": [
+      "UVMap"
+     ],
+     "materials": [
+      "eye_textured"
+     ],
+     "shape_keys": [],
+     "vertex_groups": 62,
+     "bbox_gltf_min": [
+      -0.03797,
+      1.52745,
+      0.10586
+     ],
+     "bbox_gltf_max": [
+      -0.00996,
+      1.55665,
+      0.12969
+     ]
+    }
+   },
+   {
+    "name": "hair_shoulder",
+    "type": "MESH",
+    "parent": "id_a",
+    "matrix_world": [
+     [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      1.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "mesh": {
+     "vertices": 94976,
+     "edges": 179776,
+     "polygons": 88192,
+     "triangles": 88192,
+     "boundary_edges": 94976,
+     "nonmanifold_edges": 0,
+     "uv_layers": [
+      "UVMap"
+     ],
+     "materials": [
+      "strand_hair"
+     ],
+     "shape_keys": [
+      "Basis",
+      "blink_l",
+      "blink_r"
+     ],
+     "vertex_groups": 62,
+     "bbox_gltf_min": [
+      -0.13458,
+      1.35332,
+      -0.07797
+     ],
+     "bbox_gltf_max": [
+      0.1318,
+      1.66648,
+      0.15099
+     ]
+    }
+   },
+   {
+    "name": "Icosphere",
+    "type": "MESH",
+    "parent": null,
+    "matrix_world": [
+     [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      1.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "mesh": {
+     "vertices": 42,
+     "edges": 120,
+     "polygons": 80,
+     "triangles": 80,
+     "boundary_edges": 0,
+     "nonmanifold_edges": 0,
+     "uv_layers": [
+      "UVMap"
+     ],
+     "materials": [],
+     "shape_keys": [],
+     "vertex_groups": 0,
+     "bbox_gltf_min": [
+      -0.95106,
+      -1.0,
+      -1.0
+     ],
+     "bbox_gltf_max": [
+      0.95106,
+      1.0,
+      1.0
+     ]
+    }
+   },
+   {
+    "name": "id_a",
+    "type": "ARMATURE",
+    "parent": null,
+    "matrix_world": [
+     [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      1.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "bones": 62
+   },
+   {
+    "name": "lashes",
+    "type": "MESH",
+    "parent": "id_a",
+    "matrix_world": [
+     [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      1.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "mesh": {
+     "vertices": 2620,
+     "edges": 4454,
+     "polygons": 2096,
+     "triangles": 2096,
+     "boundary_edges": 2620,
+     "nonmanifold_edges": 0,
+     "uv_layers": [
+      "UVMap"
+     ],
+     "materials": [
+      "strand_lash"
+     ],
+     "shape_keys": [
+      "Basis",
+      "blink_l",
+      "blink_r"
+     ],
+     "vertex_groups": 62,
+     "bbox_gltf_min": [
+      -0.03997,
+      1.53329,
+      0.11395
+     ],
+     "bbox_gltf_max": [
+      0.04016,
+      1.5521,
+      0.14039
+     ]
+    }
+   }
+  ],
+  "materials": [
+   {
+    "name": "cloth_basic_shorts",
+    "images": [],
+    "base_color": [
+     0.16,
+     0.17,
+     0.2,
+     1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.85
+   },
+   {
+    "name": "cloth_basic_top",
+    "images": [],
+    "base_color": [
+     0.3,
+     0.34,
+     0.42,
+     1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.85
+   },
+   {
+    "name": "cornea",
+    "images": [],
+    "base_color": [
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.03
+   },
+   {
+    "name": "eye_textured",
+    "images": [
+     "eye"
+    ],
+    "base_color": [
+     0.8,
+     0.8,
+     0.8,
+     1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.2
+   },
+   {
+    "name": "skin_textured",
+    "images": [
+     "skin_albedo",
+     "skin_normal"
+    ],
+    "base_color": [
+     0.8,
+     0.8,
+     0.8,
+     1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.55
+   },
+   {
+    "name": "strand_brow",
+    "images": [
+     "strand_single"
+    ],
+    "base_color": [
+     0.8,
+     0.8,
+     0.8,
+     1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.5
+   },
+   {
+    "name": "strand_hair",
+    "images": [
+     "strand_hair"
+    ],
+    "base_color": [
+     0.8,
+     0.8,
+     0.8,
+     1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.4
+   },
+   {
+    "name": "strand_lash",
+    "images": [
+     "strand_single"
+    ],
+    "base_color": [
+     0.8,
+     0.8,
+     0.8,
+     1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.5
+   }
+  ],
+  "images": [
+   {
+    "name": "eye",
+    "size": [
+     1024,
+     1024
+    ]
+   },
+   {
+    "name": "skin_albedo",
+    "size": [
+     2048,
+     2048
+    ]
+   },
+   {
+    "name": "skin_normal",
+    "size": [
+     1024,
+     1024
+    ]
+   },
+   {
+    "name": "strand_hair",
+    "size": [
+     256,
+     64
+    ]
+   },
+   {
+    "name": "strand_single",
+    "size": [
+     256,
+     64
+    ]
+   }
+  ],
+  "actions": [
+   "idle",
+   "jump",
+   "run",
+   "sudden_stop",
+   "turn",
+   "walk",
+   "wave"
+  ]
+ },
+ "weld": {
+  "vertices_before": 14517,
+  "vertices_after": 13380
+ },
+ "op_seconds": 0.032,
+ "weights": {
+  "group": "calf_l",
+  "vertices": 14517,
+  "changed_vertices": 801,
+  "max_change": 0.072722,
+  "groups_touched": [
+   "ball_l",
+   "calf_l",
+   "calf_r",
+   "foot_l",
+   "thigh_l",
+   "thigh_r"
+  ],
+  "max_influences_after": 4,
+  "weight_sum_min_max_after": [
+   1.0,
+   1.0
+  ],
+  "original_object_unchanged": true
+ },
+ "export": {
+  "file": "id_a_calf_l_smoothed_welded.glb",
+  "bytes": 12081840,
+  "options": {
+   "export_format": "GLB",
+   "use_selection": true,
+   "export_yup": true,
+   "export_apply": false,
+   "export_skins": true,
+   "export_morph": true,
+   "export_animations": true,
+   "export_animation_mode": "ACTIONS"
+  }
+ },
+ "seconds": 5.23
+}
