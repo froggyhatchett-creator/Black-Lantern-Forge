@@ -156,7 +156,7 @@ def build_character(spec: CharacterSpec, profile: str = "public", *, body_morphs
     parts += accessories.build_mouth(skel)
     parts += accessories.build_brows_lashes(skel, bm.field, app, spec.face)
     hair_parts = accessories.build_hair(bm.verts, bm.normals, tpl, skel, tpl.skeleton, app, bm.field)
-    if app.hair_highlight_amount > 0:  # appearance-only streaks, baked as vertex colors
+    if app.hair_highlight_amount > 0 or app.hair_gradient_enabled:  # appearance-only vertex colors
         from forge_character_forge.anatomy import head_frame
         O, h = head_frame(skel)
         for hp in hair_parts:

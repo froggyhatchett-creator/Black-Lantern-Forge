@@ -48,7 +48,9 @@ _SKIP_REGEN = {"genital.enabled", "body.femininity"}
 # Layers keep what a character *is* apart from how it is styled or dressed.  Hair style/color/highlights,
 # brow color and the wardrobe can change freely without changing the anatomical identity.
 STYLING_TRAITS = ("appearance.hair_style", "appearance.hair_color", "appearance.hair_highlight_color",
-                  "appearance.hair_highlight_amount", "appearance.brow_color")
+                  "appearance.hair_highlight_amount", "appearance.brow_color",
+                  "appearance.hair_gradient_enabled", "appearance.hair_gradient_root_color",
+                  "appearance.hair_gradient_tip_color", "appearance.hair_gradient_transition")
 
 
 def layer_of(key: str) -> str:

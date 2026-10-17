@@ -56,15 +56,22 @@ class AppearanceParams:
     hair_color: str = "#3b2416"
     hair_highlight_color: str = "#a47b52"   # streak color (appearance only; never anatomy)
     hair_highlight_amount: float = 0.0     # 0 none .. 1 strong streaks
+    hair_gradient_enabled: bool = False    # root-to-tip gradient (appearance only)
+    hair_gradient_root_color: str = ""     # empty = use hair_color
+    hair_gradient_tip_color: str = "#20d0c8"
+    hair_gradient_transition: float = 0.45 # 0=near root .. 1=near tip, midpoint of blend in hair-local length
     brow_color: str = ""            # empty = derived from hair
     lip_tint: float = 0.5
     skin_roughness: float = 0.5
 
     def __post_init__(self):
-        for name in ("skin_tone", "flush", "lip_tint", "skin_roughness", "hair_highlight_amount"):
+        for name in ("skin_tone", "flush", "lip_tint", "skin_roughness", "hair_highlight_amount",
+                     "hair_gradient_transition"):
             v = getattr(self, name)
             if not isinstance(v, (int, float)) or isinstance(v, bool) or not 0.0 <= v <= 1.0:
                 raise ParameterError(f"AppearanceParams.{name} must be in [0, 1]; got {v!r}")
+        if not isinstance(self.hair_gradient_enabled, bool):
+            raise ParameterError("AppearanceParams.hair_gradient_enabled must be bool")
         if not isinstance(self.undertone, (int, float)) or not -1.0 <= self.undertone <= 1.0:
             raise ParameterError("AppearanceParams.undertone must be in [-1, 1]")
         if self.eye_color not in EYE_COLORS and not str(self.eye_color).startswith("#"):
@@ -75,6 +82,9 @@ class AppearanceParams:
             raise ParameterError(f"hair_style must be one of {HAIR_STYLES}")
         hex_to_linear(self.hair_color)
         hex_to_linear(self.hair_highlight_color)
+        if self.hair_gradient_root_color:
+            hex_to_linear(self.hair_gradient_root_color)
+        hex_to_linear(self.hair_gradient_tip_color)
         if self.brow_color:
             hex_to_linear(self.brow_color)
 
@@ -103,11 +113,35 @@ class AppearanceParams:
         return hex_to_linear(self.hair_color)
 
     def hair_vertex_colors(self, unit_verts: np.ndarray) -> np.ndarray | None:
-        """Per-vertex hair color with highlight streaks (None when there are no highlights)."""
-        if self.hair_highlight_amount <= 0:
+        """Per-vertex hair color. Streak highlights and optional root-to-tip gradient.
+
+        unit_verts are in head-frame unit space (chin at y=0, face +z). Gradient uses
+        the hair mesh's own Y extent in that frame so it follows the hair, not world height.
+        Returns None when neither feature is active (preserves historical solid color).
+        """
+        if self.hair_highlight_amount <= 0 and not self.hair_gradient_enabled:
             return None
-        m = hair_highlight_mask(unit_verts) * self.hair_highlight_amount
-        return self.hair_linear()[None, :] * (1 - m[:, None]) + hex_to_linear(self.hair_highlight_color)[None, :] * m[:, None]
+        v = np.asarray(unit_verts, float)
+        base = self.hair_linear()
+        if self.hair_gradient_enabled:
+            root = hex_to_linear(self.hair_gradient_root_color) if self.hair_gradient_root_color else base
+            tip = hex_to_linear(self.hair_gradient_tip_color)
+            y = v[:, 1]
+            y_min, y_max = float(y.min()), float(y.max())
+            # 0 at crown (highest Y = root), 1 at lowest tips
+            t = np.clip((y_max - y) / max(y_max - y_min, 1e-6), 0, 1)
+            # transition is the midpoint of a smooth blend; width fixed for stability
+            mid = float(self.hair_gradient_transition)
+            width = 0.18
+            s = np.clip((t - (mid - width)) / (2 * width), 0, 1)
+            s = s * s * (3 - 2 * s)  # smoothstep
+            col = root[None, :] * (1 - s[:, None]) + tip[None, :] * s[:, None]
+        else:
+            col = np.tile(base, (len(v), 1))
+        if self.hair_highlight_amount > 0:
+            m = hair_highlight_mask(v) * self.hair_highlight_amount
+            col = col * (1 - m[:, None]) + hex_to_linear(self.hair_highlight_color)[None, :] * m[:, None]
+        return col
 
     def brow_linear(self) -> np.ndarray:
         return hex_to_linear(self.brow_color) if self.brow_color else self.hair_linear() * 0.8
