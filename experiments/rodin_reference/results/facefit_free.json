@@ -1,0 +1,58 @@
+{
+ "mode": "free",
+ "face_vertices": 1366,
+ "target_points": 18043,
+ "trim_percentile": 75,
+ "scale_rodin_per_v3": 0.8961,
+ "pitch_deg": 8.7,
+ "trimmed_rms_mm": [
+  [
+   "aligned, identity 0",
+   3.0
+  ],
+  [
+   "identity round 1",
+   2.78
+  ],
+  [
+   "identity round 2",
+   2.75
+  ],
+  [
+   "identity round 3",
+   2.74
+  ],
+  [
+   "identity round 4",
+   2.74
+  ]
+ ],
+ "identity_values": {
+  "skull_width": 0.133,
+  "forehead_slope": 0.031,
+  "brow_ridge": -0.055,
+  "eye_depth": -0.042,
+  "eye_spacing": 0.088,
+  "eye_size": -0.031,
+  "eye_height": 0.075,
+  "nose_width": 0.103,
+  "nose_projection": 0.058,
+  "nose_bridge": -0.068,
+  "nose_tip_angle": -0.062,
+  "cheekbone_width": 0.025,
+  "cheek_fullness": 0.068,
+  "midface_projection": -0.056,
+  "mouth_width": -0.024,
+  "mouth_height": 0.322,
+  "upper_lip": 0.056,
+  "jaw_width": 0.059,
+  "jaw_taper": -0.064,
+  "chin_width": 0.052,
+  "chin_height": 0.077,
+  "chin_projection": 0.189,
+  "face_length": 0.081,
+  "face_width": 0.131,
+  "lip_projection": -0.266
+ },
+ "at_limit": []
+}
