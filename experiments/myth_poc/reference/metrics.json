@@ -1,0 +1,47 @@
+{
+ "full_front_rest": {
+  "silhouette_px": 23513,
+  "eye_px": 25,
+  "garment_px": 12995
+ },
+ "face_front_blink0.0": {
+  "silhouette_px": 146919,
+  "eye_px": 2502,
+  "garment_px": 0
+ },
+ "face_front_blink0.5": {
+  "silhouette_px": 146919,
+  "eye_px": 1246,
+  "garment_px": 0
+ },
+ "face_front_blink1.0": {
+  "silhouette_px": 146919,
+  "eye_px": 12,
+  "garment_px": 0
+ },
+ "full_34_rest": {
+  "silhouette_px": 23229,
+  "eye_px": 22,
+  "garment_px": 12192
+ },
+ "face_34_blink0.0": {
+  "silhouette_px": 169909,
+  "eye_px": 1834,
+  "garment_px": 0
+ },
+ "face_34_blink0.5": {
+  "silhouette_px": 169922,
+  "eye_px": 929,
+  "garment_px": 0
+ },
+ "face_34_blink1.0": {
+  "silhouette_px": 169945,
+  "eye_px": 4,
+  "garment_px": 0
+ },
+ "full_34_walk10": {
+  "silhouette_px": 20554,
+  "eye_px": 21,
+  "garment_px": 11399
+ }
+}

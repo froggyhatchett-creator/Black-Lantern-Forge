@@ -1,0 +1,236 @@
+{
+ "glb": "examples/character_forge_aaa/humanity/v3_phase4a/regression/v3_identity_id_a.glb",
+ "size": [
+  640,
+  480
+ ],
+ "background": [
+  0.0,
+  0.0,
+  0.0
+ ],
+ "measured_meshes": [
+  "body",
+  "eye_l",
+  "cornea_l",
+  "eye_r",
+  "cornea_r",
+  "basic_top",
+  "basic_shorts"
+ ],
+ "strands_excluded": [
+  "brows",
+  "lashes",
+  "hair_shoulder"
+ ],
+ "eye_meshes": [
+  "eye_l",
+  "cornea_l",
+  "eye_r",
+  "cornea_r"
+ ],
+ "garment_meshes": [
+  "basic_top",
+  "basic_shorts"
+ ],
+ "frames": [
+  {
+   "name": "full_front_rest",
+   "anim": null,
+   "frame": 0,
+   "blink": 0.0,
+   "camera": {
+    "eye": [
+     0.0,
+     1.073961,
+     4.67919
+    ],
+    "target": [
+     0.0,
+     0.833216,
+     0.085494
+    ],
+    "fov_deg": 26,
+    "yaw_deg": 0,
+    "pitch_deg": 3,
+    "distance": 4.6
+   }
+  },
+  {
+   "name": "face_front_blink0.0",
+   "anim": null,
+   "frame": 0,
+   "blink": 0.0,
+   "camera": {
+    "eye": [
+     -0.0,
+     1.551521,
+     0.501994
+    ],
+    "target": [
+     -0.0,
+     1.531633,
+     0.122514
+    ],
+    "fov_deg": 26,
+    "yaw_deg": 0,
+    "pitch_deg": 3,
+    "distance": 0.38
+   }
+  },
+  {
+   "name": "face_front_blink0.5",
+   "anim": null,
+   "frame": 0,
+   "blink": 0.5,
+   "camera": {
+    "eye": [
+     -0.0,
+     1.551521,
+     0.501994
+    ],
+    "target": [
+     -0.0,
+     1.531633,
+     0.122514
+    ],
+    "fov_deg": 26,
+    "yaw_deg": 0,
+    "pitch_deg": 3,
+    "distance": 0.38
+   }
+  },
+  {
+   "name": "face_front_blink1.0",
+   "anim": null,
+   "frame": 0,
+   "blink": 1.0,
+   "camera": {
+    "eye": [
+     -0.0,
+     1.551521,
+     0.501994
+    ],
+    "target": [
+     -0.0,
+     1.531633,
+     0.122514
+    ],
+    "fov_deg": 26,
+    "yaw_deg": 0,
+    "pitch_deg": 3,
+    "distance": 0.38
+   }
+  },
+  {
+   "name": "full_34_rest",
+   "anim": null,
+   "frame": 0,
+   "blink": 0.0,
+   "camera": {
+    "eye": [
+     2.634836,
+     1.073961,
+     3.848429
+    ],
+    "target": [
+     0.0,
+     0.833216,
+     0.085494
+    ],
+    "fov_deg": 26,
+    "yaw_deg": 35,
+    "pitch_deg": 3,
+    "distance": 4.6
+   }
+  },
+  {
+   "name": "face_34_blink0.0",
+   "anim": null,
+   "frame": 0,
+   "blink": 0.0,
+   "camera": {
+    "eye": [
+     0.21766,
+     1.551521,
+     0.433365
+    ],
+    "target": [
+     -0.0,
+     1.531633,
+     0.122514
+    ],
+    "fov_deg": 26,
+    "yaw_deg": 35,
+    "pitch_deg": 3,
+    "distance": 0.38
+   }
+  },
+  {
+   "name": "face_34_blink0.5",
+   "anim": null,
+   "frame": 0,
+   "blink": 0.5,
+   "camera": {
+    "eye": [
+     0.21766,
+     1.551521,
+     0.433365
+    ],
+    "target": [
+     -0.0,
+     1.531633,
+     0.122514
+    ],
+    "fov_deg": 26,
+    "yaw_deg": 35,
+    "pitch_deg": 3,
+    "distance": 0.38
+   }
+  },
+  {
+   "name": "face_34_blink1.0",
+   "anim": null,
+   "frame": 0,
+   "blink": 1.0,
+   "camera": {
+    "eye": [
+     0.21766,
+     1.551521,
+     0.433365
+    ],
+    "target": [
+     -0.0,
+     1.531633,
+     0.122514
+    ],
+    "fov_deg": 26,
+    "yaw_deg": 35,
+    "pitch_deg": 3,
+    "distance": 0.38
+   }
+  },
+  {
+   "name": "full_34_walk10",
+   "anim": "walk",
+   "frame": 10,
+   "blink": 0.0,
+   "camera": {
+    "eye": [
+     2.60349,
+     1.073512,
+     3.742243
+    ],
+    "target": [
+     -0.031346,
+     0.832766,
+     -0.020693
+    ],
+    "fov_deg": 26,
+    "yaw_deg": 35,
+    "pitch_deg": 3,
+    "distance": 4.6
+   }
+  }
+ ]
+}

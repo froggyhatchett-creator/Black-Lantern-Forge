@@ -1,0 +1,4 @@
+.venv/
+myth_out/
+myth_poc_results.zip
+__pycache__/
