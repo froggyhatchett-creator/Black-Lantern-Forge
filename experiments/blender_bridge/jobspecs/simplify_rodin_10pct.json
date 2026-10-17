@@ -1,0 +1,11 @@
+{
+ "schema": "forge.blender-job",
+ "schema_version": 1,
+ "input": "../../rodin_reference/source/base.glb",
+ "input_sha256": "2f359f0135f632e33ad8ba378e3e1ecebcffafc45f698ccc7f4bd629ccc6e41f",
+ "operation": "simplify",
+ "output": "rodin_10pct.glb",
+ "params": {
+  "ratio": 0.1
+ }
+}

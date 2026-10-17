@@ -1,0 +1,5 @@
+jobs/
+.bpy-venv/
+.blender/
+blender_bridge_results.zip
+__pycache__/

@@ -1,0 +1,44 @@
+{
+ "schema": "forge.blender-job",
+ "schema_version": 1,
+ "input": "../../rodin_reference/source/base.glb",
+ "input_sha256": "2f359f0135f632e33ad8ba378e3e1ecebcffafc45f698ccc7f4bd629ccc6e41f",
+ "operation": "extract_region",
+ "output": "board_slab_v0.glb",
+ "params": {
+  "boxes": [
+   {
+    "centre": [
+     0.19653,
+     1.08177,
+     -0.01261
+    ],
+    "axes": [
+     [
+      0.4239,
+      0.897,
+      0.1254
+     ],
+     [
+      -0.4323,
+      0.322,
+      -0.8423
+     ],
+     [
+      0.7959,
+      -0.3028,
+      -0.5243
+     ]
+    ],
+    "half": [
+     0.587,
+     0.16,
+     0.09
+    ]
+   }
+  ],
+  "keep_largest": true,
+  "merge_vertices": true
+ },
+ "note": "v0 operator volume: one board-aligned slab. KNOWN INCORRECT: it also contains thigh and pouch surface and misses the front rails (see results/board_selection_slab_v0.jpg). It exercises the pipeline; it is not a correct board."
+}
