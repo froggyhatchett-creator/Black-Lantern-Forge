@@ -1,0 +1,2 @@
+eddd5853fa710b81f6fc2f0a0b9aa0b7f7aa8815ab26997422a0ce03ba2279fd  output/id_a_calf_l_seam_safe.glb
+a65f1f32224ae235249177f3a9ee31c467fb7d0af50af9e1840fde16a3f2a3e6  id_a_calf_l_seam_safe.restamped.glb

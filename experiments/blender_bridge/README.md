@@ -1,4 +1,4 @@
-# Blender Bridge, Phase 0: isolated experiment
+# Blender Bridge: isolated experiment (Phases 0, 1, 1.1)
 
 An optional, external Blender job bridge for asset processing. Forge stays the engine and editor. Blender processes
 files through explicit jobs, and is never required to run Forge.
@@ -6,7 +6,8 @@ files through explicit jobs, and is never required to run Forge.
 Nothing here is imported by Forge or changes Forge, generators v1/v2/v3, Character DNA, the Character Studio, Myth
 or the Rodin source. Delete this folder and nothing else changes.
 
-Reports: `docs/BLENDER_BRIDGE_PHASE0.md` (static assets), `docs/BLENDER_BRIDGE_PHASE1.md` (rigged v3 character round trip).
+Reports: `docs/BLENDER_BRIDGE_PHASE0.md` (static assets), `docs/BLENDER_BRIDGE_PHASE1.md` (rigged v3 character round trip),
+`docs/BLENDER_BRIDGE_PHASE1_1.md` (animation contract, metadata restamp, seam-safe weight editing).
 
 **Status (2026-10-17): run with Blender 5.2.2 (`bpy`, isolated venv, approved).**
 - Done: inspect, unchanged round trip, simplification, and three board extractions.
@@ -23,6 +24,11 @@ python3 -m venv .bpy-venv
 python3 bridge.py run jobspecs/<job>.json --launcher bpy --exe .bpy-venv/bin/python
 python3 verify.py jobs/<run dir>
 python3 render_results.py roundtrip|simplify|board jobs/<run dir> [tag]
+# rigged characters (Phase 1.1): the job detects the fps; then restamp and check
+python3 bridge.py run jobspecs/p11_weights_seam_safe_calf_l.json --launcher bpy --exe .bpy-venv/bin/python
+python3 forge_restamp.py <source.glb> jobs/<run>/output/<out>.glb <restamped.glb> --changes "<what changed>" --job jobs/<run>/result.json
+python3 rig_compare.py <source.glb> <restamped.glb> <compare.json>
+python3 seam_check.py <source.glb> <unedited round trip.glb> <edited.glb> <seam_check.json>
 ```
 
 ## Files
@@ -30,14 +36,17 @@ python3 render_results.py roundtrip|simplify|board jobs/<run dir> [tag]
 | File | Runs in | What |
 |---|---|---|
 | `bridge.py` | Forge's Python (stdlib) | Job runner: version pin (fail closed), input checksum, fresh sandbox directory per run, read-only input copy, subprocess with timeout and log, stray-file check, output hashes, `result.json`. Never imports bpy |
-| `job_blender.py` | **Blender** (app or pip bpy) | One operation per job: `inspect`, `roundtrip` (no edits), `rig_roundtrip` (skinned and animated character; scene fps pinned), `weights_smooth_copy` (smooth one bone's weights on a copy; optional weld first), `simplify` (weld + Decimate), `extract_region` (faces in operator boxes, or whole UV islands voted by boxes and edited by operator picks -> new object; source untouched; cut boundaries left open and reported) -> `output/report.json` + GLB |
+| `job_blender.py` | **Blender** (app or pip bpy) | One operation per job: `inspect`, `roundtrip` (no edits), `rig_roundtrip` (skinned and animated character; scene fps pinned), `weights_smooth_copy` (Phase 1 experiment: cracks seams), `weights_edit_seam_safe` (Phase 1.1: edit on a welded proxy, write back by position), `simplify` (weld + Decimate), `extract_region` (faces in operator boxes, or whole UV islands voted by boxes and edited by operator picks -> new object; source untouched; cut boundaries left open and reported) -> `output/report.json` + GLB |
 | `verify.py` | Forge's Python + numpy | Independent check of a job's output: Forge reader and validator, node transforms applied. Round trip: every triangle matched by position, per-corner normals and UVs, materials. Extraction: numpy reference of the same selection (including its own UV-island labelling) with an exact triangle-set comparison, every vertex from the source. Simplification: deviation, and no new open edges on welded geometry |
-| `test_bridge.py` | Forge's Python | 7 tests: job contract, checksum refusal, sandbox, failure/stray/timeout reporting, version pin; verifier self-test (a correct extraction passes; a moved vertex, a 1 % rescale or missing faces fail) |
+| `test_bridge.py` | Forge's Python | 9 tests (2 for the restamp: restore, and refuse a rotated joint / renamed clip / unskinned garment); job contract, checksum refusal, sandbox, failure/stray/timeout reporting, version pin; verifier self-test (a correct extraction passes; a moved vertex, a 1 % rescale or missing faces fail) |
 | `board_select.py`, `board_grow.py` | Forge's Python + numpy | Board segmentation probes on the Rodin mesh (no Blender), evidence in `results/` |
 | `probe_blender_selection.py` | **Blender** | Blender's own part finders on the welded mesh: loose parts, UV islands, sharp-edge islands |
 | `render_results.py` | Forge's Python | Evidence sheets of job outputs with Forge's renderer (round trip with pixel difference, simplification, board) |
 | `rig_compare.py` | Forge's Python + numpy + Node | Phase 1: independent comparison of a rigged GLB and its Blender round trip (validator, metadata, skin, meshes matched per vertex, weights by joint name, morphs, materials and image pixels, animation values at the source key times, playback through `tools/glb_playback.mjs`) |
 | `render_rig.py`, `render_weights.py` | Forge's Python + Node | Phase 1 renders: rest, walk, blink and pixel difference (colours from each file's own textures); weight heat maps and posed knee for the weight edit |
+| `forge_restamp.py` | Forge's Python + numpy | Phase 1.1 post-export step: verifies the source's Forge claims against the processed file, then restores `asset.extras.forge` (+ a `post_processing` record), per-joint metadata (by skin joint, never by bare name) and clip order |
+| `seam_check.py` | Forge's Python + Node | Phase 1.1: seam consistency and posed openings over all walk/run frames, edit isolation against the unedited round trip, garment penetration per frame |
+| `render_seams.py` | Forge's Python + Node | Phase 1.1: weight-edit variants at the widest seam, with opening and normal-change heat maps |
 | `DEPENDENCIES.md` | — | Installed packages, versions, licences, checksum, licensing concerns |
 | `jobspecs/` | — | Jobs for the Rodin GLB: inspect, round trip, simplify 10 %, board extraction (slab v0; UV islands v1 and v2 with operator picks) |
 | `run_on_windows.ps1` | Windows (not executed: no Windows here) | Runs the jobs plus verification against an installed Blender (`-BlenderExe`) or a local bpy venv (`-InstallBpy`), and zips the results |

@@ -1,0 +1,2 @@
+53d8471650d0a3fd65fd6cc15dddea4fea02695410e6c7a6c0b83fe1574b9a7b  output/id_a_p11_roundtrip.glb
+37e4925514bb3ca0aac073028a005c49bc7c1ed6524007cdb3bc41c8346528a6  id_a_p11_roundtrip.restamped.glb

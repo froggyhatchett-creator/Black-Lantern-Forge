@@ -31,7 +31,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 JOB_SCRIPT = HERE / "job_blender.py"
 PINNED_VERSION = "5.2.2"   # the version proposed for approval (bpy 5.2.2 / Blender 5.2.2); fail closed on anything else
-OPERATIONS = ("inspect", "roundtrip", "rig_roundtrip", "weights_smooth_copy", "simplify", "extract_region")
+OPERATIONS = ("inspect", "roundtrip", "rig_roundtrip", "weights_smooth_copy", "weights_edit_seam_safe", "simplify", "extract_region")
 SCHEMA = "forge.blender-job"
 SCHEMA_VERSION = 1
 

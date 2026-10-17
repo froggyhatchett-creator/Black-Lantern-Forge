@@ -291,15 +291,33 @@ def main():
             tb, vb, _ = cb[k]
             if np.ptp(vb, axis=0).max() < 1e-6:
                 constant_extra += 1
+        same_count = [k for k in ca if k in cb and len(ca[k][0]) == len(cb[k][0])]
+        kt = max((float(np.abs(ca[k][0] - cb[k][0]).max()) for k in same_count), default=None)
         dur = lambda c: max(float(v[0][-1]) for v in c.values())
         anims[an["name"]] = {"channels": [len(ca), len(cb)], "source_channels_missing": len(set(ca) - set(cb)), "extra_channels": len(set(cb) - set(ca)),
                              "extra_channels_constant": constant_extra, "duration_s": [round(dur(ca), 5), round(dur(cb), 5)],
                              "keys_per_channel": [sorted({len(v[0]) for v in ca.values()}), sorted({len(v[0]) for v in cb.values()})],
                              "interpolation": [sorted({v[2] for v in ca.values()}), sorted({v[2] for v in cb.values()})],
                              "max_rotation_deg_at_source_keys": round(worst["rotation"], 5), "max_translation_mm_at_source_keys": round(worst["translation"] * 1000, 5),
-                             "max_scale_diff": round(worst["scale"], 7)}
+                             "max_scale_diff": round(worst["scale"], 7),
+                             "channel_sets_equal": set(ca) == set(cb),
+                             "key_times_max_abs_diff_s": kt, "channels_with_same_key_count": f"{len(same_count)}/{len(ca)}"}
     rep["animations"] = anims
     rep["animations_extra_in_roundtrip"] = sorted(set(ad) - {a["name"] for a in S.g["animations"]})
+    rep["animation_order"] = {"source": [a["name"] for a in S.g["animations"]], "roundtrip": [a["name"] for a in D.g.get("animations", [])]}
+    rep["animation_order"]["same"] = rep["animation_order"]["source"] == rep["animation_order"]["roundtrip"]
+    # by role, not bare name (a joint and a mesh node can share a name, e.g. eye_l); type-strict (JSON text)
+    def node_extras(gg):
+        jset = set(gg.g["skins"][0]["joints"])
+        return {("joint" if i in jset else "node") + ":" + gg.name(i): json.dumps(n.get("extras"), sort_keys=True)
+                for i, n in enumerate(gg.g["nodes"]) if n.get("extras")}
+    ne_s, ne_d = node_extras(S), node_extras(D)
+    rep["node_extras"] = {"source_nodes": len(ne_s), "roundtrip_nodes": len(ne_d), "equal": ne_s == ne_d,
+                          "missing": sorted(k for k in ne_s if k not in ne_d), "different": sorted(k for k in ne_s if k in ne_d and ne_s[k] != ne_d[k]),
+                          "extra": sorted(k for k in ne_d if k not in ne_s)}
+    mw = lambda gg: {m.get("name"): m.get("weights") for m in gg.g["meshes"] if m.get("weights") is not None}
+    rep["mesh_default_weights"] = {"source": mw(S), "roundtrip": mw(D), "equal": mw(S) == mw(D)}
+    rep["asset_extras_equal"] = S.g["asset"].get("extras") == D.g["asset"].get("extras")
     # --- playback through the independent player
     play = {}
     want = ",".join(n for n in MS if n in MD)

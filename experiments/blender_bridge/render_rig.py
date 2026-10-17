@@ -3,7 +3,7 @@
 the base colour factor), drawn with Forge's renderer. Strand cards are drawn solid (the renderer has no alpha mask).
 
     python3 render_rig.py <out prefix> <label>=<glb> [<label>=<glb> ...]
-Writes <prefix>_rest.jpg, <prefix>_walk.jpg, <prefix>_blink.jpg, <prefix>_diff.jpg (first two files, |difference| x10).
+Writes <prefix>_rest.jpg, <prefix>_walk.jpg, <prefix>_run.jpg, <prefix>_blink.jpg, <prefix>_diff.jpg (first two files, |difference| x10).
 """
 import io
 import subprocess
@@ -72,6 +72,8 @@ def main():
         rest = [posed(p, tmp, f"rest{k}", None, [0], {}, names)[0] for k, (_, _, p) in enumerate(gs)]
         walkf = [0, 8, 16, 24]
         walk = [posed(p, tmp, f"walk{k}", "walk", walkf, {}, names) for k, (_, _, p) in enumerate(gs)]
+        runf = [0, 5, 10, 15]
+        run = [posed(p, tmp, f"run{k}", "run", runf, {}, names) for k, (_, _, p) in enumerate(gs)]
         blinks = [0, 0.5, 1]
         blink = [[posed(p, tmp, f"blink{k}_{w}", None, [0], {"blink_l": w, "blink_r": w}, names)[0] for w in blinks] for k, (_, _, p) in enumerate(gs)]
     tiles, imgs = [], {}
@@ -90,6 +92,13 @@ def main():
     save(sheet(tiles, len(walkf)), f"{prefix}_walk.jpg")
     tiles = []
     for k, (lab, _, _) in enumerate(gs):
+        for f in runf:
+            im = rasterize(items(run[k][f], cols[k]), Camera(yaw_deg=60, pitch_deg=3, target=(0, 0.85, 0), distance=5.2, fov_deg=22), W=300, H=560, background=BG, ground_y=0.0)
+            imgs[("run", f, k)] = im
+            tiles.append(label(im, f"{lab}: run t = {f}/30 s", size=12))
+    save(sheet(tiles, len(runf)), f"{prefix}_run.jpg")
+    tiles = []
+    for k, (lab, _, _) in enumerate(gs):
         for j, w in enumerate(blinks):
             head = rest[k]["body"][0]
             em = head[head[:, 1] > 1.45].mean(0)
@@ -99,7 +108,7 @@ def main():
             tiles.append(label(im, f"{lab}: blink {w}", size=12))
     save(sheet(tiles, len(blinks)), f"{prefix}_blink.jpg")
     tiles = []
-    for key in [("rest", 0), ("rest", 35)] + [("walk", f) for f in walkf] + [("blink", w) for w in blinks]:
+    for key in [("rest", 0), ("rest", 35)] + [("walk", f) for f in walkf] + [("run", f) for f in runf] + [("blink", w) for w in blinks]:
         for k in range(1, len(gs)):
             a, b = imgs[key + (0,)], imgs[key + (k,)]
             dif = np.abs(a.astype(int) - b.astype(int)).max(2)

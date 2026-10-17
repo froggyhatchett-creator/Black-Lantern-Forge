@@ -1,0 +1,129 @@
+{
+ "isolation_baseline_vs_edited": {
+  "basic_shorts": {
+   "same_vertex_order_and_triangles": true,
+   "position_max_abs": 0.0,
+   "normal_max_abs": 0.0,
+   "morph_max_abs": 0.0,
+   "weights_changed_vertices": 0,
+   "weights_max_change": 0.0
+  },
+  "basic_top": {
+   "same_vertex_order_and_triangles": true,
+   "position_max_abs": 0.0,
+   "normal_max_abs": 0.0,
+   "morph_max_abs": 0.0,
+   "weights_changed_vertices": 0,
+   "weights_max_change": 0.0
+  },
+  "body": {
+   "same_vertex_order_and_triangles": true,
+   "position_max_abs": 0.0,
+   "normal_max_abs": 0.0,
+   "uv_max_abs": 0.0,
+   "morph_max_abs": 0.0,
+   "weights_changed_vertices": 696,
+   "weights_max_change": 0.07272195816040039
+  },
+  "brows": {
+   "same_vertex_order_and_triangles": true,
+   "position_max_abs": 0.0,
+   "normal_max_abs": 0.0,
+   "uv_max_abs": 0.0,
+   "morph_max_abs": 0.0,
+   "weights_changed_vertices": 0,
+   "weights_max_change": 0.0
+  },
+  "cornea_l": {
+   "same_vertex_order_and_triangles": true,
+   "position_max_abs": 0.0,
+   "normal_max_abs": 0.0,
+   "morph_max_abs": 0.0,
+   "weights_changed_vertices": 0,
+   "weights_max_change": 0.0
+  },
+  "cornea_r": {
+   "same_vertex_order_and_triangles": true,
+   "position_max_abs": 0.0,
+   "normal_max_abs": 0.0,
+   "morph_max_abs": 0.0,
+   "weights_changed_vertices": 0,
+   "weights_max_change": 0.0
+  },
+  "eye_l": {
+   "same_vertex_order_and_triangles": true,
+   "position_max_abs": 0.0,
+   "normal_max_abs": 0.0,
+   "uv_max_abs": 0.0,
+   "morph_max_abs": 0.0,
+   "weights_changed_vertices": 0,
+   "weights_max_change": 0.0
+  },
+  "eye_r": {
+   "same_vertex_order_and_triangles": true,
+   "position_max_abs": 0.0,
+   "normal_max_abs": 0.0,
+   "uv_max_abs": 0.0,
+   "morph_max_abs": 0.0,
+   "weights_changed_vertices": 0,
+   "weights_max_change": 0.0
+  },
+  "hair_shoulder": {
+   "same_vertex_order_and_triangles": true,
+   "position_max_abs": 0.0,
+   "normal_max_abs": 0.0,
+   "uv_max_abs": 0.0,
+   "morph_max_abs": 0.0,
+   "weights_changed_vertices": 0,
+   "weights_max_change": 0.0
+  },
+  "lashes": {
+   "same_vertex_order_and_triangles": true,
+   "position_max_abs": 0.0,
+   "normal_max_abs": 0.0,
+   "uv_max_abs": 0.0,
+   "morph_max_abs": 0.0,
+   "weights_changed_vertices": 0,
+   "weights_max_change": 0.0
+  }
+ },
+ "seams": {
+  "groups": 1122,
+  "groups_with_different_weights": 0,
+  "max_posed_opening_mm_all_walk_run_frames": 0.0
+ },
+ "garments_walk_run_all_frames": {
+  "source": {
+   "basic_shorts": {
+    "frames": 52,
+    "inside_gt_1mm_total": 328,
+    "inside_gt_1mm_max_per_frame": 12,
+    "deepest_mm": 11.472,
+    "left_leg_inside_gt_1mm_total": 44
+   },
+   "basic_top": {
+    "frames": 52,
+    "inside_gt_1mm_total": 930,
+    "inside_gt_1mm_max_per_frame": 28,
+    "deepest_mm": 8.346,
+    "left_leg_inside_gt_1mm_total": 13
+   }
+  },
+  "edited": {
+   "basic_shorts": {
+    "frames": 52,
+    "inside_gt_1mm_total": 328,
+    "inside_gt_1mm_max_per_frame": 12,
+    "deepest_mm": 11.472,
+    "left_leg_inside_gt_1mm_total": 44
+   },
+   "basic_top": {
+    "frames": 52,
+    "inside_gt_1mm_total": 930,
+    "inside_gt_1mm_max_per_frame": 28,
+    "deepest_mm": 8.346,
+    "left_leg_inside_gt_1mm_total": 13
+   }
+  }
+ }
+}

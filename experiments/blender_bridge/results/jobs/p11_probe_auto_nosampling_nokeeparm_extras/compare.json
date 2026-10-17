@@ -1,0 +1,1461 @@
+{
+ "source": "../../examples/character_forge_aaa/humanity/v3_phase4a/regression/v3_identity_id_a.glb",
+ "roundtrip": "jobs/20261017T075724_rig_roundtrip_c257a6b1_jcvc56q6/output/id_a_auto_nosampling_nokeeparm_extras.glb",
+ "validator_source": {
+  "errors": [],
+  "warnings": [],
+  "stats": {
+   "meshes": 10,
+   "triangles": 130124,
+   "vertices": 124127,
+   "joints": 62,
+   "morph_targets": 8,
+   "animations": 7,
+   "materials": 8,
+   "images": 5,
+   "profile": "public"
+  }
+ },
+ "validator_roundtrip": {
+  "errors": [],
+  "warnings": [],
+  "stats": {
+   "meshes": 10,
+   "triangles": 130124,
+   "vertices": 124127,
+   "joints": 62,
+   "morph_targets": 8,
+   "animations": 7,
+   "materials": 8,
+   "images": 5,
+   "profile": null
+  }
+ },
+ "asset": {
+  "source_generator": "Black Lantern Character Studio (browser export)",
+  "roundtrip_generator": "Khronos glTF Blender I/O v5.2.40",
+  "source_has_forge_extras": true,
+  "roundtrip_has_forge_extras": false
+ },
+ "skin": {
+  "joints_source": 62,
+  "joints_roundtrip": 62,
+  "same_names": true,
+  "same_order": false,
+  "hierarchy_same": true,
+  "inverse_bind_max_abs_diff": 2e-07,
+  "rest_joint_position_max_mm": 0.0002,
+  "rest_joint_rotation_max_deg": 0.0,
+  "rest_x_inverse_bind_identity_err_source": 0.0,
+  "rest_x_inverse_bind_identity_err_roundtrip": 3e-07,
+  "extra_nodes_roundtrip": []
+ },
+ "meshes": {
+  "body": {
+   "vertices": [
+    14517,
+    14517
+   ],
+   "triangles": [
+    26756,
+    26756
+   ],
+   "primitives_roundtrip": 1,
+   "attributes": [
+    [
+     "JOINTS_0",
+     "NORMAL",
+     "POSITION",
+     "TEXCOORD_0",
+     "WEIGHTS_0"
+    ],
+    [
+     "JOINTS_0",
+     "NORMAL",
+     "POSITION",
+     "TEXCOORD_0",
+     "WEIGHTS_0"
+    ]
+   ],
+   "material": [
+    "skin_textured",
+    "skin_textured"
+   ],
+   "unmatched_vertices": 22,
+   "position_max_mm": 1e-05,
+   "same_triangle_set": false,
+   "normal_max_deg": 0.092,
+   "uv_max_abs_diff": 0.1180030107498169,
+   "skin_weight_max_abs_diff": 0.0,
+   "morph_targets": [
+    [
+     "blink_l",
+     "blink_r"
+    ],
+    [
+     "blink_l",
+     "blink_r"
+    ]
+   ],
+   "morph_delta_max_mm": {
+    "blink_l": 6e-05,
+    "blink_r": 6e-05
+   }
+  },
+  "eye_l": {
+   "vertices": [
+    276,
+    276
+   ],
+   "triangles": [
+    530,
+    530
+   ],
+   "primitives_roundtrip": 1,
+   "attributes": [
+    [
+     "JOINTS_0",
+     "NORMAL",
+     "POSITION",
+     "TEXCOORD_0",
+     "WEIGHTS_0"
+    ],
+    [
+     "JOINTS_0",
+     "NORMAL",
+     "POSITION",
+     "TEXCOORD_0",
+     "WEIGHTS_0"
+    ]
+   ],
+   "material": [
+    "eye_textured",
+    "eye_textured"
+   ],
+   "unmatched_vertices": 0,
+   "position_max_mm": 0.0,
+   "same_triangle_set": true,
+   "normal_max_deg": 0.0297,
+   "uv_max_abs_diff": 0.0,
+   "skin_weight_max_abs_diff": 0.0,
+   "morph_targets": [
+    [],
+    []
+   ],
+   "morph_delta_max_mm": {}
+  },
+  "cornea_l": {
+   "vertices": [
+    256,
+    256
+   ],
+   "triangles": [
+    490,
+    490
+   ],
+   "primitives_roundtrip": 1,
+   "attributes": [
+    [
+     "JOINTS_0",
+     "NORMAL",
+     "POSITION",
+     "WEIGHTS_0"
+    ],
+    [
+     "JOINTS_0",
+     "NORMAL",
+     "POSITION",
+     "WEIGHTS_0"
+    ]
+   ],
+   "material": [
+    "cornea",
+    "cornea"
+   ],
+   "unmatched_vertices": 0,
+   "position_max_mm": 0.0,
+   "same_triangle_set": true,
+   "normal_max_deg": 0.0169,
+   "skin_weight_max_abs_diff": 0.0,
+   "morph_targets": [
+    [],
+    []
+   ],
+   "morph_delta_max_mm": {}
+  },
+  "eye_r": {
+   "vertices": [
+    276,
+    276
+   ],
+   "triangles": [
+    530,
+    530
+   ],
+   "primitives_roundtrip": 1,
+   "attributes": [
+    [
+     "JOINTS_0",
+     "NORMAL",
+     "POSITION",
+     "TEXCOORD_0",
+     "WEIGHTS_0"
+    ],
+    [
+     "JOINTS_0",
+     "NORMAL",
+     "POSITION",
+     "TEXCOORD_0",
+     "WEIGHTS_0"
+    ]
+   ],
+   "material": [
+    "eye_textured",
+    "eye_textured"
+   ],
+   "unmatched_vertices": 0,
+   "position_max_mm": 0.0,
+   "same_triangle_set": true,
+   "normal_max_deg": 0.0247,
+   "uv_max_abs_diff": 0.0,
+   "skin_weight_max_abs_diff": 0.0,
+   "morph_targets": [
+    [],
+    []
+   ],
+   "morph_delta_max_mm": {}
+  },
+  "cornea_r": {
+   "vertices": [
+    256,
+    256
+   ],
+   "triangles": [
+    490,
+    490
+   ],
+   "primitives_roundtrip": 1,
+   "attributes": [
+    [
+     "JOINTS_0",
+     "NORMAL",
+     "POSITION",
+     "WEIGHTS_0"
+    ],
+    [
+     "JOINTS_0",
+     "NORMAL",
+     "POSITION",
+     "WEIGHTS_0"
+    ]
+   ],
+   "material": [
+    "cornea",
+    "cornea"
+   ],
+   "unmatched_vertices": 0,
+   "position_max_mm": 0.0,
+   "same_triangle_set": true,
+   "normal_max_deg": 0.0454,
+   "skin_weight_max_abs_diff": 0.0,
+   "morph_targets": [
+    [],
+    []
+   ],
+   "morph_delta_max_mm": {}
+  },
+  "basic_top": {
+   "vertices": [
+    1846,
+    1846
+   ],
+   "triangles": [
+    3419,
+    3419
+   ],
+   "primitives_roundtrip": 1,
+   "attributes": [
+    [
+     "JOINTS_0",
+     "NORMAL",
+     "POSITION",
+     "WEIGHTS_0"
+    ],
+    [
+     "JOINTS_0",
+     "NORMAL",
+     "POSITION",
+     "WEIGHTS_0"
+    ]
+   ],
+   "material": [
+    "cloth_basic_top",
+    "cloth_basic_top"
+   ],
+   "unmatched_vertices": 0,
+   "position_max_mm": 0.0,
+   "same_triangle_set": true,
+   "normal_max_deg": 0.0342,
+   "skin_weight_max_abs_diff": 0.0,
+   "morph_targets": [
+    [],
+    []
+   ],
+   "morph_delta_max_mm": {}
+  },
+  "basic_shorts": {
+   "vertices": [
+    784,
+    784
+   ],
+   "triangles": [
+    1381,
+    1381
+   ],
+   "primitives_roundtrip": 1,
+   "attributes": [
+    [
+     "JOINTS_0",
+     "NORMAL",
+     "POSITION",
+     "WEIGHTS_0"
+    ],
+    [
+     "JOINTS_0",
+     "NORMAL",
+     "POSITION",
+     "WEIGHTS_0"
+    ]
+   ],
+   "material": [
+    "cloth_basic_shorts",
+    "cloth_basic_shorts"
+   ],
+   "unmatched_vertices": 0,
+   "position_max_mm": 0.0,
+   "same_triangle_set": true,
+   "normal_max_deg": 0.0768,
+   "skin_weight_max_abs_diff": 0.0,
+   "morph_targets": [
+    [],
+    []
+   ],
+   "morph_delta_max_mm": {}
+  },
+  "brows": {
+   "vertices": [
+    8320,
+    8320
+   ],
+   "triangles": [
+    6240,
+    6240
+   ],
+   "primitives_roundtrip": 1,
+   "attributes": [
+    [
+     "JOINTS_0",
+     "NORMAL",
+     "POSITION",
+     "TEXCOORD_0",
+     "WEIGHTS_0"
+    ],
+    [
+     "JOINTS_0",
+     "NORMAL",
+     "POSITION",
+     "TEXCOORD_0",
+     "WEIGHTS_0"
+    ]
+   ],
+   "material": [
+    "strand_brow",
+    "strand_brow"
+   ],
+   "unmatched_vertices": 0,
+   "position_max_mm": 0.00096,
+   "same_triangle_set": true,
+   "normal_max_deg": 5.2299,
+   "uv_max_abs_diff": 0.0,
+   "skin_weight_max_abs_diff": 0.0,
+   "morph_targets": [
+    [
+     "blink_l",
+     "blink_r"
+    ],
+    [
+     "blink_l",
+     "blink_r"
+    ]
+   ],
+   "morph_delta_max_mm": {
+    "blink_l": 0.0,
+    "blink_r": 0.00012
+   }
+  },
+  "lashes": {
+   "vertices": [
+    2620,
+    2620
+   ],
+   "triangles": [
+    2096,
+    2096
+   ],
+   "primitives_roundtrip": 1,
+   "attributes": [
+    [
+     "JOINTS_0",
+     "NORMAL",
+     "POSITION",
+     "TEXCOORD_0",
+     "WEIGHTS_0"
+    ],
+    [
+     "JOINTS_0",
+     "NORMAL",
+     "POSITION",
+     "TEXCOORD_0",
+     "WEIGHTS_0"
+    ]
+   ],
+   "material": [
+    "strand_lash",
+    "strand_lash"
+   ],
+   "unmatched_vertices": 0,
+   "position_max_mm": 0.0,
+   "same_triangle_set": true,
+   "normal_max_deg": 0.0336,
+   "uv_max_abs_diff": 0.0,
+   "skin_weight_max_abs_diff": 0.0,
+   "morph_targets": [
+    [
+     "blink_l",
+     "blink_r"
+    ],
+    [
+     "blink_l",
+     "blink_r"
+    ]
+   ],
+   "morph_delta_max_mm": {
+    "blink_l": 0.0,
+    "blink_r": 0.0
+   }
+  },
+  "hair_shoulder": {
+   "vertices": [
+    94976,
+    94976
+   ],
+   "triangles": [
+    88192,
+    88192
+   ],
+   "primitives_roundtrip": 1,
+   "attributes": [
+    [
+     "COLOR_0",
+     "JOINTS_0",
+     "NORMAL",
+     "POSITION",
+     "TEXCOORD_0",
+     "WEIGHTS_0"
+    ],
+    [
+     "COLOR_0",
+     "JOINTS_0",
+     "NORMAL",
+     "POSITION",
+     "TEXCOORD_0",
+     "WEIGHTS_0"
+    ]
+   ],
+   "material": [
+    "strand_hair",
+    "strand_hair"
+   ],
+   "unmatched_vertices": 0,
+   "position_max_mm": 0.0,
+   "same_triangle_set": true,
+   "normal_max_deg": 0.2964,
+   "uv_max_abs_diff": 0.0,
+   "color_max_abs_diff": 0.003936822740729817,
+   "skin_weight_max_abs_diff": 0.0,
+   "morph_targets": [
+    [
+     "blink_l",
+     "blink_r"
+    ],
+    [
+     "blink_l",
+     "blink_r"
+    ]
+   ],
+   "morph_delta_max_mm": {
+    "blink_l": 0.0,
+    "blink_r": 0.0
+   }
+  }
+ },
+ "meshes_extra_in_roundtrip": [],
+ "materials": {
+  "skin_textured": {
+   "baseColorFactor": [
+    [
+     0.745636832455541,
+     0.38788139845772407,
+     0.23923925766292,
+     1
+    ],
+    [
+     0.7456368207931519,
+     0.38788139820098877,
+     0.23923926055431366,
+     1
+    ]
+   ],
+   "metallic_roughness": [
+    [
+     0,
+     0.55
+    ],
+    [
+     0,
+     0.550000011920929
+    ]
+   ],
+   "alphaMode": [
+    "OPAQUE",
+    "OPAQUE"
+   ],
+   "alphaCutoff": [
+    null,
+    null
+   ],
+   "doubleSided": [
+    false,
+    false
+   ],
+   "textures": {
+    "baseColor": {
+     "image": [
+      "skin_albedo",
+      "skin_albedo"
+     ],
+     "size": [
+      [
+       2048,
+       2048
+      ],
+      [
+       2048,
+       2048
+      ]
+     ],
+     "pixel_max_abs_diff": 0,
+     "sampler": [
+      {
+       "magFilter": 9729,
+       "minFilter": 9987,
+       "wrapS": 33071,
+       "wrapT": 33071
+      },
+      {
+       "magFilter": 9729,
+       "minFilter": 9987,
+       "wrapS": 33071,
+       "wrapT": 33071
+      }
+     ],
+     "scale": [
+      null,
+      null
+     ]
+    },
+    "normal": {
+     "image": [
+      "skin_normal",
+      "skin_normal"
+     ],
+     "size": [
+      [
+       1024,
+       1024
+      ],
+      [
+       1024,
+       1024
+      ]
+     ],
+     "pixel_max_abs_diff": 0,
+     "sampler": [
+      {
+       "magFilter": 9729,
+       "minFilter": 9987,
+       "wrapS": 33071,
+       "wrapT": 33071
+      },
+      {
+       "magFilter": 9729,
+       "minFilter": 9987,
+       "wrapS": 33071,
+       "wrapT": 33071
+      }
+     ],
+     "scale": [
+      null,
+      null
+     ]
+    }
+   }
+  },
+  "eye_textured": {
+   "baseColorFactor": [
+    [
+     1,
+     1,
+     1,
+     1
+    ],
+    [
+     1,
+     1,
+     1,
+     1
+    ]
+   ],
+   "metallic_roughness": [
+    [
+     0,
+     0.2
+    ],
+    [
+     0,
+     0.20000000298023224
+    ]
+   ],
+   "alphaMode": [
+    "OPAQUE",
+    "OPAQUE"
+   ],
+   "alphaCutoff": [
+    null,
+    null
+   ],
+   "doubleSided": [
+    false,
+    false
+   ],
+   "textures": {
+    "baseColor": {
+     "image": [
+      "eye",
+      "eye"
+     ],
+     "size": [
+      [
+       1024,
+       1024
+      ],
+      [
+       1024,
+       1024
+      ]
+     ],
+     "pixel_max_abs_diff": 0,
+     "sampler": [
+      {
+       "magFilter": 9729,
+       "minFilter": 9987,
+       "wrapS": 33071,
+       "wrapT": 33071
+      },
+      {
+       "magFilter": 9729,
+       "minFilter": 9987,
+       "wrapS": 33071,
+       "wrapT": 33071
+      }
+     ],
+     "scale": [
+      null,
+      null
+     ]
+    }
+   }
+  },
+  "cornea": {
+   "baseColorFactor": [
+    [
+     1,
+     1,
+     1,
+     0.08
+    ],
+    [
+     1,
+     1,
+     1,
+     0.07999999821186066
+    ]
+   ],
+   "metallic_roughness": [
+    [
+     0,
+     0.03
+    ],
+    [
+     0,
+     0.029999999329447746
+    ]
+   ],
+   "alphaMode": [
+    "BLEND",
+    "BLEND"
+   ],
+   "alphaCutoff": [
+    null,
+    null
+   ],
+   "doubleSided": [
+    false,
+    false
+   ],
+   "textures": {}
+  },
+  "cloth_basic_top": {
+   "baseColorFactor": [
+    [
+     0.3,
+     0.34,
+     0.42,
+     1
+    ],
+    [
+     0.30000001192092896,
+     0.3400000035762787,
+     0.41999998688697815,
+     1
+    ]
+   ],
+   "metallic_roughness": [
+    [
+     0,
+     0.85
+    ],
+    [
+     0,
+     0.8500000238418579
+    ]
+   ],
+   "alphaMode": [
+    "OPAQUE",
+    "OPAQUE"
+   ],
+   "alphaCutoff": [
+    null,
+    null
+   ],
+   "doubleSided": [
+    true,
+    true
+   ],
+   "textures": {}
+  },
+  "cloth_basic_shorts": {
+   "baseColorFactor": [
+    [
+     0.16,
+     0.17,
+     0.2,
+     1
+    ],
+    [
+     0.1599999964237213,
+     0.17000000178813934,
+     0.20000000298023224,
+     1
+    ]
+   ],
+   "metallic_roughness": [
+    [
+     0,
+     0.85
+    ],
+    [
+     0,
+     0.8500000238418579
+    ]
+   ],
+   "alphaMode": [
+    "OPAQUE",
+    "OPAQUE"
+   ],
+   "alphaCutoff": [
+    null,
+    null
+   ],
+   "doubleSided": [
+    true,
+    true
+   ],
+   "textures": {}
+  },
+  "strand_brow": {
+   "baseColorFactor": [
+    [
+     0.02405426609133541,
+     0.009703074968611244,
+     0.004412756141961747,
+     1
+    ],
+    [
+     0.02405426651239395,
+     0.0097030745819211,
+     0.00441275630146265,
+     1
+    ]
+   ],
+   "metallic_roughness": [
+    [
+     0,
+     0.5
+    ],
+    [
+     0,
+     0.5
+    ]
+   ],
+   "alphaMode": [
+    "MASK",
+    "MASK"
+   ],
+   "alphaCutoff": [
+    0.3,
+    0.30000001192092896
+   ],
+   "doubleSided": [
+    true,
+    true
+   ],
+   "textures": {
+    "baseColor": {
+     "image": [
+      "strand_single",
+      "strand_single"
+     ],
+     "size": [
+      [
+       64,
+       256
+      ],
+      [
+       64,
+       256
+      ]
+     ],
+     "pixel_max_abs_diff": 0,
+     "sampler": [
+      {
+       "magFilter": 9729,
+       "minFilter": 9987,
+       "wrapS": 33071,
+       "wrapT": 33071
+      },
+      {
+       "magFilter": 9729,
+       "minFilter": 9987,
+       "wrapS": 33071,
+       "wrapT": 33071
+      }
+     ],
+     "scale": [
+      null,
+      null
+     ]
+    }
+   }
+  },
+  "strand_lash": {
+   "baseColorFactor": [
+    [
+     0.025,
+     0.02,
+     0.018,
+     1
+    ],
+    [
+     0.02500000037252903,
+     0.019999999552965164,
+     0.017999999225139618,
+     1
+    ]
+   ],
+   "metallic_roughness": [
+    [
+     0,
+     0.5
+    ],
+    [
+     0,
+     0.5
+    ]
+   ],
+   "alphaMode": [
+    "MASK",
+    "MASK"
+   ],
+   "alphaCutoff": [
+    0.3,
+    0.30000001192092896
+   ],
+   "doubleSided": [
+    true,
+    true
+   ],
+   "textures": {
+    "baseColor": {
+     "image": [
+      "strand_single",
+      "strand_single"
+     ],
+     "size": [
+      [
+       64,
+       256
+      ],
+      [
+       64,
+       256
+      ]
+     ],
+     "pixel_max_abs_diff": 0,
+     "sampler": [
+      {
+       "magFilter": 9729,
+       "minFilter": 9987,
+       "wrapS": 33071,
+       "wrapT": 33071
+      },
+      {
+       "magFilter": 9729,
+       "minFilter": 9987,
+       "wrapS": 33071,
+       "wrapT": 33071
+      }
+     ],
+     "scale": [
+      null,
+      null
+     ]
+    }
+   }
+  },
+  "strand_hair": {
+   "baseColorFactor": [
+    [
+     0.043735029256973465,
+     0.017641954488384078,
+     0.008023192985384994,
+     1
+    ],
+    [
+     0.04373503103852272,
+     0.017641954123973846,
+     0.00802319310605526,
+     1
+    ]
+   ],
+   "metallic_roughness": [
+    [
+     0,
+     0.4
+    ],
+    [
+     0,
+     0.4000000059604645
+    ]
+   ],
+   "alphaMode": [
+    "MASK",
+    "MASK"
+   ],
+   "alphaCutoff": [
+    0.3,
+    0.30000001192092896
+   ],
+   "doubleSided": [
+    true,
+    true
+   ],
+   "textures": {
+    "baseColor": {
+     "image": [
+      "strand_hair",
+      "strand_hair"
+     ],
+     "size": [
+      [
+       64,
+       256
+      ],
+      [
+       64,
+       256
+      ]
+     ],
+     "pixel_max_abs_diff": 0,
+     "sampler": [
+      {
+       "magFilter": 9729,
+       "minFilter": 9987,
+       "wrapS": 33071,
+       "wrapT": 33071
+      },
+      {
+       "magFilter": 9729,
+       "minFilter": 9987,
+       "wrapS": 33071,
+       "wrapT": 33071
+      }
+     ],
+     "scale": [
+      null,
+      null
+     ]
+    }
+   }
+  }
+ },
+ "animations": {
+  "idle": {
+   "channels": [
+    6,
+    6
+   ],
+   "source_channels_missing": 0,
+   "extra_channels": 0,
+   "extra_channels_constant": 0,
+   "duration_s": [
+    1.96667,
+    1.96667
+   ],
+   "keys_per_channel": [
+    [
+     60
+    ],
+    [
+     60
+    ]
+   ],
+   "interpolation": [
+    [
+     "LINEAR"
+    ],
+    [
+     "LINEAR"
+    ]
+   ],
+   "max_rotation_deg_at_source_keys": 1e-05,
+   "max_translation_mm_at_source_keys": 6e-05,
+   "max_scale_diff": 0.0,
+   "channel_sets_equal": true,
+   "key_times_max_abs_diff_s": 0.0,
+   "channels_with_same_key_count": "6/6"
+  },
+  "walk": {
+   "channels": [
+    14,
+    14
+   ],
+   "source_channels_missing": 0,
+   "extra_channels": 0,
+   "extra_channels_constant": 0,
+   "duration_s": [
+    1.03333,
+    1.03333
+   ],
+   "keys_per_channel": [
+    [
+     32
+    ],
+    [
+     32
+    ]
+   ],
+   "interpolation": [
+    [
+     "LINEAR"
+    ],
+    [
+     "LINEAR"
+    ]
+   ],
+   "max_rotation_deg_at_source_keys": 1e-05,
+   "max_translation_mm_at_source_keys": 6e-05,
+   "max_scale_diff": 0.0,
+   "channel_sets_equal": true,
+   "key_times_max_abs_diff_s": 0.0,
+   "channels_with_same_key_count": "14/14"
+  },
+  "run": {
+   "channels": [
+    14,
+    14
+   ],
+   "source_channels_missing": 0,
+   "extra_channels": 0,
+   "extra_channels_constant": 0,
+   "duration_s": [
+    0.63333,
+    0.63333
+   ],
+   "keys_per_channel": [
+    [
+     20
+    ],
+    [
+     20
+    ]
+   ],
+   "interpolation": [
+    [
+     "LINEAR"
+    ],
+    [
+     "LINEAR"
+    ]
+   ],
+   "max_rotation_deg_at_source_keys": 1e-05,
+   "max_translation_mm_at_source_keys": 6e-05,
+   "max_scale_diff": 0.0,
+   "channel_sets_equal": true,
+   "key_times_max_abs_diff_s": 0.0,
+   "channels_with_same_key_count": "14/14"
+  },
+  "jump": {
+   "channels": [
+    10,
+    10
+   ],
+   "source_channels_missing": 0,
+   "extra_channels": 0,
+   "extra_channels_constant": 0,
+   "duration_s": [
+    1.53333,
+    1.53333
+   ],
+   "keys_per_channel": [
+    [
+     47
+    ],
+    [
+     47
+    ]
+   ],
+   "interpolation": [
+    [
+     "LINEAR"
+    ],
+    [
+     "LINEAR"
+    ]
+   ],
+   "max_rotation_deg_at_source_keys": 2e-05,
+   "max_translation_mm_at_source_keys": 0.00012,
+   "max_scale_diff": 0.0,
+   "channel_sets_equal": true,
+   "key_times_max_abs_diff_s": 0.0,
+   "channels_with_same_key_count": "10/10"
+  },
+  "turn": {
+   "channels": [
+    10,
+    10
+   ],
+   "source_channels_missing": 0,
+   "extra_channels": 0,
+   "extra_channels_constant": 0,
+   "duration_s": [
+    2.36667,
+    2.36667
+   ],
+   "keys_per_channel": [
+    [
+     72
+    ],
+    [
+     72
+    ]
+   ],
+   "interpolation": [
+    [
+     "LINEAR"
+    ],
+    [
+     "LINEAR"
+    ]
+   ],
+   "max_rotation_deg_at_source_keys": 2e-05,
+   "max_translation_mm_at_source_keys": 6e-05,
+   "max_scale_diff": 0.0,
+   "channel_sets_equal": true,
+   "key_times_max_abs_diff_s": 0.0,
+   "channels_with_same_key_count": "10/10"
+  },
+  "sudden_stop": {
+   "channels": [
+    10,
+    10
+   ],
+   "source_channels_missing": 0,
+   "extra_channels": 0,
+   "extra_channels_constant": 0,
+   "duration_s": [
+    2.46667,
+    2.46667
+   ],
+   "keys_per_channel": [
+    [
+     75
+    ],
+    [
+     75
+    ]
+   ],
+   "interpolation": [
+    [
+     "LINEAR"
+    ],
+    [
+     "LINEAR"
+    ]
+   ],
+   "max_rotation_deg_at_source_keys": 2e-05,
+   "max_translation_mm_at_source_keys": 0.00036,
+   "max_scale_diff": 0.0,
+   "channel_sets_equal": true,
+   "key_times_max_abs_diff_s": 0.0,
+   "channels_with_same_key_count": "10/10"
+  },
+  "wave": {
+   "channels": [
+    6,
+    6
+   ],
+   "source_channels_missing": 0,
+   "extra_channels": 0,
+   "extra_channels_constant": 0,
+   "duration_s": [
+    1.3,
+    1.3
+   ],
+   "keys_per_channel": [
+    [
+     40
+    ],
+    [
+     40
+    ]
+   ],
+   "interpolation": [
+    [
+     "LINEAR"
+    ],
+    [
+     "LINEAR"
+    ]
+   ],
+   "max_rotation_deg_at_source_keys": 1e-05,
+   "max_translation_mm_at_source_keys": 6e-05,
+   "max_scale_diff": 0.0,
+   "channel_sets_equal": true,
+   "key_times_max_abs_diff_s": 0.0,
+   "channels_with_same_key_count": "6/6"
+  }
+ },
+ "animations_extra_in_roundtrip": [],
+ "animation_order": {
+  "source": [
+   "idle",
+   "walk",
+   "run",
+   "jump",
+   "turn",
+   "sudden_stop",
+   "wave"
+  ],
+  "roundtrip": [
+   "idle",
+   "jump",
+   "run",
+   "sudden_stop",
+   "turn",
+   "walk",
+   "wave"
+  ],
+  "same": false
+ },
+ "node_extras": {
+  "source_nodes": 27,
+  "roundtrip_nodes": 27,
+  "equal": true,
+  "missing": [],
+  "different": [],
+  "extra": []
+ },
+ "mesh_default_weights": {
+  "source": {
+   "body": [
+    0,
+    0
+   ],
+   "brows": [
+    0,
+    0
+   ],
+   "lashes": [
+    0,
+    0
+   ],
+   "hair_shoulder": [
+    0,
+    0
+   ]
+  },
+  "roundtrip": {
+   "body": [
+    0,
+    0
+   ],
+   "brows": [
+    0,
+    0
+   ],
+   "hair_shoulder": [
+    0,
+    0
+   ],
+   "lashes": [
+    0,
+    0
+   ]
+  },
+  "equal": true
+ },
+ "asset_extras_equal": false,
+ "playback": {
+  "walk_nomorph": {
+   "frames": [
+    0,
+    4,
+    8,
+    12,
+    16,
+    20,
+    24,
+    28,
+    31
+   ],
+   "max_mm": 0.001,
+   "worst_mesh": "brows",
+   "per_mesh_max_mm": {
+    "body": 0.0005,
+    "eye_l": 0.0005,
+    "cornea_l": 0.0005,
+    "eye_r": 0.0005,
+    "cornea_r": 0.0005,
+    "basic_top": 0.0004,
+    "basic_shorts": 0.0003,
+    "brows": 0.001,
+    "lashes": 0.0005,
+    "hair_shoulder": 0.0005
+   }
+  },
+  "rest_blink_l0.5_blink_r0.5": {
+   "frames": [
+    0
+   ],
+   "max_mm": 0.001,
+   "worst_mesh": "brows",
+   "per_mesh_max_mm": {
+    "body": 0.0006,
+    "eye_l": 0.0005,
+    "cornea_l": 0.0005,
+    "eye_r": 0.0005,
+    "cornea_r": 0.0005,
+    "basic_top": 0.0002,
+    "basic_shorts": 0.0002,
+    "brows": 0.001,
+    "lashes": 0.0005,
+    "hair_shoulder": 0.0004
+   }
+  },
+  "rest_blink_l1_blink_r1": {
+   "frames": [
+    0
+   ],
+   "max_mm": 0.001,
+   "worst_mesh": "brows",
+   "per_mesh_max_mm": {
+    "body": 0.0005,
+    "eye_l": 0.0005,
+    "cornea_l": 0.0005,
+    "eye_r": 0.0005,
+    "cornea_r": 0.0005,
+    "basic_top": 0.0002,
+    "basic_shorts": 0.0002,
+    "brows": 0.001,
+    "lashes": 0.0005,
+    "hair_shoulder": 0.0004
+   }
+  },
+  "run_nomorph": {
+   "frames": [
+    0,
+    5,
+    10,
+    15,
+    19
+   ],
+   "max_mm": 0.001,
+   "worst_mesh": "brows",
+   "per_mesh_max_mm": {
+    "body": 0.0005,
+    "eye_l": 0.0005,
+    "cornea_l": 0.0005,
+    "eye_r": 0.0005,
+    "cornea_r": 0.0005,
+    "basic_top": 0.0004,
+    "basic_shorts": 0.0002,
+    "brows": 0.001,
+    "lashes": 0.0005,
+    "hair_shoulder": 0.0005
+   }
+  },
+  "wave_blink_l1_blink_r1": {
+   "frames": [
+    0,
+    13,
+    26,
+    39
+   ],
+   "max_mm": 0.0009,
+   "worst_mesh": "brows",
+   "per_mesh_max_mm": {
+    "body": 0.0005,
+    "eye_l": 0.0005,
+    "cornea_l": 0.0005,
+    "eye_r": 0.0005,
+    "cornea_r": 0.0005,
+    "basic_top": 0.0003,
+    "basic_shorts": 0.0002,
+    "brows": 0.0009,
+    "lashes": 0.0005,
+    "hair_shoulder": 0.0004
+   }
+  }
+ }
+}

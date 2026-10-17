@@ -158,5 +158,61 @@ class VerifierTest(unittest.TestCase):
         self.assertFalse(self.check(self.P, self.sel[:-2])["pass"])
 
 
+class RestampTest(unittest.TestCase):
+    """forge_restamp.py refuses files that no longer support the source's claims (JSON-level edits of the committed
+    ID-A character), and restores metadata, joint extras and clip order when they do."""
+    SRC = Path(__file__).resolve().parents[2] / "examples/character_forge_aaa/humanity/v3_phase4a/regression/v3_identity_id_a.glb"
+
+    def setUp(self):
+        import forge_restamp
+        self.R = forge_restamp
+        self.tmp = Path(tempfile.mkdtemp())
+        self.js, self.bin = forge_restamp.chunks(self.SRC)
+
+    def processed(self, edit):
+        js = json.loads(json.dumps(self.js))
+        js["asset"].pop("extras", None)  # what Blender's exporter does
+        edit(js)
+        p = self.tmp / "processed.glb"
+        self.R.write_glb(p, js, self.bin)
+        return p
+
+    def run_restamp(self, p):
+        out = self.tmp / "out.glb"
+        with mock.patch.object(sys, "argv", ["forge_restamp.py", str(self.SRC), str(p), str(out)]), mock.patch("builtins.print"):
+            code = self.R.main()
+        return code, out
+
+    def test_restores_metadata_extras_and_clip_order(self):
+        def edit(js):
+            for j in js["skins"][0]["joints"]:
+                js["nodes"][j].pop("extras", None)
+            js["animations"] = sorted(js["animations"], key=lambda a: a["name"])
+        code, out = self.run_restamp(self.processed(edit))
+        self.assertEqual(code, 0)
+        js, _ = self.R.chunks(out)
+        forge = dict(js["asset"]["extras"]["forge"])
+        pp = forge.pop("post_processing")
+        self.assertEqual(forge, self.js["asset"]["extras"]["forge"])
+        self.assertTrue(pp[-1]["dna_reproduces_file"])
+        self.assertEqual([a["name"] for a in js["animations"]], [a["name"] for a in self.js["animations"]])
+        for j in js["skins"][0]["joints"]:  # extras land on joints only, never on a mesh node of the same name
+            self.assertEqual(js["nodes"][j].get("extras"), self.js["nodes"][j].get("extras"))
+        meshes = [n for n in js["nodes"] if "mesh" in n]
+        self.assertTrue(all("extras" not in n for n in meshes))
+
+    def test_refuses_unsupported_claims(self):
+        def rotate(js):
+            js["nodes"][js["skins"][0]["joints"][5]]["rotation"] = [0.1, 0, 0, 0.995]
+        def rename_clip(js):
+            js["animations"][1]["name"] = "walk_v2"
+        def drop_shorts(js):
+            js["nodes"] = [n if n.get("name") != "basic_shorts" else {**{k: v for k, v in n.items() if k != "skin"}} for n in js["nodes"]]
+        for edit in (rotate, rename_clip, drop_shorts):
+            code, out = self.run_restamp(self.processed(edit))
+            self.assertEqual(code, 1, edit.__name__)
+            self.assertFalse(out.exists(), edit.__name__)
+
+
 if __name__ == "__main__":
     unittest.main()
