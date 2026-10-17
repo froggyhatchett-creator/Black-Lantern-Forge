@@ -1,0 +1,24 @@
+{
+ "boot_s": 0.971,
+ "blink_eval_s": {
+  "ID-A": 0.297
+ },
+ "return_to_neutral": {
+  "body_m": 0,
+  "lashes_m": 0
+ },
+ "legacy": {
+  "status": "Loaded id_a: 35 user, 41 default. Saved before the eyelid fit: shown exactly as saved (eyelid fit 1).",
+  "fit_after_load": 1,
+  "upgrade_visible": true,
+  "undo_restores_fit": 1,
+  "redo_fit": 2,
+  "saved_group": {
+   "schema": "forge.v3-face-deformation",
+   "version": 1,
+   "eyelid_fit": 2
+  },
+  "fit_after_reload": 2
+ },
+ "errors": []
+}

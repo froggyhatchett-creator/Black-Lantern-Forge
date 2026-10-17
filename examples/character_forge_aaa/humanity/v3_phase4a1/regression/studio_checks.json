@@ -1,0 +1,105 @@
+{
+ "checks": [
+  {
+   "name": "v3 studio boots",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "Identity tab with one slider per parameter",
+   "pass": true,
+   "detail": "{\"tab\":true,\"sliders\":36,\"presets\":[\"neutral\",\"ID-A\",\"ID-B\",\"MERCY-INSPIRED\"],\"keys\":36,\"version\":1}"
+  },
+  {
+   "name": "four identity presets",
+   "pass": true,
+   "detail": "neutral, ID-A, ID-B, MERCY-INSPIRED"
+  },
+  {
+   "name": "preset neutral sets its values and stays editable",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "preset ID-A sets its values and stays editable",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "preset ID-B sets its values and stays editable",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "preset MERCY-INSPIRED sets its values and stays editable",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "strand roots stay on the skin for every identity",
+   "pass": true,
+   "detail": "{\"neutral\":{\"brows\":0.25,\"lashes\":0.3,\"hair\":0.002},\"ID-A\":{\"brows\":0.25,\"lashes\":0.3,\"hair\":0.002},\"ID-B\":{\"brows\":0.25,\"lashes\":0.3,\"hair\":0.002},\"MERCY-INSPIRED\":{\"brows\":0.25,\"lashes\":0.3,\"hair\":0.002}}"
+  },
+  {
+   "name": "lashes ride the blink for every identity",
+   "pass": true,
+   "detail": "neutral 4.93 mm, ID-A 4.76 mm, ID-B 5.06 mm, MERCY-INSPIRED 4.26 mm"
+  },
+  {
+   "name": "saved DNA carries the versioned identity group",
+   "pass": true,
+   "detail": "{\"preset\":\"ID-B\",\"nose_length\":0.35,\"locked\":[\"nose_length\"]}"
+  },
+  {
+   "name": "save -> reload -> load restores the character (to the DNA's 4-decimal trait precision)",
+   "pass": true,
+   "detail": "max body vertex difference 4.99e-5 m; height 1.6807 -> 1.6807"
+  },
+  {
+   "name": "re-saving the loaded character gives the same DNA",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "v3 DNA without an identity group loads with the neutral identity",
+   "pass": true,
+   "detail": "Loaded custom_idb: 36 user, 40 default. No identity group: neutral identity (its original appearance). Saved before the eyelid fit: shown exactly as saved (eyelid fit 1)."
+  },
+  {
+   "name": "invalid identity group is refused and nothing changes",
+   "pass": true,
+   "detail": "Could not load DNA: face_identity version 2 is not supported (this studio reads version 1)"
+  },
+  {
+   "name": "legacy v3 DNA looks the same as in the pre-identity studio",
+   "pass": true,
+   "detail": "max body vertex difference 0.00e+0 m"
+  },
+  {
+   "name": "legacy character offers and applies the corrected eyelids",
+   "pass": true,
+   "detail": "{\"shown\":true,\"fit\":2}"
+  },
+  {
+   "name": "GLB exported: ID-A",
+   "pass": true,
+   "detail": "12.2 MB"
+  },
+  {
+   "name": "GLB exported: ID-B",
+   "pass": true,
+   "detail": "12.2 MB"
+  },
+  {
+   "name": "GLB exported: MERCY-INSPIRED",
+   "pass": true,
+   "detail": "12.2 MB"
+  },
+  {
+   "name": "no page errors",
+   "pass": true,
+   "detail": ""
+  }
+ ],
+ "errors": []
+}

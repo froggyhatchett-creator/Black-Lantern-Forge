@@ -148,6 +148,20 @@ adult character in the real studio before expanding. Finite credits: short visua
   Tests: `tests/test_character_forge_v3_blink.py`. v2 smoke not re-run.
 - Remaining: canthus folds, 2-3 upright corner lashes, eye-size-vs-thin-lid in the open pose (identity basis v2).
 
+## Generator v3 Phase 4A.1: facial stabilization and regression hardening (stopped for review)
+- Report `docs/CHARACTER_FORGE_V3_PHASE4A1.md`; evidence `examples/character_forge_aaa/humanity/v3_phase4a1/`
+  (GLBs, dumps, per-shot PNGs git-ignored; sha256 manifest + JPEG sheets committed).
+- Eye-size defects: the CC0 eye-scale targets move the lids, not the eyeball. Fix: eyelid fit 2 (`v3/eyelid_fit.py`),
+  a linear per-term correction keeping lid skin on the eyeball. DNA group `face_deformation` (absent = fit 1, exact
+  old geometry); studio "Use corrected eyelids" for legacy characters; pack `lidfit`/`expr2`/`residual2`.
+  Python: `evaluate.EYELID_FIT`, `with evaluate.fit(n)`.
+- Corners: blink model 2 limits `NO_OVERTAKE` (0.4) and `ANGLE_UNTANGLE` (40) in `v3/model.py` (None/0 = Phase 4A).
+- Lashes: root normals smoothed over neighbouring strands (`lash_contact.TURN_SIGMA`, pack `turn_ij`/`turn_w`).
+  Upright corner lashes not fixed (canthus skin does not turn); elevation limits tried and removed.
+- Tools: `tools/v3_phase4a1.py` (+ `_table`, `_evidence`), `tools/studio_v3_eyelid.mjs`, `tools/studio_v3_gpu_bench.mjs`.
+  Tests: `tests/test_character_forge_v3_eyelid_fit.py`. Next: Phase 4A.2 canthus closure (tarsus turn), body-preset
+  blink residuals; hardware bench on the user's tower.
+
 ## Open problems / next actions
 1. Commit/push checkpoint; publish the studio artifact (multi-file; `downloads` capability; GLB offered zipped).
 2. Face realism (lips/eyes/brows) and anatomy fixes (hands, knees, feet) need a re-bake (~28 min) to reach the studio.

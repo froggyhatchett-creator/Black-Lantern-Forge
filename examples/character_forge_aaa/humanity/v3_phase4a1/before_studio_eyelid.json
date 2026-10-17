@@ -1,0 +1,22 @@
+{
+ "boot_s": 2.606,
+ "blink_eval_s": {
+  "neutral": 0.058,
+  "ID-A": 0.027,
+  "ID-B": 0.023,
+  "MERCY-INSPIRED": 0.008,
+  "ID-A_eye0.8": 0.013,
+  "MERCY-INSPIRED_eye0.8": 0.009,
+  "ID-A_stress": 0.008
+ },
+ "return_to_neutral": {
+  "body_m": 0,
+  "lashes_m": 0
+ },
+ "legacy": {
+  "status": "Loaded id_a: 35 user, 41 default.",
+  "fit_after_load": 1,
+  "upgrade_visible": null
+ },
+ "errors": []
+}

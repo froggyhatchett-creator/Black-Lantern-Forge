@@ -1,0 +1,29 @@
+{
+ "v3_identity_id_a.glb": {
+  "bytes": 12186772,
+  "sha256": "984a483d126f7aa1ea562f0c02c0814dc75032aa5d1de6c6fab03544f1cddcd8",
+  "valid": true,
+  "errors": [],
+  "morph_targets": 8,
+  "animations": 7,
+  "joints": 62
+ },
+ "v3_identity_id_b.glb": {
+  "bytes": 12186728,
+  "sha256": "e47d8beca8141aebef10c6e44810d0cf4a418c3ff0fa22f08621d2a423f09442",
+  "valid": true,
+  "errors": [],
+  "morph_targets": 8,
+  "animations": 7,
+  "joints": 62
+ },
+ "v3_identity_mercy_inspired.glb": {
+  "bytes": 12187104,
+  "sha256": "c142116daa63ef5adc91c807a31c408c92f862b85e178dcc061e5fa4037fe5a4",
+  "valid": true,
+  "errors": [],
+  "morph_targets": 8,
+  "animations": 7,
+  "joints": 62
+ }
+}

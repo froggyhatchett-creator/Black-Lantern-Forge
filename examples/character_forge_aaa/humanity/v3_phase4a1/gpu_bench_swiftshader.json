@@ -1,0 +1,49 @@
+{
+ "load_s": 2.026,
+ "renderer": {
+  "vendor": "Google Inc. (Google)",
+  "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+ },
+ "software": true,
+ "orbit": {
+  "frames": 90,
+  "median_ms": 865,
+  "p95_ms": 1822.9,
+  "max_ms": 2850
+ },
+ "identity_slider": {
+  "frames": 20,
+  "median_ms": 900.8,
+  "p95_ms": 1781.8,
+  "max_ms": 1781.8
+ },
+ "blink_first_after_shape_change": {
+  "frames": 1,
+  "median_ms": 1406.9,
+  "p95_ms": 1406.9,
+  "max_ms": 1406.9
+ },
+ "blink_playback": {
+  "frames": 40,
+  "median_ms": 929.9,
+  "p95_ms": 1834.9,
+  "max_ms": 1845.7
+ },
+ "walk_with_blink": {
+  "frames": 60,
+  "median_ms": 946.9,
+  "p95_ms": 1892.6,
+  "max_ms": 2823.5
+ },
+ "hair_shoulder_orbit": {
+  "frames": 60,
+  "median_ms": 851.4,
+  "p95_ms": 1890.5,
+  "max_ms": 3297.6
+ },
+ "export": {
+  "seconds": 24.14,
+  "bytes": 12186808
+ },
+ "errors": []
+}

@@ -1,0 +1,10 @@
+# Phase 4A.1 evidence storage policy (docs/CHARACTER_FORGE_V3_PHASE4A1.md, "Repository size"):
+# committed: report JSON, measurement matrices, JPEG sheets, GLB sha256 manifest. Not committed (regenerable, large):
+dumps/
+playback/
+shots/
+regression/dumps/
+regression/playback/
+regression/shots/
+*.glb
+regression/glb_playback_sheet.png
