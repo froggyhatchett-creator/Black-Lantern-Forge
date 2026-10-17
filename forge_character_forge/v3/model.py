@@ -301,6 +301,10 @@ FORNIX = (0.0012, 3.0, 15.0)
 MARGIN_MIN_W = 0.2    # margin samples must carry at least this lid-bone weight
 CANTHUS_TURN = 0.5    # turn at the canthus vertices relative to the nearest margin sample (0 left a gap at the corners
                       # of wide-set eyes; 1 folds the corners)  # lining within 1.2 mm of the eyeball, 3-15 deg past a margin, is anchored (see below)
+# Phase 4A.1 (corner folds): set NO_OVERTAKE = None and ANGLE_UNTANGLE = 0 to reproduce the Phase 4A blink
+NO_OVERTAKE = 0.4     # outer lid skin keeps at least this fraction of its open angular spacing to the vertex below it
+NO_OVERTAKE_ROUNDS = 60  # (above 0.4 the corners stop closing: exposure 0.001-0.011 on the stress shapes)
+ANGLE_UNTANGLE = 40   # rounds of turn-angle smoothing over the vertices of triangles that would still flip
 
 
 @lru_cache(maxsize=None)
@@ -327,6 +331,101 @@ def _lid_bone_weights(side: str):
 def _smoothstep(x):
     t = np.clip(x, 0, 1)
     return t * t * (3 - 2 * t)
+
+
+@lru_cache(maxsize=None)
+def _region_edges(side: str):
+    region = lid_region(side, CORRECTIVE_RINGS)
+    src, _, tris, _ = body_surface()
+    T = src[tris]
+    T = T[np.isin(T, region).all(1)]
+    e = np.unique(np.sort(np.r_[T[:, [0, 1]], T[:, [1, 2]], T[:, [2, 0]]], 1), axis=0)
+    e = e[e[:, 0] != e[:, 1]]
+    pos = {int(g): k for k, g in enumerate(region)}
+    return np.array([[pos[int(i)], pos[int(j)]] for i, j in e])
+
+
+def _no_overtake(side, region, r, a, th, margin_ids, R):
+    """Phase 4A.1: limit the turns so no outer-skin vertex passes the one below it on the arc. At the corners the
+    lid-bone weights let skin above the canthus turn further than the corner margin under it (and the lower lid's
+    skin rise past the corner), so it overtook it and folded. Along every outer-skin edge running mostly along the
+    arc, the closed angles keep ``NO_OVERTAKE`` of their open spacing; violations are split between the two ends
+    (margins stay on the closure line)."""
+    E = _region_edges(side)
+    rho = np.linalg.norm(r, axis=1)
+    outer = (rho - R > 0.0004) & (r[:, 2] > 0)
+    fixed = np.isin(region, margin_ids)
+    i, j = E[:, 0], E[:, 1]
+    keep = outer[i] & outer[j]
+    da = a[i] - a[j]
+    L = np.linalg.norm(r[i] - r[j], axis=1)
+    keep &= np.abs(da) * 0.5 * (rho[i] + rho[j]) > 0.5 * L  # edges running mostly along the arc
+    i, j, da = i[keep], j[keep], da[keep]
+    s = np.sign(da)
+    hi, lo_ = np.where(s > 0, i, j), np.where(s > 0, j, i)
+    gap = np.abs(da)
+    th = th.copy()
+    for _ in range(NO_OVERTAKE_ROUNDS):
+        viol = NO_OVERTAKE * gap - ((a[hi] - th[hi]) - (a[lo_] - th[lo_]))
+        bad = viol > 0
+        if not bad.any():
+            break
+        corr, cnt = np.zeros(len(th)), np.zeros(len(th))
+        h, l_, amt = hi[bad], lo_[bad], viol[bad]
+        fh, fl = ~fixed[h], ~fixed[l_]
+        share = np.where(fh & fl, 0.5, 1.0)  # (weighting it toward the end that turns more opened corner gaps)
+        np.add.at(corr, h[fh], -amt[fh] * share[fh])
+        np.add.at(cnt, h[fh], 1)
+        np.add.at(corr, l_[fl], amt[fl] * share[fl])
+        np.add.at(cnt, l_[fl], 1)
+        th = th + corr / np.maximum(cnt, 1)
+    return th
+
+
+def _turned(r, th):
+    ct, st = np.cos(th), np.sin(th)
+    q = r.copy()
+    q[:, 1] = r[:, 1] * ct - r[:, 2] * st
+    q[:, 2] = r[:, 1] * st + r[:, 2] * ct
+    return q
+
+
+@lru_cache(maxsize=None)
+def _region_tris_local(side: str):
+    region = lid_region(side, CORRECTIVE_RINGS)
+    src, _, tris, _ = body_surface()
+    T = src[tris]
+    T = T[np.isin(T, region).all(1)]
+    pos = -np.ones(len(neutral()), np.int64)
+    pos[region] = np.arange(len(region))
+    return pos[T]
+
+
+def _angle_untangle(side, region, r, th, margin_ids):
+    """Where turned triangles flip, smooth the turn angle over the flipped triangles' vertices (margins stay on the
+    closure line). Works in angle space, so the lid keeps its distance from the eyeball."""
+    T = _region_tris_local(side)
+    E = _region_edges(side)
+    fixed = np.isin(region, margin_ids)
+    n0 = np.cross(r[T[:, 1]] - r[T[:, 0]], r[T[:, 2]] - r[T[:, 0]])
+    th = th.copy()
+    for _ in range(ANGLE_UNTANGLE):
+        q = _turned(r, th)
+        n1 = np.cross(q[T[:, 1]] - q[T[:, 0]], q[T[:, 2]] - q[T[:, 0]])
+        bad = (n0 * n1).sum(1) < 0
+        if not bad.any():
+            break
+        hot = np.zeros(len(th), bool)
+        hot[T[bad].ravel()] = True
+        s, cnt = np.zeros(len(th)), np.zeros(len(th))
+        np.add.at(s, E[:, 0], th[E[:, 1]])
+        np.add.at(cnt, E[:, 0], 1)
+        np.add.at(s, E[:, 1], th[E[:, 0]])
+        np.add.at(cnt, E[:, 1], 1)
+        avg = s / np.maximum(cnt, 1)
+        m = hot & ~fixed
+        th[m] = 0.5 * th[m] + 0.5 * avg[m]
+    return th
 
 
 def blink_closed(v: np.ndarray, side: str) -> np.ndarray:
@@ -376,6 +475,10 @@ def blink_closed(v: np.ndarray, side: str) -> np.ndarray:
     past = np.degrees(np.maximum(a - AU, 0) + np.maximum(AL - a, 0))
     lining = 1 - _smoothstep((dist - FORNIX[0] * 0.5) / (FORNIX[0] * 0.5))
     th *= 1 - lining * _smoothstep((past - FORNIX[1]) / (FORNIX[2] - FORNIX[1]))
+    if NO_OVERTAKE is not None:
+        th = _no_overtake(side, region, r, a, th, np.r_[up, lo], R)
+    if ANGLE_UNTANGLE:
+        th = _angle_untangle(side, region, r, th, np.r_[up[wu[up] >= MARGIN_MIN_W], lo[wl[lo] >= MARGIN_MIN_W]])
     ct, st = np.cos(th), np.sin(th)  # turn about x through c: the elevation angle atan2(y, z) decreases by th
     q = r.copy()
     q[:, 1] = r[:, 1] * ct - r[:, 2] * st

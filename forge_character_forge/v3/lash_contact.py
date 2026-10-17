@@ -29,6 +29,9 @@ BEND_RATIO = 0.5       # and at most this fraction of its distance from the root
 MAX_BEND_OWN = 0.001   # m: smaller allowance against the lash's own lid (its folded skin would fling the lash off)
 MAX_DEPTH = 0.003  # a point counts as behind the skin only directly behind a triangle (its nearest point inside the
                    # triangle) and within the lid's thickness; past the patch edge or deeper, it is beside the lid
+# Phase 4A.1 (expression lash orientation, see expression_lashes); TURN_SIGMA = 0 reproduces Phase 4A
+TURN_SIGMA = 0.0015     # m: root normals are averaged over neighbouring strands of the same lid (Gaussian of root distance)
+TURN_RADIUS = 0.004     # m: ... within this distance
 
 
 @lru_cache(maxsize=None)
@@ -144,12 +147,42 @@ def root_normals(P: np.ndarray, tri: np.ndarray) -> np.ndarray:
     return r / np.linalg.norm(r, axis=1, keepdims=True)
 
 
+@lru_cache(maxsize=None)
+def turn_neighbours():
+    """(strand index i, neighbour j, weight) of the root-normal smoothing: strands of the same eye and lid, roots within
+    ``TURN_RADIUS`` on the neutral, Gaussian weights normalised per strand (the studio reads them from the pack)."""
+    if not TURN_SIGMA:
+        return np.zeros((0, 2), np.int64), np.zeros(0)
+    from forge_character_forge.v3 import blink_quality as Q
+    c = Q.lash_points(model.neutral())
+    root, grp = c[:, 0], np.char.add(strand_sides(c), np.where(strand_upper(c), "u", "d"))
+    d = np.linalg.norm(root[:, None] - root[None], axis=2)
+    m = (d < TURN_RADIUS) & (grp[:, None] == grp[None])
+    i, j = np.nonzero(m)
+    w = np.exp(-0.5 * (d[i, j] / TURN_SIGMA) ** 2)
+    s = np.zeros(len(c))
+    np.add.at(s, i, w)
+    return np.c_[i, j], w / s[i]
+
+
+def _smoothed(n: np.ndarray) -> np.ndarray:
+    ij, w = turn_neighbours()
+    if not len(w):
+        return n
+    out = np.zeros_like(n)
+    np.add.at(out, ij[:, 0], w[:, None] * n[ij[:, 1]])
+    return out / np.linalg.norm(out, axis=1, keepdims=True)
+
+
 def expression_lashes(c_rest: np.ndarray, root_closed: np.ndarray, P_rest: np.ndarray, P_closed: np.ndarray) -> np.ndarray:
     """Closed lash point centres (S, K, 3): the root stays on its triangle (``root_closed``) and the lash turns with
-    the smoothed surface normal at its root. (Rigid in the root triangle's own frame, a lash stood upright on the
-    closed lid wherever blink model 2 shears that one margin triangle while the lid around it turns.)"""
+    the surface normal at its root, averaged over the neighbouring strands of its lid (Phase 4A.1). (Rigid in the root
+    triangle's own frame, a lash stood upright on the closed lid wherever blink model 2 shears that one margin
+    triangle while the lid around it turns. With single-triangle normals, neighbouring lashes turned by different
+    amounts and scattered. Lashes at the canthi still keep their open angle when closed: the canthus skin barely
+    turns in blink model 2; turning those lashes down regardless drives their base into the lid margin.)"""
     tri = np.asarray(grooming.parts()["lashes"]["anchor"]["tri"])
-    R = _rotation_between(root_normals(P_rest, tri), root_normals(P_closed, tri))
+    R = _rotation_between(_smoothed(root_normals(P_rest, tri)), _smoothed(root_normals(P_closed, tri)))
     rel = c_rest - c_rest[:, :1]
     return root_closed[:, None, :] + np.einsum("sij,skj->ski", R, rel)
 

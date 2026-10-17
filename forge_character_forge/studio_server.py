@@ -80,7 +80,7 @@ def make_handler(pack: Path, out_dir: Path):
                 from forge_character_forge.pipeline import export_character
                 D.validate_dna(dna)
                 gen = dna["identity"].get("generator") or {}
-                if gen.get("version", 2) >= 3 or "face_identity" in dna:  # the exact build is the v2 engine: refuse, never drop v3
+                if gen.get("version", 2) >= 3 or "face_identity" in dna or "face_deformation" in dna:  # the exact build is the v2 engine: refuse, never drop v3
                     return self._json(400, {"error": "generator v3 characters (and face identities) export from the studio's Export GLB; "
                                                      "the Python exact build is generator v2 only"})
                 name = re.sub(r"[^\w.-]+", "_", dna["identity"].get("name") or "character")[:40] or "character"

@@ -50,7 +50,8 @@ def load(tag):
 def reference(meta, w):
     """(scaled split-body positions, full unscaled base vertices, scale) from the Python reference evaluation."""
     ctl, iv = meta["params"], meta["identity"]["values"]
-    v = E.shape(ctl, iv) + w * E.blink(ctl, iv)
+    with E.fit(meta.get("lidFit", 1)):  # dumps before Phase 4A.1 carry no eyelid fit: fit 1
+        v = E.shape(ctl, iv) + w * E.blink(ctl, iv)
     k = E.height_scale(v, ctl)
     return v[SRC] * k, v, k
 
@@ -129,7 +130,8 @@ def main():
         tag = f.name[len("combo_"):-len("_blink0.json")]
         r, base, meta = blink_series(f"combo_{tag}", (0, 0.5, 1))
         ctl = meta["params"]
-        q = metrics.tri_quality(E.shape(ctl, {}), base, H)
+        with E.fit(meta.get("lidFit", 1)):
+            q = metrics.tri_quality(E.shape(ctl, {}), base, H)
         r["head_health_vs_same_controls_without_identity"] = q
         r["identity_preset"], r["controls_changed"] = meta["identity"]["preset"], {k: v for k, v in ctl.items() if abs(v - E.control_defaults()[k]) > 1e-6}
         rep["combinations"][tag] = r

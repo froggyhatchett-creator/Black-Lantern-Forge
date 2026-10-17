@@ -21,7 +21,8 @@ from forge_character_forge.params import preset
 from forge_character_forge.skeleton import HUMANOID_MAP
 from forge_character_forge.studio_bake import (BODY_RANGES, FACE_RANGES, PACK_MAGIC, PACK_VERSION, _Blob, _encode_delta,
                                                base_params, compact_pack)
-from forge_character_forge.v3 import GENERATOR, controls, garments, grooming, identity, identity_dna, mh, model, rig, textures
+from forge_character_forge.v3 import (GENERATOR, controls, eyelid_fit, garments, grooming, identity, identity_dna, mh, model, rig,
+                                      textures)
 
 BLINK_RESHAPE_M = 0.0003  # a control side whose lid-region shape changes by more than this gets a blink corrective
 
@@ -131,7 +132,12 @@ def bake(out_path, log=print) -> dict:
                 entry["contact"] = {**{f"tris_{s}_{'up' if up else 'lo'}": blob.add(np.asarray(t, "<u4")) for (s, up), t in LC.lid_tris().items()},
                                     "clear": LC.CLEAR, "max_depth": LC.MAX_DEPTH, "path_ts": list(LC.PATH_TS),
                                     "max_path_step": LC.MAX_PATH_STEP, "max_bend": LC.MAX_BEND, "max_bend_own": LC.MAX_BEND_OWN,
-                                    "bend_ratio": LC.BEND_RATIO, "first_point": LC.FIRST_POINT}
+                                    "bend_ratio": LC.BEND_RATIO, "first_point": LC.FIRST_POINT,
+                                    "turn_sigma": LC.TURN_SIGMA}  # Phase 4A.1: smoothed lash turn (turn_ij, turn_w)
+                ij, w = LC.turn_neighbours()
+                if len(w):
+                    entry["contact"]["turn_ij"] = blob.add(np.asarray(ij, "<u4"))
+                    entry["contact"]["turn_w"] = blob.add(np.asarray(w, "<f4"))
         if p.get("color") is not None:
             entry["color"] = blob.add(np.clip(np.asarray(p["color"]) * 0.5 * 255, 0, 255).astype("u1"))  # x2 headroom
         if name == "body":
@@ -183,13 +189,28 @@ def bake(out_path, log=print) -> dict:
                 # blink corrective: where a control reshapes the lids, the blink is refitted at this end and the
                 # difference is stored; the studio adds it scaled by (blink weight x control weight)
                 if controls.CONTROLS[key][1] != "scale":  # height: post-scale
-                    corr, fit = evaluate.control_corrective(key, side)
+                    with evaluate.fit(1):
+                        corr, fit = evaluate.control_corrective(key, side)
                     for s in "lr":
                         if corr[s] is not None:
                             blink_fits[f"{key}:{side}"] = fit
                             enc = _encode_delta(blob, corr[s][bsrc])
                             if enc:
                                 se.setdefault("expr", {})[f"blink_{s}"] = enc
+                    # eyelid fit 2 (Phase 4A.1): the lid correction of this side and the blink correctives refitted on
+                    # the corrected shape; a side without a correction uses its fit-1 data unchanged
+                    K = _encode_delta(blob, eyelid_fit.correction(d)[bsrc])
+                    if K:
+                        se["lidfit"] = {"body": K}
+                        with evaluate.fit(2):
+                            corr, fit = evaluate.control_corrective(key, side)
+                        se["expr2"] = {}
+                        for s in "lr":
+                            if corr[s] is not None:
+                                blink_fits[f"{key}:{side}:fit2"] = fit
+                                enc = _encode_delta(blob, corr[s][bsrc])
+                                if enc:
+                                    se["expr2"][f"blink_{s}"] = enc
                 pe["sides"][side] = se
             if quality == "direct" and controls.CONTROLS[key][1] == "scale":
                 pe["mode"] = "uniform_scale"  # the studio scales the evaluated character to exactly this height
@@ -206,6 +227,8 @@ def bake(out_path, log=print) -> dict:
                                "root": blob.add(np.asarray(c.root_translation, "<f4"))}
     man["blink_fits"] = blink_fits
     man["blink_model"] = model.BLINK_MODEL
+    man["eyelid_fit"] = {"current": eyelid_fit.FIT, "group": eyelid_fit.dna_group(), "gap_full": eyelid_fit.GAP_FULL,
+                         "gap_none": eyelid_fit.GAP_NONE}
     man["rig"] = {**rig.merge_report(), "skin": skin_report, "renderer_joint_limit": 80, "export_joint_limit": 64}
     man["controls"] = controls.summary()
     man["unstable_topology"] = []
@@ -256,14 +279,30 @@ def _identity_pack(blob, parts, v, j0, eyes0, log=print) -> dict:
             if enc:
                 pe["parts"][name] = enc
         for sign, side in ((1, "hi"), (-1, "lo")):
-            corr, _ = evaluate.identity_corrective(key, sign)
+            with evaluate.fit(1):
+                corr, _ = evaluate.identity_corrective(key, sign)
             for s in "lr":
                 if corr[s] is not None:
                     enc = _encode_delta(blob, corr[s][bsrc])
                     if enc:
                         pe["expr"].setdefault(side, {})[f"blink_{s}"] = enc
+        K = _encode_delta(blob, eyelid_fit.correction(d)[bsrc])  # eyelid fit 2 (s = -1: the negative)
+        if K:
+            pe["lidfit"] = {"body": K}
+            pe["expr2"] = {}
+            for sign, side in ((1, "hi"), (-1, "lo")):
+                with evaluate.fit(2):
+                    corr, _ = evaluate.identity_corrective(key, sign)
+                for s in "lr":
+                    if corr[s] is not None:
+                        enc = _encode_delta(blob, corr[s][bsrc])
+                        if enc:
+                            pe["expr2"].setdefault(side, {})[f"blink_{s}"] = enc
         out["params"][key] = pe
-    res = evaluate.preset_residuals()
+    with evaluate.fit(1):
+        res = evaluate.preset_residuals()
+    with evaluate.fit(2):
+        res2 = evaluate.preset_residuals()
     for name, pr in identity_dna.presets().items():
         entry = {"label": identity_dna.PRESET_LABELS.get(name, name), "values": {k: float(x) for k, x in pr["values"].items()},
                  "controls": pr["controls"]}
@@ -274,6 +313,11 @@ def _identity_pack(blob, parts, v, j0, eyes0, log=print) -> dict:
                 enc = _encode_delta(blob, res[name][s][bsrc])
                 if enc:
                     entry["residual"][f"blink_{s}"] = enc
+            entry["residual2"] = {}
+            for s in "lr":
+                enc = _encode_delta(blob, res2[name][s][bsrc])
+                if enc:
+                    entry["residual2"][f"blink_{s}"] = enc
         out["presets"][name] = entry
         log(f"identity preset {name}: {entry.get('blink_fit')}")
     return out

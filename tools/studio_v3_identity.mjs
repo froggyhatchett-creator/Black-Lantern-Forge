@@ -40,7 +40,7 @@ const setBlink = (w) => page.evaluate((w) => { const s = window.studio; s.state.
 const dump = async (tag) => {  // body positions (float32), joints and the state that produced them
   const d = await page.evaluate(() => { const s = window.studio; s.evaluate(); const b = s.parts.body.cur;
     const enc = (a) => { const u = new Uint8Array(a.buffer, a.byteOffset, a.byteLength); let t = ""; for (let i = 0; i < u.length; i += 32768) t += String.fromCharCode(...u.subarray(i, i + 32768)); return btoa(t); };
-    return { body: enc(Float32Array.from(b)), rest: Array.from(s.rest), height: s.heightNow, params: s.state.params, identity: s.state.identity,
+    return { body: enc(Float32Array.from(b)), rest: Array.from(s.rest), height: s.heightNow, params: s.state.params, identity: s.state.identity, lidFit: s.state.lidFit || 1,
       expr: s.state.expr, affinity: s.presetAffinity() }; });
   fs.writeFileSync(path.join(dumps, `${tag}.f4`), Buffer.from(d.body, "base64"));
   delete d.body; fs.writeFileSync(path.join(dumps, `${tag}.json`), JSON.stringify(d));
@@ -125,6 +125,7 @@ ok("re-saving the loaded character gives the same DNA", JSON.stringify(resaved.f
 
 // --- legacy v3 DNA (no identity group) and an invalid group
 const legacy = JSON.parse(JSON.stringify(saved)); delete legacy.face_identity;
+delete legacy.face_deformation;  // DNA saved before Phase 4A.1 has no eyelid-fit group either (it then loads as fit 1)
 const legacyPath = path.join(out, "legacy_v3_no_identity.dna.json"); fs.writeFileSync(legacyPath, JSON.stringify(legacy, null, 1));
 await page.setInputFiles("#dna-load", legacyPath);
 await page.waitForFunction(() => /neutral identity/.test(document.getElementById("status").textContent), null, { timeout: 60000 });
@@ -146,6 +147,11 @@ if (legacyUrl) {  // the same legacy DNA in the studio as it was before identity
   ok("legacy v3 DNA looks the same as in the pre-identity studio", dl2 < 2e-6, `max body vertex difference ${dl2.toExponential(2)} m`);
   await p2.close();
 }
+// the loaded legacy character keeps eyelid fit 1 until "Use corrected eyelids"; upgrade it so the presets below are
+// exported with the current fit (as for any new character)
+const upg = await page.evaluate(() => { const b = document.getElementById("lidfit-upgrade"), r = document.getElementById("lidfit-row");
+  if (!b) return null; const shown = r && !r.hidden; if (shown) b.click(); return { shown, fit: window.studio.state.lidFit || 1 }; });
+if (upg) ok("legacy character offers and applies the corrected eyelids", upg.shown && upg.fit === 2, JSON.stringify(upg));
 
 // --- browser GLB exports of the three faces (female body preset, identity preset as selected)
 for (const p of ["ID-A", "ID-B", "MERCY-INSPIRED"]) {

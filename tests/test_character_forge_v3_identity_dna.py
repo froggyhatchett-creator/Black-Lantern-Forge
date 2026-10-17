@@ -116,7 +116,11 @@ class IdentityWithControlsTest(unittest.TestCase):
     def test_identity_adds_exactly_to_the_controls(self):
         vals = I.presets()["ID-B"]["values"]
         ctl = {"body.femininity": 0.8, "face.jaw_width": 1.2}
-        np.testing.assert_allclose(evaluate.shape(ctl, vals), evaluate.shape(ctl, {}) + identity.identity_delta(vals), atol=1e-12)
+        with evaluate.fit(1):  # eyelid fit 1: the frozen basis v1 as is
+            np.testing.assert_allclose(evaluate.shape(ctl, vals), evaluate.shape(ctl, {}) + identity.identity_delta(vals), atol=1e-12)
+        with evaluate.fit(2):  # fit 2: each basis vector carries its own (linear) eyelid correction
+            fitted = sum(s * evaluate.identity_term(k) for k, s in vals.items() if s)
+            np.testing.assert_allclose(evaluate.shape(ctl, vals), evaluate.shape(ctl, {}) + fitted, atol=1e-12)
 
     def test_combined_shapes_are_healthy(self):
         for label, (preset, ctl) in COMBOS.items():

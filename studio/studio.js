@@ -199,8 +199,10 @@ class Studio {
     return { params, locks: {}, preset: "neutral", name: "studio_character", age: 30,
       skin_tone: 0.3, undertone: 0.0, eye: "brown", hair_style: "long", hair_color: "#3b2416", hl_color: "#a47b52", hl_amount: 0,
       outfit: ["tshirt", "shorts"].filter((g) => this.meta.garments.includes(g)), colors: {}, expr: {}, pose: "A-pose (rest)", clip: "idle",
-      identity: { preset: "neutral", values: {}, locks: {} } };
+      identity: { preset: "neutral", values: {}, locks: {} }, lidFit: this.lidFitCurrent() };
   }
+  lidFitCurrent() { return this.man.eyelid_fit ? this.man.eyelid_fit.current : 1; }  // v3 eyelid fit (Phase 4A.1); 1 = before it
+  fit2() { return (this.state.lidFit || 1) >= 2; }
   buildPart(name, p) {
     const pos = this.arr(p.pos), idx = this.arr(p.idx);
     const hl = p.highlight ? this.arr(p.highlight) : null;  // hair: highlight streak mask in COLOR_0.r
@@ -216,7 +218,8 @@ class Studio {
       anchor: p.anchor ? { mode: p.anchor.mode, root: this.arr(p.anchor.root), tri: this.arr(p.anchor.tri), bary: this.arr(p.anchor.bary),
         off: this.arr(p.anchor.off), cageIdx: p.anchor.cage_idx ? this.arr(p.anchor.cage_idx) : null,
         cageW: p.anchor.cage_w ? Float32Array.from(this.arr(p.anchor.cage_w), (x) => x / 65535) : null } : null, strandPts: p.strand_points || 0,
-      contact: p.contact ? { ...p.contact, tris: Object.fromEntries(["l_up", "l_lo", "r_up", "r_lo"].map((k) => [k, this.arr(p.contact[`tris_${k}`])])) } : null };
+      contact: p.contact ? { ...p.contact, tris: Object.fromEntries(["l_up", "l_lo", "r_up", "r_lo"].map((k) => [k, this.arr(p.contact[`tris_${k}`])])),
+        turnIJ: p.contact.turn_ij ? this.arr(p.contact.turn_ij) : null, turnW: p.contact.turn_w ? this.arr(p.contact.turn_w) : null } : null };
     if (p.iris_angle) g.irisA = p.iris_angle;
   }
   async loadTextures() {  // v3 maps live in the pack as PNG bytes
@@ -308,9 +311,10 @@ class Studio {
   }
   exprTerms(name) {  // extra morph terms of an expression for this character: control and identity correctives, preset residuals
     const out = [];
-    for (const [se, wp] of this.weights()) if (se.expr && se.expr[name]) out.push([se.expr[name], wp]);
-    for (const [pe, s] of this.identityTerms()) { const c = pe.expr[s > 0 ? "hi" : "lo"]; if (c && c[name]) out.push([c[name], Math.abs(s)]); }
-    for (const [p, a] of Object.entries(this.presetAffinity())) { const r = this.man.identity.presets[p].residual; if (r[name]) out.push([r[name], a]); }
+    const f2 = this.fit2();  // eyelid fit 2: terms with a lid correction carry blink correctives refitted on the corrected shape
+    for (const [se, wp] of this.weights()) { const ex = f2 && se.lidfit ? se.expr2 : se.expr; if (ex && ex[name]) out.push([ex[name], wp]); }
+    for (const [pe, s] of this.identityTerms()) { const ex = f2 && pe.lidfit ? pe.expr2 : pe.expr, c = ex && ex[s > 0 ? "hi" : "lo"]; if (c && c[name]) out.push([c[name], Math.abs(s)]); }
+    for (const [p, a] of Object.entries(this.presetAffinity())) { const P = this.man.identity.presets[p], r = f2 && P.residual2 ? P.residual2 : P.residual; if (r[name]) out.push([r[name], a]); }
     return out;
   }
   headFrame(rest) {  // the engine's head_frame recovered from the head and jaw joints (exact, see skeleton.py)
@@ -320,7 +324,7 @@ class Studio {
   }
   evaluate() {
     this.updateVisibility();
-    this.shapeKey = JSON.stringify([this.state.params, this.state.identity && this.state.identity.values]);
+    this.shapeKey = JSON.stringify([this.state.params, this.state.identity && this.state.identity.values, this.state.lidFit || 1]);
     const ws = this.weights();
     const pre = this.man.presets[this.state.preset];
     const rest = Float32Array.from(this.restBase);
@@ -342,6 +346,10 @@ class Studio {
       for (const [se, w] of ws) this.addDelta(cur, se.parts[name], w);
       if (pre && pre.parts) this.addDelta(cur, pre.parts[name], 1);
       for (const [pe, w] of ids) this.addDelta(cur, pe.parts[name], w);  // v3 identity (s = -1 is the negative of s = +1)
+      if (this.fit2()) {  // eyelid fit 2: every term keeps the lid skin on the eyeball (v3/eyelid_fit.py)
+        for (const [se, w] of ws) if (se.lidfit) this.addDelta(cur, se.lidfit[name], w);
+        for (const [pe, w] of ids) if (pe.lidfit) this.addDelta(cur, pe.lidfit[name], w);
+      }
       if (name === "body") this.bodyRest = Float32Array.from(cur);  // the body without expressions (grooming base)
       if (name === "body") for (const e of this.man.expressions) {
         const we = this.state.expr[e.name] || 0; if (!we) continue;
@@ -606,14 +614,23 @@ class Studio {
     if (ck) { if (!P.morphCache || P.morphCacheShape !== this.shapeKey) { P.morphCache = new Map(); P.morphCacheShape = this.shapeKey; } P.morphCache.set(ck, b); }
     return b;
   }
-  lashTurn(P, a, b, Pr, Pc) {  // in an expression a lash turns with the smoothed surface normal at its root (lash_contact.py)
+  lashTurn(P, a, b, Pr, Pc) {  // in an expression a lash turns with the surface normal at its root, averaged over its
+    // neighbouring strands of the same lid (lash_contact.expression_lashes)
     const B = this.parts.body, n0 = new Float32Array(Pr.length), n1 = new Float32Array(Pc.length);
     this.normals(Pr, B.idx, n0, B.weld); this.normals(Pc, B.idx, n1, B.weld);
-    const A = P.anchor, K = P.strandPts, S = a.length / 3 / (2 * K);
+    const A = P.anchor, C = P.contact, K = P.strandPts, S = a.length / 3 / (2 * K);
+    const rootN = (n) => { const out = new Float64Array(S * 3);
+      for (let s = 0; s < S; s++) { const t = [A.tri[s * 3], A.tri[s * 3 + 1], A.tri[s * 3 + 2]];
+        const m = norm([0, 1, 2].map((c) => n[t[0] * 3 + c] + n[t[1] * 3 + c] + n[t[2] * 3 + c])); out.set(m, s * 3); }
+      if (!C.turnIJ) return out;
+      const sm = new Float64Array(S * 3);
+      for (let e = 0; e < C.turnW.length; e++) { const i = C.turnIJ[e * 2], j = C.turnIJ[e * 2 + 1], w = C.turnW[e];
+        for (let c = 0; c < 3; c++) sm[i * 3 + c] += w * out[j * 3 + c]; }
+      for (let s = 0; s < S; s++) sm.set(norm([sm[s * 3], sm[s * 3 + 1], sm[s * 3 + 2]]), s * 3);
+      return sm; };
+    const N0 = rootN(n0), N1 = rootN(n1);
     for (let s = 0; s < S; s++) {
-      const t = [A.tri[s * 3], A.tri[s * 3 + 1], A.tri[s * 3 + 2]];
-      const sum = (n) => norm([0, 1, 2].map((c) => n[t[0] * 3 + c] + n[t[1] * 3 + c] + n[t[2] * 3 + c]));
-      const q = rotBetween(sum(n0), sum(n1)), o = s * K * 6;
+      const q = rotBetween([N0[s * 3], N0[s * 3 + 1], N0[s * 3 + 2]], [N1[s * 3], N1[s * 3 + 1], N1[s * 3 + 2]]), o = s * K * 6;
       const r0 = [0, 1, 2].map((c) => (a[o + c] + a[o + 3 + c]) / 2), r1 = [0, 1, 2].map((c) => (b[o + c] + b[o + 3 + c]) / 2);
       for (let v = 0; v < 2 * K; v++) {
         const i = o + v * 3, rel = qrot(q, [a[i] - r0[0], a[i + 1] - r0[1], a[i + 2] - r0[2]]);
@@ -894,6 +911,7 @@ class Studio {
     if (I) dna.face_identity = { schema: I.schema, version: I.version, generator: { id: this.man.generator.id, version: this.man.generator.version },
       preset: s.identity.preset, values: Object.fromEntries(I.keys.map((k) => [k, +(+(s.identity.values[k] || 0)).toFixed(4)])),
       locked: I.keys.filter((k) => s.identity.locks[k]) };
+    if (this.man.eyelid_fit) dna.face_deformation = { ...this.man.eyelid_fit.group, eyelid_fit: s.lidFit || 1 };
     return dna;
   }
   readIdentity(dna) {  // validated identity group of a DNA -> {preset, values, locks, note}; throws rather than reinterpreting
@@ -911,12 +929,26 @@ class Studio {
     const locks = {}; for (const k of g.locked || []) { if (!I.keys.includes(k)) throw new Error(`face_identity.locked has unknown ${k}`); locks[k] = true; }
     return { preset: typeof g.preset === "string" ? g.preset : "custom", values: { ...vals }, locks, note: "" };
   }
+  readLidFit(dna) {  // eyelid fit of a DNA: its face_deformation group, or 1 when absent (saved before Phase 4A.1: exact)
+    const g = dna.face_deformation, E = this.man.eyelid_fit;
+    if (!E) return { fit: 1, note: "" };
+    if (g === undefined) return { fit: 1, note: " Saved before the eyelid fit: shown exactly as saved (eyelid fit 1)." };
+    if (!g || g.schema !== E.group.schema || g.version !== E.group.version) throw new Error(`face_deformation ${g && g.schema} v${g && g.version} is not supported`);
+    if (![1, 2].includes(g.eyelid_fit)) throw new Error(`face_deformation.eyelid_fit = ${g.eyelid_fit} is not 1 or 2`);
+    return { fit: g.eyelid_fit, note: g.eyelid_fit < E.current ? ` Eyelid fit ${g.eyelid_fit} (as saved).` : "" };
+  }
+  upgradeLidFit() {  // legacy characters: switch to the current eyelid fit (an edit, undoable)
+    this._before = this.snapshot(); this.state.lidFit = this.lidFitCurrent(); this.commit(); this.syncUI(); this.dirtyGeo = true;
+    setStatus(`Eyelid fit ${this.state.lidFit}: the lids now stay on the eyeball for every shape. Undo restores the saved fit.`);
+  }
   fromDNA(dna) {
     if (dna.schema !== this.meta.dna.schema) throw new Error("This file is not Character DNA (forge.character-dna).");
     if (!(dna.identity && dna.identity.age_years >= 18)) throw new Error("Character DNA must describe an adult (age 18 or older).");
     const idn = this.readIdentity(dna);  // validate before changing anything
+    const lf = this.readLidFit(dna);
     this._before = this.snapshot();
     if (this.man.identity) this.state.identity = { preset: idn.preset, values: idn.values, locks: idn.locks };
+    this.state.lidFit = lf.fit;
     const dg = dna.identity.generator, mine = this.man.generator;
     const genNote = dg && mine && dg.version !== mine.version
       ? ` Note: this DNA was made with generator v${dg.version}; it is shown on v${mine.version} geometry, which differs.` : "";
@@ -938,7 +970,7 @@ class Studio {
     this.enforceCoverage(); this.commit(); this.syncUI(); this.dirtyGeo = true; this._resetPhys = true;
     const prov = {}; for (const v of Object.values(t)) prov[v.provenance] = (prov[v.provenance] || 0) + 1;
     setStatus(`Loaded ${s.name}: ${Object.entries(prov).map(([k, v]) => `${v} ${k}`).join(", ")}` +
-      (clamped.length ? `. ${clamped.length} value(s) were outside the studio range and were clamped.` : ".") + genNote + idn.note);
+      (clamped.length ? `. ${clamped.length} value(s) were outside the studio range and were clamped.` : ".") + genNote + idn.note + lf.note);
   }
   // -------------------------------------------------------------- UI
   buildUI() {
@@ -1033,6 +1065,7 @@ class Studio {
       try { await navigator.clipboard.writeText(txt); setStatus("Character DNA copied. Save it as a .dna.json file and run: python3 -m forge_character_forge export <file> --out character.glb"); }
       catch { $("#dna-text").value = txt; $("#dna-text").hidden = false; $("#dna-text").select(); setStatus("Clipboard unavailable: the DNA is shown below, selected for copying."); }
     });
+    if ($("#lidfit-upgrade")) $("#lidfit-upgrade").addEventListener("click", () => this.upgradeLidFit());
     $("#dna-save").addEventListener("click", () => this.offerFile(`${this.state.name}.dna.json`, JSON.stringify(this.toDNA(), null, 1)));
     $("#glb-export").addEventListener("click", () => { const bytes = this.exportBytes();
       setStatus(`Built ${(bytes.length / 1e6).toFixed(1)} MB GLB in the browser.`);
@@ -1057,6 +1090,7 @@ class Studio {
       inp.value = this.state.params[k]; document.getElementById(`o-${k}`).textContent = this.fmt(k, this.state.params[k]);
       document.getElementById(`l-${k}`).setAttribute("aria-pressed", !!this.state.locks[k]);
     }
+    const lr = $("#lidfit-row"); if (lr) lr.hidden = !((this.state.lidFit || 1) < this.lidFitCurrent());
     $("#skin").value = this.state.skin_tone; $("#under").value = this.state.undertone; $("#eye").value = this.state.eye;
     for (const id of ["#skin", "#under"]) $(id).parentElement.querySelector("output").textContent = (+$(id).value).toFixed(2);
     $("#hairstyle").value = this.state.hair_style; $("#haircolor").value = this.state.hair_color;

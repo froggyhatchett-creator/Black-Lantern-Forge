@@ -64,6 +64,8 @@ def anatomy_hash(dna: dict) -> str:
     t = {k: v["value"] for k, v in dna["traits"].items() if layer_of(k) == "anatomy"}
     if "face_identity" in dna:  # only when present: DNA without the group keeps its hash
         t["face_identity"] = _identity_values(dna)
+    if "face_deformation" in dna:  # generator-v3 eyelid fit (Phase 4A.1); absent = fit 1, hash unchanged
+        t["face_deformation"] = dna["face_deformation"]
     return hashlib.sha256(canonical_json(t)).hexdigest()[:16]
 
 
@@ -139,6 +141,9 @@ def validate_dna(dna: dict) -> None:
     if "face_identity" in dna:  # optional generator-v3 identity group (absent = neutral identity)
         from forge_character_forge.v3.identity_dna import validate_group
         validate_group(dna["face_identity"])
+    if "face_deformation" in dna:  # optional generator-v3 eyelid fit (absent = fit 1, the geometry saved before it)
+        from forge_character_forge.v3.eyelid_fit import dna_fit
+        dna_fit(dna)
 
 
 def set_trait(dna: dict, key: str, value, *, lock: bool | None = None, note: str = "user edit") -> dict:
@@ -247,6 +252,8 @@ def dna_hash(dna: dict) -> str:
     doc = {"identity": dna["identity"], "values": vals}
     if "face_identity" in dna:  # only when present: DNA without the group keeps its hash
         doc["face_identity"] = _identity_values(dna)
+    if "face_deformation" in dna:
+        doc["face_deformation"] = dna["face_deformation"]
     return hashlib.sha256(canonical_json(doc)).hexdigest()
 
 

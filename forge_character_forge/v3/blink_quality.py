@@ -14,6 +14,15 @@ For a base character ``v`` (all base vertices) and a blink morph ``d`` (closed m
 - smoothness: lid-region Laplacian (umbrella) magnitude relative to the open lid (99th percentile and max ratio);
 - symmetry: |exposure left - right| and the mirrored left/right closed-lid displacement difference (mm).
 
+Phase 4A.1 adds:
+
+- eyeball through the open lid: outer lid-skin vertices inside the eyeball or cornea meshes in the open pose
+  (exact distance to the eye's own triangles, signed by their outward normals; count and deepest, mm). The bare
+  neutral itself has 10-13 such margin vertices per eye, up to 1.15 mm, where the margin rests on the cornea;
+- closed lash orientation: upper lashes whose root-to-tip chord still rises more than 20 degrees above horizontal at
+  full closure ("upright"), and the scatter of that elevation against neighbouring strands (within 2 mm on the same
+  lid; 95th percentile and max, degrees).
+
 Lashes: anchored in their lid triangle's frame on the open body (the studio's ``anchorEval``) and following the blink
 as a linear morph (closed minus open), which is what both the studio preview and the GLB morph targets show.
 """
@@ -106,15 +115,6 @@ def _mirror_map():
     return L, R[j]
 
 
-def _normals(p):
-    T = _tris()
-    n = np.zeros_like(p)
-    fn = np.cross(p[T[:, 1]] - p[T[:, 0]], p[T[:, 2]] - p[T[:, 0]])
-    for k in range(3):
-        np.add.at(n, T[:, k], fn)
-    return n / (np.linalg.norm(n, axis=1, keepdims=True) + 1e-15)
-
-
 def _depth(p, c, R, cc, CR):
     """Signed distance outside the eye (eyeball sphere; cornea sphere only over its forward cap), metres."""
     de = np.linalg.norm(p - c, axis=1) - R
@@ -134,6 +134,62 @@ def _lash_sd(pts, p, side):
     from forge_character_forge.v3 import lash_contact as LC
     src, *_ = model.body_surface()
     return LC.signed_to_skin(pts, p[src], _skin_tris(side))[0]
+
+
+def _eye_signed(v: np.ndarray, side: str, pts: np.ndarray) -> np.ndarray:
+    """Signed distance (m) of points to the eye's eyeball and cornea meshes (negative inside either)."""
+    from forge_character_forge.v3 import lash_contact as LC
+    E = mh.fit_eyes(v)
+    out = np.full(len(pts), np.inf)
+    for part in ("eye", "cornea"):
+        ids, t = model.eye_parts()[f"{part}_{side}"]
+        P = E[ids]
+        c, _ = model.sphere_fit(P)
+        a, b, cc = P[t[:, 0]], P[t[:, 1]], P[t[:, 2]]
+        n = np.cross(b - a, cc - a)
+        n *= np.sign((((a + b + cc) / 3 - c) * n).sum(1))[:, None]  # outward
+        q, dist = LC.point_triangle(pts, a, b, cc)
+        k = np.argmin(dist, 1)
+        r = np.arange(len(pts))
+        sd = np.sign(((pts - q[r, k]) * n[k]).sum(1)) * dist[r, k]
+        out = np.minimum(out, sd)
+    return out
+
+
+def open_skin_in_eye(v: np.ndarray) -> dict:
+    """Per eye: outer lid-skin vertices inside the eyeball or cornea in the open pose (count, deepest mm)."""
+    from forge_character_forge.v3 import lash_contact as LC
+    src, *_ = model.body_surface()
+    outer = np.unique(src[LC.outer_skin()])
+    res = {}
+    for s in "lr":
+        ids = np.intersect1d(model.lid_region(s, model.CORRECTIVE_RINGS), outer)
+        sd = _eye_signed(v, s, v[ids])
+        res[s] = {"vertices": int((sd < 0).sum()), "max_mm": round(float(max(-sd.min(), 0) * 1000), 3)}
+    return res
+
+
+UPRIGHT_DEG = 20.0
+
+
+def lash_orientation(c_open: np.ndarray, c_closed: np.ndarray) -> dict:
+    """Per eye: closed upper lashes rising more than ``UPRIGHT_DEG`` and the elevation scatter against neighbours."""
+    from forge_character_forge.v3 import lash_contact as LC
+    up, sides = LC.strand_upper(c_open), LC.strand_sides(c_open)
+    ch = c_closed[:, -1] - c_closed[:, 0]
+    el = np.degrees(np.arcsin(np.clip(ch[:, 1] / np.linalg.norm(ch, axis=1), -1, 1)))
+    root = c_open[:, 0]
+    out = {}
+    for s in "lr":
+        m = up & (sides == s)
+        R, E = root[m], el[m]
+        dd = np.linalg.norm(R[:, None] - R[None], axis=2)
+        nb = (dd < 0.002) & (dd > 0)
+        mean = np.array([E[nb[i]].mean() if nb[i].any() else E[i] for i in range(len(E))])
+        sc = np.abs(E - mean)
+        out[s] = {"upright": int((E > UPRIGHT_DEG).sum()), "upper_strands": int(m.sum()), "max_elev_deg": round(float(E.max()), 1),
+                  "scatter_p95_deg": round(float(np.percentile(sc, 95)), 1), "scatter_max_deg": round(float(sc.max()), 1)}
+    return out
 
 
 def measure(v: np.ndarray, d: np.ndarray, weights=(0.0, 0.25, 0.5, 0.75, 1.0), lash_contact: bool = True,
@@ -156,7 +212,8 @@ def measure(v: np.ndarray, d: np.ndarray, weights=(0.0, 0.25, 0.5, 0.75, 1.0), l
         inner = [i for i in reg if all(j in set(reg.tolist()) for j in nb[int(i)])]
         info[s] = (c, R, cc, CR, reg, t, vis_t, vis_v, inner)
     lash_side = np.sign(lash0[:, 0, 0])  # +x = left eye
-    pn0 = _normals(v)
+    out["open_skin_in_eye"] = open_skin_in_eye(v)
+    out["lash_orientation_closed"] = lash_orientation(lash0, lash1)
     rest = {}
     for s in "lr":
         c, R, cc, CR, reg, t, vis_t, vis_v, inner = info[s]
@@ -168,7 +225,6 @@ def measure(v: np.ndarray, d: np.ndarray, weights=(0.0, 0.25, 0.5, 0.75, 1.0), l
         p = v + w * d
         row = {}
         px = exposure_per_eye(p) if w else open_px
-        pn = _normals(p)
         lp = lash0 + w * (lash1 - lash0)
         for s in "lr":
             c, R, cc, CR, reg, t, vis_t, vis_v, inner = info[s]
@@ -211,7 +267,12 @@ def summary(m: dict) -> dict:
             "lash_penetrating_max": max(r["lash_strands_penetrating"] for _, _, r in rows),
             "smooth_p99_ratio_max": max(r["smooth_p99_ratio"] for _, _, r in rows),
             "symmetry_exposure_diff_max": max(m["weights"][w]["symmetry"]["exposure_diff"] for w in m["weights"]),
-            "half_exposure": [m["weights"]["0.5"][s]["exposure"] for s in "lr"] if "0.5" in m["weights"] else None}
+            "half_exposure": [m["weights"]["0.5"][s]["exposure"] for s in "lr"] if "0.5" in m["weights"] else None,
+            **({"open_skin_in_eye_vertices": sum(m["open_skin_in_eye"][s]["vertices"] for s in "lr"),
+                "open_skin_in_eye_max_mm": max(m["open_skin_in_eye"][s]["max_mm"] for s in "lr")} if "open_skin_in_eye" in m else {}),
+            **({"lash_upright_closed": sum(m["lash_orientation_closed"][s]["upright"] for s in "lr"),
+                "lash_scatter_p95_deg": max(m["lash_orientation_closed"][s]["scatter_p95_deg"] for s in "lr")}
+               if "lash_orientation_closed" in m else {})}
 
 
 def lash_ribbons(v: np.ndarray, d: np.ndarray | None = None):

@@ -3,7 +3,8 @@
 Measures the studio blink (the pack's linear model: neutral blink + summed correctives + preset residual, as
 v3/evaluate.py reproduces it) with v3/blink_quality.py at weights 0-1, per eye.
 usage: python3 tools/v3_phase4a.py <tag> [--model 1]   -> examples/character_forge_aaa/humanity/v3_phase4a/matrix_<tag>.json
-(--model 1 reproduces the Phase 1-3 blink, the "before" of Phase 4A)
+(--model 1 reproduces the Phase 1-3 blink, the "before" of Phase 4A). Phase 4A.1 changed the defaults (eyelid fit 2,
+corner limits, smoothed lash turn); this tool switches them back (``phase_4a``) so it reproduces its Phase 4A output.
 """
 import json
 import sys
@@ -13,9 +14,17 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 from forge_character_forge.params import preset  # noqa: E402
-from forge_character_forge.v3 import blink_quality as Q, evaluate as E, identity_dna as I  # noqa: E402
+from forge_character_forge.v3 import blink_quality as Q, evaluate as E, identity_dna as I, lash_contact as LC, model  # noqa: E402
 
 OUT = ROOT / "examples/character_forge_aaa/humanity/v3_phase4a"
+
+
+def phase_4a():
+    """Every Phase 4A.1 switch back to Phase 4A (eyelid fit 1, no corner limits, Phase 4A lash turn)."""
+    E.EYELID_FIT = 1
+    model.NO_OVERTAKE, model.ANGLE_UNTANGLE = None, 0
+    LC.TURN_SIGMA = 0
+    LC.turn_neighbours.cache_clear()
 
 
 def body_preset(name):
@@ -51,6 +60,7 @@ def main(tag):
 
 
 if __name__ == "__main__":
+    phase_4a()
     if "--model" in sys.argv:
         E.BLINK_MODEL = int(sys.argv[sys.argv.index("--model") + 1])
     main(sys.argv[1])

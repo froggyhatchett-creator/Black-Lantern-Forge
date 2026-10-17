@@ -172,6 +172,8 @@ code { font-family: var(--mono); font-size: 0.8em; }
           <fieldset><legend>Character DNA</legend>
             <div class="row"><button type="button" id="dna-copy">Copy DNA</button><button type="button" id="dna-save">Save DNA file</button>
               <label class="row" style="gap:6px">Load DNA <input type="file" id="dna-load" accept=".json,application/json"></label></div>
+            <p class="note" id="lidfit-row" hidden>This character was saved before the eyelid fit (Phase 4A.1) and is shown exactly as saved.
+              <button type="button" id="lidfit-upgrade">Use corrected eyelids</button></p>
             <textarea id="dna-text" hidden aria-label="Character DNA JSON"></textarea>
             <p class="note">The DNA records every value, which ones you changed, and your locks. Exact geometry and a rigged GLB come from the Python engine:<br>
               <code>python3 -m forge_character_forge export ada.dna.json --out ada.glb --physics</code></p>

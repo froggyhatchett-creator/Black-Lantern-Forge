@@ -4,6 +4,8 @@
     blink(side) = blink0 + sum_controls w_c * C_c(side) + sum_identity |s_k| * C_k(sign s_k) [+ preset residual]
 
 then the whole character is scaled about the floor origin to the exact height control (``uniform_scale``).
+With eyelid fit 2 (Phase 4A.1, ``eyelid_fit``) every D_c and B_k carries its eyelid correction K (D -> D + K(D));
+fit 1 reproduces the geometry saved before Phase 4A.1.
 D_c are MakeHuman control deltas, B_k the Forge identity basis (``identity.basis``), C the blink correctives (the
 blink refitted at a control or identity end, minus the neutral blink). Used for tests, the blink report and to
 compare the studio's GLB export against an independent evaluation.
@@ -17,9 +19,10 @@ from pathlib import Path
 
 import numpy as np
 
-from forge_character_forge.v3 import controls, identity, model
+from forge_character_forge.v3 import controls, eyelid_fit, identity, model
 
 BLINK_MODEL = model.BLINK_MODEL  # 2 (Phase 4A); set to 1 to reproduce the Phase 1-3 blink for before/after evidence
+EYELID_FIT = eyelid_fit.FIT      # 2 (Phase 4A.1); 1 = the shape bases before the eyelid fit (legacy DNA)
 BLINK_RESHAPE_M = 0.0003  # a side whose lid region changes shape by more than this gets a blink corrective
 CACHE = Path(__file__).resolve().parents[2] / ".forge_cache"
 
@@ -28,6 +31,48 @@ def control_defaults() -> dict:
     from forge_character_forge.studio_bake import BODY_RANGES, FACE_RANGES, base_params
     b, f = base_params()
     return {f"{g}.{n}": float(getattr(o, n)) for g, o, R in (("body", b, BODY_RANGES), ("face", f, FACE_RANGES)) for n in R}
+
+
+@lru_cache(maxsize=None)
+def _control_term(key: str, side: str, fit: int):
+    r = model.control_delta(key, side)
+    if r is None:
+        return None
+    d = eyelid_fit.fitted(r[0], fit)
+    d.flags.writeable = False
+    return d
+
+
+def control_term(key: str, side: str) -> np.ndarray | None:
+    """Shape delta of one control side at its slider end, with the current eyelid fit."""
+    return _control_term(key, side, EYELID_FIT)
+
+
+@lru_cache(maxsize=None)
+def _identity_term(key: str, fit: int):
+    d = eyelid_fit.fitted(identity.basis(key), fit)
+    d.flags.writeable = False
+    return d
+
+
+def identity_term(key: str) -> np.ndarray:
+    """Identity basis vector (s = +1) with the current eyelid fit (s = -1 is its negative)."""
+    return _identity_term(key, EYELID_FIT)
+
+
+class fit:
+    """``with fit(1): ...`` evaluates with another eyelid fit (the bake writes both)."""
+
+    def __init__(self, f: int):
+        self.f = f
+
+    def __enter__(self):
+        global EYELID_FIT
+        self.prev, EYELID_FIT = EYELID_FIT, self.f
+
+    def __exit__(self, *exc):
+        global EYELID_FIT
+        EYELID_FIT = self.prev
 
 
 def is_scale(key: str) -> bool:
@@ -64,6 +109,8 @@ def _model_tag() -> str:
         return ""
     params = (model.BLINK_MODEL, model.CLOSE_AT, model.CLOSE_OVERLAP, model.FORNIX, model.MARGIN_MIN_W, model.CANTHUS_TURN,
               model.CORRECTIVE_RINGS, model.CHORD_TS)
+    if model.NO_OVERTAKE is not None or model.ANGLE_UNTANGLE:  # Phase 4A.1 corner limits (absent: the Phase 4A tag)
+        params += (model.NO_OVERTAKE, model.NO_OVERTAKE_ROUNDS, model.ANGLE_UNTANGLE)
     return f"_m{BLINK_MODEL}{hashlib.sha256(repr(params).encode()).hexdigest()[:8]}"
 
 
@@ -133,20 +180,24 @@ def _closed_exposure(v, sides) -> float:
 
 def identity_corrective(key: str, sign: int):
     """Blink corrective of one identity parameter at s = sign (+1 or -1), per eye side."""
-    return _corrective(sign * identity.basis(key), f"id_{key}_{'hi' if sign > 0 else 'lo'}")
+    return _corrective(sign * identity_term(key), f"id_{key}_{'hi' if sign > 0 else 'lo'}")
 
 
 def control_corrective(key: str, side: str):
-    return _corrective(model.control_delta(key, side)[0], f"ctl_{key}_{side}", per_side=False)
+    return _corrective(control_term(key, side), f"ctl_{key}_{side}", per_side=False)
 
 
 def shape(control_values: dict | None = None, identity_values: dict | None = None) -> np.ndarray:
     """Unscaled base vertices (V,3) of the character (before the exact-height scaling)."""
     v = model.neutral().copy()
     for k, side, w in control_weights(control_values or {}):
-        v += w * model.control_delta(k, side)[0]
-    if identity_values:
-        v += identity.identity_delta(identity_values)
+        v += w * control_term(k, side)
+    unknown = set(identity_values or {}) - set(identity.KEYS)
+    if unknown:
+        raise KeyError(f"unknown identity parameters: {sorted(unknown)}")
+    for k, s in (identity_values or {}).items():
+        if s:
+            v += float(s) * identity_term(k)
     return v
 
 
