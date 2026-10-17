@@ -162,6 +162,18 @@ adult character in the real studio before expanding. Finite credits: short visua
   Tests: `tests/test_character_forge_v3_eyelid_fit.py`. Next: Phase 4A.2 canthus closure (tarsus turn), body-preset
   blink residuals; hardware bench on the user's tower.
 
+## Project Humanity: Mercy face reference refinement (stopped for review)
+- Report `docs/CHARACTER_FORGE_V3_MERCY_REFINED.md`; evidence `examples/character_forge_aaa/humanity/v3_mercy_refined/`.
+- New preset `MERCY-REFINED` ("Mercy-inspired (refined)"): Phase 3C values with 23 overrides, controls femininity 1
+  and face.eye_size 1.25. MERCY-INSPIRED unchanged. No new operators.
+- `identity_dna.RESIDUAL_PRESETS` freezes the presets that carry a blink residual (ID-A, ID-B, MERCY-INSPIRED), so a
+  new nearby preset cannot change existing blinks.
+- Found: the Phase 3C Mercy preset has 2 open-pose canthus flips under eyelid fit 2 (`eye_outer_corner` 1.0); for 4A.2.
+- Main likeness blockers are styling: brow/lash colour tied to hair colour, no makeup layer, iris colour, no v3 bob,
+  highlight not placeable as a streak, accessories.
+- Tools: `tools/studio_v3_mercy_refined.mjs`, `tools/v3_mercy_refined.py`. Test:
+  `tests/test_character_forge_v3_mercy_refined.py`.
+
 ## Open problems / next actions
 1. Commit/push checkpoint; publish the studio artifact (multi-file; `downloads` capability; GLB offered zipped).
 2. Face realism (lips/eyes/brows) and anatomy fixes (hands, knees, feet) need a re-bake (~28 min) to reach the studio.

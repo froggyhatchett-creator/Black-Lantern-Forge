@@ -24,7 +24,7 @@ const boot = async (p, url) => { await p.goto(url + "?gen=3"); await p.waitForFu
 await boot(page, base);
 ok("v3 studio boots", (await page.evaluate(() => document.body.dataset.ready)) === "1");
 
-const PRESETS = ["neutral", "ID-A", "ID-B", "MERCY-INSPIRED"];
+const PRESETS = ["neutral", "ID-A", "ID-B", "MERCY-INSPIRED", "MERCY-REFINED"];
 const settle = (n = 3) => page.evaluate((n) => new Promise((r) => { const f0 = window.studio.frames; const t = () => (window.studio.frames - f0 >= n ? r() : requestAnimationFrame(t)); t(); }), n);
 const shot = async (name) => { if (!shots) return; await settle(); await page.locator("#view").screenshot({ path: path.join(out, "shots", `${name}.png`), timeout: 900000 }); };
 const reset = () => page.evaluate(() => { const s = window.studio; s.applyPreset("female", false); s.state.clip = "none"; s.playing = false; s.clipT = 0;
@@ -52,7 +52,7 @@ const ui = await page.evaluate(() => ({ tab: !document.getElementById("t-identit
   presets: [...document.querySelectorAll("[data-identity]")].map((b) => b.dataset.identity), keys: window.studio.man.identity.keys.length,
   version: window.studio.man.identity.version }));
 ok("Identity tab with one slider per parameter", ui.tab && ui.sliders === ui.keys && ui.keys === 36, JSON.stringify(ui));
-ok("four identity presets", JSON.stringify(ui.presets) === JSON.stringify(PRESETS), ui.presets.join(", "));
+ok("five identity presets", JSON.stringify(ui.presets) === JSON.stringify(PRESETS), ui.presets.join(", "));
 
 // --- presets through the UI; geometry at blink weights for the Python comparison; grooming follows the face
 const groom = {};

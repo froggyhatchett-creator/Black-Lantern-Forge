@@ -6,7 +6,7 @@ characters saved before identity existed) keeps its exact appearance:
     "face_identity": {
       "schema": "forge.v3-face-identity", "version": 1,
       "generator": {"id": "forge.character-forge", "version": 3},
-      "preset": "ID-A",           # where the values started: neutral, ID-A, ID-B, MERCY-INSPIRED, or custom
+      "preset": "ID-A",           # where the values started: neutral, ID-A, ID-B, MERCY-INSPIRED, MERCY-REFINED or custom
       "values": {"nose_length": 0.7, ...},   # s in [-1, 1]; 0 = neutral; a missing key is 0
       "locked": ["nose_length"]   # kept by preset changes in the studio
     }
@@ -42,7 +42,13 @@ KEYS_V1 = (
     "lip_projection",
 )
 BASIS_RECORD = Path(__file__).resolve().parent / "identity_basis_v1.json"  # Forge-made, not a third-party asset
-PRESET_LABELS = {"neutral": "Neutral", "ID-A": "ID-A", "ID-B": "ID-B", "MERCY-INSPIRED": "Mercy-inspired"}
+PRESET_LABELS = {"neutral": "Neutral", "ID-A": "ID-A", "ID-B": "ID-B", "MERCY-INSPIRED": "Mercy-inspired",
+                 "MERCY-REFINED": "Mercy-inspired (refined)"}
+
+
+# Presets that carry a blink residual. Frozen: the residuals blend by distance, so a new preset near an old one would
+# change the blink of characters at and around the old one. Later presets (MERCY-REFINED) carry none.
+RESIDUAL_PRESETS = ("ID-A", "ID-B", "MERCY-INSPIRED")
 
 
 def presets() -> dict:
@@ -113,7 +119,7 @@ def preset_affinity(values: dict) -> dict:
     to the preset's own size (|s - s_P| / |s_P|). The studio uses the same formula."""
     out = {}
     for n, p in presets().items():
-        if not p["values"]:
+        if not p["values"] or n not in RESIDUAL_PRESETS:
             continue
         sp = np.array([p["values"].get(k, 0.0) for k in KEYS_V1])
         s = np.array([values.get(k, 0.0) for k in KEYS_V1])

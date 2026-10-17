@@ -220,7 +220,7 @@ def preset_residuals() -> dict:
     from forge_character_forge.v3 import identity_dna
     out = {}
     for name, pr in identity_dna.presets().items():
-        if not pr["values"]:
+        if not pr["values"] or name not in identity_dna.RESIDUAL_PRESETS:
             continue
         vi = shape({}, pr["values"])
         tag = hashlib.sha256(np.round(vi - model.neutral(), 7).astype("<f4").tobytes()).hexdigest()[:16]

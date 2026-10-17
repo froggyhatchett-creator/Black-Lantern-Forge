@@ -347,7 +347,19 @@ STYLIZED = {
     },
 }
 
-STYLIZED_CONTROLS = {"MERCY-INSPIRED": {"body.femininity": 1.0}}
+# Mercy face refinement (after a second, stylised reference image): a separate preset so the comparison stays
+# reviewable; MERCY-INSPIRED is unchanged. Bigger almond eyes (with the eye-size control at 1.25, eyelid fit 2), a
+# shorter, softer lower face, a smaller mouth with fuller lips set back, a rounder chin brought forward. Values are the
+# Phase 3C ones except where listed; eye_outer_corner 0.8 (not 1.0) keeps the open canthus unflipped under fit 2.
+STYLIZED["MERCY-REFINED"] = {**STYLIZED["MERCY-INSPIRED"],
+    "eye_size": 1.0, "eye_aperture": 0.8, "eye_tilt": 0.45, "eye_length": 0.8, "eye_outer_corner": 0.8, "brow_ridge": -0.7,
+    "nose_length": -0.8, "nose_bridge": -0.5, "nose_tip_angle": 0.6, "mouth_width": -0.75, "mouth_height": 0.25,
+    "upper_lip": 0.1, "lower_lip": 0.15, "lip_projection": -1.0, "cheekbone_height": 0.35, "cheek_fullness": 0.4,
+    "midface_projection": 0.0, "jaw_width": -0.45, "jaw_taper": 0.4, "chin_width": -0.4, "chin_projection": 0.7,
+    "chin_height": -0.8, "face_length": -0.7,
+}
+
+STYLIZED_CONTROLS = {"MERCY-INSPIRED": {"body.femininity": 1.0}, "MERCY-REFINED": {"body.femininity": 1.0, "face.eye_size": 1.25}}
 
 # Two deliberately different original adults (Phase 3B), and nothing else: identity values only.
 IDENTITIES = {

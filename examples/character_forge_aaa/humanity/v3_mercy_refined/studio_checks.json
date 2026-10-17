@@ -1,0 +1,35 @@
+{
+ "checks": [
+  {
+   "name": "both Mercy presets are offered",
+   "pass": true,
+   "detail": "neutral, ID-A, ID-B, MERCY-INSPIRED, MERCY-REFINED"
+  },
+  {
+   "name": "MERCY-INSPIRED: preset and its controls applied",
+   "pass": true,
+   "detail": "{\"preset\":\"MERCY-INSPIRED\",\"fem\":1,\"eye\":1.06,\"lidFit\":2,\"note\":\"Mercy-inspired also sets body.femininity = 1 (a body control, editable in Body).\"}"
+  },
+  {
+   "name": "GLB exported: MERCY-INSPIRED",
+   "pass": true,
+   "detail": "12.2 MB"
+  },
+  {
+   "name": "MERCY-REFINED: preset and its controls applied",
+   "pass": true,
+   "detail": "{\"preset\":\"MERCY-REFINED\",\"fem\":1,\"eye\":1.25,\"lidFit\":2,\"note\":\"Mercy-inspired (refined) also sets body.femininity = 1, face.eye_size = 1.25 (a body control, editable in Body).\"}"
+  },
+  {
+   "name": "GLB exported: MERCY-REFINED",
+   "pass": true,
+   "detail": "12.2 MB"
+  },
+  {
+   "name": "no page errors",
+   "pass": true,
+   "detail": ""
+  }
+ ],
+ "errors": []
+}

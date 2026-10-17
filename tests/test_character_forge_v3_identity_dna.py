@@ -63,7 +63,7 @@ class IdentityDNATest(unittest.TestCase):
 
     def test_preset_affinity(self):
         for name, pr in I.presets().items():
-            if pr["values"]:
+            if pr["values"] and name in I.RESIDUAL_PRESETS:
                 self.assertAlmostEqual(I.preset_affinity(pr["values"])[name], 1.0)
         self.assertTrue(all(a == 0 for a in I.preset_affinity({}).values()))
 
