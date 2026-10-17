@@ -1,0 +1,229 @@
+{
+ "schema": "forge.blender-job-result",
+ "schema_version": 1,
+ "job": {
+  "schema": "forge.blender-job",
+  "schema_version": 1,
+  "input": "../../rodin_reference/source/base.glb",
+  "input_sha256": "2f359f0135f632e33ad8ba378e3e1ecebcffafc45f698ccc7f4bd629ccc6e41f",
+  "operation": "extract_region",
+  "output": "board_slab_v0.glb",
+  "params": {
+   "boxes": [
+    {
+     "centre": [
+      0.19653,
+      1.08177,
+      -0.01261
+     ],
+     "axes": [
+      [
+       0.4239,
+       0.897,
+       0.1254
+      ],
+      [
+       -0.4323,
+       0.322,
+       -0.8423
+      ],
+      [
+       0.7959,
+       -0.3028,
+       -0.5243
+      ]
+     ],
+     "half": [
+      0.587,
+      0.16,
+      0.09
+     ]
+    }
+   ],
+   "keep_largest": true,
+   "merge_vertices": true
+  },
+  "note": "v0 operator volume: one board-aligned slab. KNOWN INCORRECT: it also contains thigh and pouch surface and misses the front rails (see results/board_selection_slab_v0.jpg). It exercises the pipeline; it is not a correct board."
+ },
+ "job_dir": "/home/user/forge-worktrees/aaa-oneshot/experiments/blender_bridge/jobs/20261017T070835_extract_region_2f359f01_5bdz60rg",
+ "launcher": "bpy",
+ "blender_version": "5.2.2",
+ "expected_version": "5.2.2",
+ "exit_code": 0,
+ "seconds": 8.93,
+ "peak_rss_mb": 997.5,
+ "unexpected_files": [],
+ "report": {
+  "ok": true,
+  "blender_version": "5.2.2 LTS",
+  "operation": "extract_region",
+  "params": {
+   "boxes": [
+    {
+     "centre": [
+      0.19653,
+      1.08177,
+      -0.01261
+     ],
+     "axes": [
+      [
+       0.4239,
+       0.897,
+       0.1254
+      ],
+      [
+       -0.4323,
+       0.322,
+       -0.8423
+      ],
+      [
+       0.7959,
+       -0.3028,
+       -0.5243
+      ]
+     ],
+     "half": [
+      0.587,
+      0.16,
+      0.09
+     ]
+    }
+   ],
+   "keep_largest": true,
+   "merge_vertices": true
+  },
+  "import_merge_vertices": true,
+  "weld": {
+   "model": {
+    "distance": 1e-06,
+    "vertices_before": 487197,
+    "vertices_after": 249818
+   }
+  },
+  "import_seconds": 5.08,
+  "scene": {
+   "objects": [
+    {
+     "name": "model",
+     "type": "MESH",
+     "parent": null,
+     "matrix_world": [
+      [
+       1.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       1.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       1.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ],
+     "mesh": {
+      "vertices": 249818,
+      "edges": 750000,
+      "polygons": 500000,
+      "triangles": 500000,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "uv_layers": [
+       "UVMap"
+      ],
+      "materials": [
+       "model"
+      ],
+      "shape_keys": [],
+      "vertex_groups": 0,
+      "bbox_gltf_min": [
+       -0.5386,
+       0.0,
+       -0.56555
+      ],
+      "bbox_gltf_max": [
+       0.53875,
+       1.89756,
+       0.56654
+      ]
+     }
+    }
+   ],
+   "materials": [
+    {
+     "name": "model",
+     "images": [],
+     "base_color": [
+      0.5,
+      0.5,
+      0.5,
+      1.0
+     ],
+     "metallic": 0.05,
+     "roughness": 0.4
+    }
+   ],
+   "images": [],
+   "actions": []
+  },
+  "op_seconds": 1.76,
+  "result": {
+   "parts_in_boxes": 17,
+   "kept_part_faces": 54228,
+   "vertices": 27953,
+   "edges": 82206,
+   "polygons": 54228,
+   "triangles": 54228,
+   "boundary_edges": 1728,
+   "nonmanifold_edges": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "materials": [
+    "model"
+   ],
+   "shape_keys": [],
+   "vertex_groups": 0,
+   "bbox_gltf_min": [
+    -0.1735,
+    0.55412,
+    -0.2194
+   ],
+   "bbox_gltf_max": [
+    0.53678,
+    1.6043,
+    0.17319
+   ]
+  },
+  "source_object_unchanged": true,
+  "export": {
+   "file": "board_slab_v0.glb",
+   "bytes": 1306864
+  },
+  "seconds": 8.27
+ },
+ "outputs": {
+  "board_slab_v0.glb": {
+   "bytes": 1306864,
+   "sha256": "5361774afa8041e82f07d65607381b380379cf084047ee2c672be979741a3d38"
+  },
+  "report.json": {
+   "bytes": 2254,
+   "sha256": "1936d6431e6b0b2c57dd85ffa1c1eeb6db70332152a7dd42f81901b245cd8545"
+  }
+ },
+ "input_unchanged": true,
+ "ok": true
+}

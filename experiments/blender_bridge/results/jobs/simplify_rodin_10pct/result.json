@@ -1,0 +1,163 @@
+{
+ "schema": "forge.blender-job-result",
+ "schema_version": 1,
+ "job": {
+  "schema": "forge.blender-job",
+  "schema_version": 1,
+  "input": "../../rodin_reference/source/base.glb",
+  "input_sha256": "2f359f0135f632e33ad8ba378e3e1ecebcffafc45f698ccc7f4bd629ccc6e41f",
+  "operation": "simplify",
+  "output": "rodin_10pct.glb",
+  "params": {
+   "ratio": 0.1
+  }
+ },
+ "job_dir": "/home/user/forge-worktrees/aaa-oneshot/experiments/blender_bridge/jobs/20261017T070807_simplify_2f359f01_gb36fjws",
+ "launcher": "bpy",
+ "blender_version": "5.2.2",
+ "expected_version": "5.2.2",
+ "exit_code": 0,
+ "seconds": 15.25,
+ "peak_rss_mb": 1337.5,
+ "unexpected_files": [],
+ "report": {
+  "ok": true,
+  "blender_version": "5.2.2 LTS",
+  "operation": "simplify",
+  "params": {
+   "ratio": 0.1
+  },
+  "import_merge_vertices": true,
+  "weld": {
+   "model": {
+    "distance": 1e-06,
+    "vertices_before": 487197,
+    "vertices_after": 249818
+   }
+  },
+  "import_seconds": 5.21,
+  "scene": {
+   "objects": [
+    {
+     "name": "model",
+     "type": "MESH",
+     "parent": null,
+     "matrix_world": [
+      [
+       1.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       1.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       1.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ],
+     "mesh": {
+      "vertices": 249818,
+      "edges": 750000,
+      "polygons": 500000,
+      "triangles": 500000,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "uv_layers": [
+       "UVMap"
+      ],
+      "materials": [
+       "model"
+      ],
+      "shape_keys": [],
+      "vertex_groups": 0,
+      "bbox_gltf_min": [
+       -0.5386,
+       0.0,
+       -0.56555
+      ],
+      "bbox_gltf_max": [
+       0.53875,
+       1.89756,
+       0.56654
+      ]
+     }
+    }
+   ],
+   "materials": [
+    {
+     "name": "model",
+     "images": [],
+     "base_color": [
+      0.5,
+      0.5,
+      0.5,
+      1.0
+     ],
+     "metallic": 0.05,
+     "roughness": 0.4
+    }
+   ],
+   "images": [],
+   "actions": []
+  },
+  "op_seconds": 7.94,
+  "result": {
+   "model": {
+    "vertices": 24818,
+    "edges": 75000,
+    "polygons": 50000,
+    "triangles": 50000,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "uv_layers": [
+     "UVMap"
+    ],
+    "materials": [
+     "model"
+    ],
+    "shape_keys": [],
+    "vertex_groups": 0,
+    "bbox_gltf_min": [
+     -0.53894,
+     0.00052,
+     -0.56568
+    ],
+    "bbox_gltf_max": [
+     0.53936,
+     1.89788,
+     0.56542
+    ]
+   }
+  },
+  "export": {
+   "file": "rodin_10pct.glb",
+   "bytes": 1352560
+  },
+  "seconds": 14.47
+ },
+ "outputs": {
+  "report.json": {
+   "bytes": 1832,
+   "sha256": "cbf53d1c7c2499eb5e013294c159d0135f4dc03114eb3071a10e80bbcca54547"
+  },
+  "rodin_10pct.glb": {
+   "bytes": 1352560,
+   "sha256": "acfccbf90c2a3b83355c7f81fe4bfa7d7639fddfddd83661deb80650210a1b63"
+  }
+ },
+ "input_unchanged": true,
+ "ok": true
+}

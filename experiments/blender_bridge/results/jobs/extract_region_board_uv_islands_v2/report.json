@@ -1,0 +1,242 @@
+{
+ "ok": true,
+ "blender_version": "5.2.2 LTS",
+ "operation": "extract_region",
+ "params": {
+  "select": "uv_islands",
+  "boxes": [
+   {
+    "centre": [
+     0.17265,
+     1.09085,
+     0.00312
+    ],
+    "axes": [
+     [
+      0.4239,
+      0.897,
+      0.1254
+     ],
+     [
+      -0.4323,
+      0.322,
+      -0.8423
+     ],
+     [
+      0.7959,
+      -0.3028,
+      -0.5243
+     ]
+    ],
+    "half": [
+     0.62,
+     0.2,
+     0.17
+    ]
+   }
+  ],
+  "island_vote": 0.6,
+  "keep_largest": false,
+  "exclude_points": {
+   "pant leg behind the board": [
+    -0.01527,
+    0.74502,
+    -0.27471
+   ],
+   "other pant leg": [
+    -0.06125,
+    0.63181,
+    0.15211
+   ],
+   "glove cuff": [
+    0.38118,
+    1.13759,
+    0.04652
+   ],
+   "wrist band at grip": [
+    0.32102,
+    1.09224,
+    0.13402
+   ],
+   "crotch fold": [
+    0.0188,
+    0.98136,
+    0.00234
+   ],
+   "forearm sleeve": [
+    0.23217,
+    1.16669,
+    -0.10163
+   ]
+  },
+  "include_points": {
+   "lower turbine housing a": [
+    0.10153,
+    0.84481,
+    0.21829
+   ],
+   "lower turbine housing b": [
+    0.17849,
+    0.78551,
+    0.21571
+   ]
+  }
+ },
+ "import_merge_vertices": true,
+ "weld": {
+  "model": {
+   "distance": 1e-06,
+   "vertices_before": 487197,
+   "vertices_after": 249818
+  }
+ },
+ "import_seconds": 4.49,
+ "scene": {
+  "objects": [
+   {
+    "name": "model",
+    "type": "MESH",
+    "parent": null,
+    "matrix_world": [
+     [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      1.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "mesh": {
+     "vertices": 249818,
+     "edges": 750000,
+     "polygons": 500000,
+     "triangles": 500000,
+     "boundary_edges": 0,
+     "nonmanifold_edges": 0,
+     "uv_layers": [
+      "UVMap"
+     ],
+     "materials": [
+      "model"
+     ],
+     "shape_keys": [],
+     "vertex_groups": 0,
+     "bbox_gltf_min": [
+      -0.5386,
+      0.0,
+      -0.56555
+     ],
+     "bbox_gltf_max": [
+      0.53875,
+      1.89756,
+      0.56654
+     ]
+    }
+   }
+  ],
+  "materials": [
+   {
+    "name": "model",
+    "images": [],
+    "base_color": [
+     0.5,
+     0.5,
+     0.5,
+     1.0
+    ],
+    "metallic": 0.05,
+    "roughness": 0.4
+   }
+  ],
+  "images": [],
+  "actions": []
+ },
+ "op_seconds": 7.84,
+ "result": {
+  "uv_islands": 460,
+  "islands_taken": 68,
+  "picks": {
+   "pant leg behind the board": {
+    "action": "exclude",
+    "island_faces": 17113
+   },
+   "other pant leg": {
+    "action": "exclude",
+    "island_faces": 18831
+   },
+   "glove cuff": {
+    "action": "exclude",
+    "island_faces": 3382
+   },
+   "wrist band at grip": {
+    "action": "exclude",
+    "island_faces": 1162
+   },
+   "crotch fold": {
+    "action": "exclude",
+    "island_faces": 2926
+   },
+   "forearm sleeve": {
+    "action": "exclude",
+    "island_faces": 2088
+   },
+   "lower turbine housing a": {
+    "action": "include",
+    "island_faces": 918
+   },
+   "lower turbine housing b": {
+    "action": "include",
+    "island_faces": 3719
+   }
+  },
+  "parts": 2,
+  "kept_part_faces": 89793,
+  "vertices": 45633,
+  "edges": 135458,
+  "polygons": 89796,
+  "triangles": 89796,
+  "boundary_edges": 1528,
+  "nonmanifold_edges": 0,
+  "uv_layers": [
+   "UVMap"
+  ],
+  "materials": [
+   "model"
+  ],
+  "shape_keys": [],
+  "vertex_groups": 0,
+  "bbox_gltf_min": [
+   -0.10168,
+   0.57588,
+   -0.27243
+  ],
+  "bbox_gltf_max": [
+   0.53875,
+   1.6043,
+   0.27489
+  ]
+ },
+ "source_object_unchanged": true,
+ "export": {
+  "file": "board_uv_islands_v2.glb",
+  "bytes": 2110576
+ },
+ "seconds": 13.72
+}

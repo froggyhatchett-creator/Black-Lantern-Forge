@@ -1,0 +1,98 @@
+{
+ "operation": "extract_region",
+ "source": {
+  "triangles": 500000,
+  "bbox": [
+   [
+    -0.5386,
+    0.0,
+    -0.5656
+   ],
+   [
+    0.5388,
+    1.8976,
+    0.5665
+   ]
+  ]
+ },
+ "validator": {
+  "errors": [],
+  "warnings": []
+ },
+ "output": {
+  "triangles": 54228,
+  "vertices": 30633,
+  "bbox": [
+   [
+    -0.1735,
+    0.5541,
+    -0.2194
+   ],
+   [
+    0.5368,
+    1.6043,
+    0.1732
+   ]
+  ],
+  "normals": true,
+  "uvs": true,
+  "node_transforms": [
+   [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ]
+  ],
+  "materials": [
+   "model"
+  ],
+  "material_values": [
+   {
+    "name": "model",
+    "doubleSided": true,
+    "baseColorFactor": [
+     0.5,
+     0.5,
+     0.5,
+     1
+    ],
+    "metallicFactor": 0.05000000074505806,
+    "roughnessFactor": 0.4000000059604645
+   }
+  ],
+  "images": 0,
+  "generator": "Khronos glTF Blender I/O v5.2.40"
+ },
+ "extract": {
+  "expected_triangles_numpy_reference": 54228,
+  "output_triangles": 54228,
+  "match": true,
+  "parts_in_boxes": 14,
+  "vertex_max_deviation_from_source_mm": 0.0008,
+  "vertices_outside_boxes": 0,
+  "open_boundary_loops": 11,
+  "open_boundary_edges": 1728
+ },
+ "pass": true
+}

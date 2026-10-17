@@ -1,0 +1,1 @@
+1d37c95c6b9e88dc9428bff7f2f660dfd59a53f656d458a8fb87a89fe627f37e  rodin_roundtrip.glb

@@ -1,0 +1,341 @@
+{
+ "schema": "forge.blender-job-result",
+ "schema_version": 1,
+ "job": {
+  "schema": "forge.blender-job",
+  "schema_version": 1,
+  "operation": "extract_region",
+  "input": "../../rodin_reference/source/base.glb",
+  "input_sha256": "2f359f0135f632e33ad8ba378e3e1ecebcffafc45f698ccc7f4bd629ccc6e41f",
+  "output": "board_uv_islands_v1.glb",
+  "params": {
+   "select": "uv_islands",
+   "boxes": [
+    {
+     "centre": [
+      0.17265,
+      1.09085,
+      0.00312
+     ],
+     "axes": [
+      [
+       0.4239,
+       0.897,
+       0.1254
+      ],
+      [
+       -0.4323,
+       0.322,
+       -0.8423
+      ],
+      [
+       0.7959,
+       -0.3028,
+       -0.5243
+      ]
+     ],
+     "half": [
+      0.62,
+      0.2,
+      0.17
+     ]
+    }
+   ],
+   "island_vote": 0.6,
+   "keep_largest": false,
+   "exclude_points": {
+    "pant leg behind the board": [
+     -0.01527,
+     0.74502,
+     -0.27471
+    ],
+    "other pant leg": [
+     -0.06125,
+     0.63181,
+     0.15211
+    ],
+    "glove cuff": [
+     0.38118,
+     1.13759,
+     0.04652
+    ],
+    "wrist band at grip": [
+     0.32102,
+     1.09224,
+     0.13402
+    ],
+    "crotch fold": [
+     0.0188,
+     0.98136,
+     0.00234
+    ]
+   },
+   "include_points": {
+    "lower turbine housing a": [
+     0.10153,
+     0.84481,
+     0.21829
+    ],
+    "lower turbine housing b": [
+     0.17849,
+     0.78551,
+     0.21571
+    ]
+   }
+  },
+  "note": "Operator-assisted v1: whole UV islands (Rodin's own UV charts, Blender 'Select Linked, delimit UV') with >= 60 % of their faces in one generous board-aligned box, minus islands picked as character (5 picks), plus islands picked as board (2 picks). Picks are surface points; each resolves to the island of the nearest face."
+ },
+ "job_dir": "/home/user/forge-worktrees/aaa-oneshot/experiments/blender_bridge/jobs/20261017T071424_extract_region_2f359f01_6s__0ndj",
+ "launcher": "bpy",
+ "blender_version": "5.2.2",
+ "expected_version": "5.2.2",
+ "exit_code": 0,
+ "seconds": 15.07,
+ "peak_rss_mb": 1100.2,
+ "unexpected_files": [],
+ "report": {
+  "ok": true,
+  "blender_version": "5.2.2 LTS",
+  "operation": "extract_region",
+  "params": {
+   "select": "uv_islands",
+   "boxes": [
+    {
+     "centre": [
+      0.17265,
+      1.09085,
+      0.00312
+     ],
+     "axes": [
+      [
+       0.4239,
+       0.897,
+       0.1254
+      ],
+      [
+       -0.4323,
+       0.322,
+       -0.8423
+      ],
+      [
+       0.7959,
+       -0.3028,
+       -0.5243
+      ]
+     ],
+     "half": [
+      0.62,
+      0.2,
+      0.17
+     ]
+    }
+   ],
+   "island_vote": 0.6,
+   "keep_largest": false,
+   "exclude_points": {
+    "pant leg behind the board": [
+     -0.01527,
+     0.74502,
+     -0.27471
+    ],
+    "other pant leg": [
+     -0.06125,
+     0.63181,
+     0.15211
+    ],
+    "glove cuff": [
+     0.38118,
+     1.13759,
+     0.04652
+    ],
+    "wrist band at grip": [
+     0.32102,
+     1.09224,
+     0.13402
+    ],
+    "crotch fold": [
+     0.0188,
+     0.98136,
+     0.00234
+    ]
+   },
+   "include_points": {
+    "lower turbine housing a": [
+     0.10153,
+     0.84481,
+     0.21829
+    ],
+    "lower turbine housing b": [
+     0.17849,
+     0.78551,
+     0.21571
+    ]
+   }
+  },
+  "import_merge_vertices": true,
+  "weld": {
+   "model": {
+    "distance": 1e-06,
+    "vertices_before": 487197,
+    "vertices_after": 249818
+   }
+  },
+  "import_seconds": 4.94,
+  "scene": {
+   "objects": [
+    {
+     "name": "model",
+     "type": "MESH",
+     "parent": null,
+     "matrix_world": [
+      [
+       1.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       1.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       1.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ],
+     "mesh": {
+      "vertices": 249818,
+      "edges": 750000,
+      "polygons": 500000,
+      "triangles": 500000,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "uv_layers": [
+       "UVMap"
+      ],
+      "materials": [
+       "model"
+      ],
+      "shape_keys": [],
+      "vertex_groups": 0,
+      "bbox_gltf_min": [
+       -0.5386,
+       0.0,
+       -0.56555
+      ],
+      "bbox_gltf_max": [
+       0.53875,
+       1.89756,
+       0.56654
+      ]
+     }
+    }
+   ],
+   "materials": [
+    {
+     "name": "model",
+     "images": [],
+     "base_color": [
+      0.5,
+      0.5,
+      0.5,
+      1.0
+     ],
+     "metallic": 0.05,
+     "roughness": 0.4
+    }
+   ],
+   "images": [],
+   "actions": []
+  },
+  "op_seconds": 7.75,
+  "result": {
+   "uv_islands": 460,
+   "islands_taken": 69,
+   "picks": {
+    "pant leg behind the board": {
+     "action": "exclude",
+     "island_faces": 17113
+    },
+    "other pant leg": {
+     "action": "exclude",
+     "island_faces": 18831
+    },
+    "glove cuff": {
+     "action": "exclude",
+     "island_faces": 3382
+    },
+    "wrist band at grip": {
+     "action": "exclude",
+     "island_faces": 1162
+    },
+    "crotch fold": {
+     "action": "exclude",
+     "island_faces": 2926
+    },
+    "lower turbine housing a": {
+     "action": "include",
+     "island_faces": 918
+    },
+    "lower turbine housing b": {
+     "action": "include",
+     "island_faces": 3719
+    }
+   },
+   "parts": 2,
+   "kept_part_faces": 91881,
+   "vertices": 46707,
+   "edges": 138622,
+   "polygons": 91884,
+   "triangles": 91884,
+   "boundary_edges": 1592,
+   "nonmanifold_edges": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "materials": [
+    "model"
+   ],
+   "shape_keys": [],
+   "vertex_groups": 0,
+   "bbox_gltf_min": [
+    -0.10168,
+    0.57588,
+    -0.27243
+   ],
+   "bbox_gltf_max": [
+    0.53875,
+    1.6043,
+    0.27489
+   ]
+  },
+  "source_object_unchanged": true,
+  "export": {
+   "file": "board_uv_islands_v1.glb",
+   "bytes": 2160864
+  },
+  "seconds": 14.39
+ },
+ "outputs": {
+  "board_uv_islands_v1.glb": {
+   "bytes": 2160864,
+   "sha256": "a434884f81b1c2968c054b0137d4092bd5dd3683314084f4607a78f200f1dbef"
+  },
+  "report.json": {
+   "bytes": 3464,
+   "sha256": "1cba252549394c3d6438c7d5ba2601df4e8ea341047602a5ad376d5fb1166271"
+  }
+ },
+ "input_unchanged": true,
+ "ok": true
+}

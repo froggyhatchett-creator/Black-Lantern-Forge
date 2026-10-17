@@ -1,0 +1,102 @@
+{
+ "operation": "simplify",
+ "source": {
+  "triangles": 500000,
+  "bbox": [
+   [
+    -0.5386,
+    0.0,
+    -0.5656
+   ],
+   [
+    0.5388,
+    1.8976,
+    0.5665
+   ]
+  ]
+ },
+ "validator": {
+  "errors": [],
+  "warnings": []
+ },
+ "output": {
+  "triangles": 50000,
+  "vertices": 32854,
+  "bbox": [
+   [
+    -0.5389,
+    0.0005,
+    -0.5657
+   ],
+   [
+    0.5394,
+    1.8979,
+    0.5654
+   ]
+  ],
+  "normals": true,
+  "uvs": true,
+  "node_transforms": [
+   [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ]
+  ],
+  "materials": [
+   "model"
+  ],
+  "material_values": [
+   {
+    "name": "model",
+    "doubleSided": true,
+    "baseColorFactor": [
+     0.5,
+     0.5,
+     0.5,
+     1
+    ],
+    "metallicFactor": 0.05000000074505806,
+    "roughnessFactor": 0.4000000059604645
+   }
+  ],
+  "images": 0,
+  "generator": "Khronos glTF Blender I/O v5.2.40"
+ },
+ "simplify": {
+  "triangle_ratio": 0.1,
+  "requested": 0.1,
+  "deviation_to_nearest_source_vertex_mm_p50_p99_max": [
+   1.498,
+   4.531,
+   6.675
+  ],
+  "welded_open_edges_source_output": [
+   0,
+   0
+  ],
+  "welded_parts_output": 1
+ },
+ "pass": true
+}

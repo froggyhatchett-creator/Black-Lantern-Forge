@@ -1,0 +1,89 @@
+{
+ "schema": "forge.blender-job",
+ "schema_version": 1,
+ "operation": "extract_region",
+ "input": "../../rodin_reference/source/base.glb",
+ "input_sha256": "2f359f0135f632e33ad8ba378e3e1ecebcffafc45f698ccc7f4bd629ccc6e41f",
+ "output": "board_uv_islands_v2.glb",
+ "params": {
+  "select": "uv_islands",
+  "boxes": [
+   {
+    "centre": [
+     0.17265,
+     1.09085,
+     0.00312
+    ],
+    "axes": [
+     [
+      0.4239,
+      0.897,
+      0.1254
+     ],
+     [
+      -0.4323,
+      0.322,
+      -0.8423
+     ],
+     [
+      0.7959,
+      -0.3028,
+      -0.5243
+     ]
+    ],
+    "half": [
+     0.62,
+     0.2,
+     0.17
+    ]
+   }
+  ],
+  "island_vote": 0.6,
+  "keep_largest": false,
+  "exclude_points": {
+   "pant leg behind the board": [
+    -0.01527,
+    0.74502,
+    -0.27471
+   ],
+   "other pant leg": [
+    -0.06125,
+    0.63181,
+    0.15211
+   ],
+   "glove cuff": [
+    0.38118,
+    1.13759,
+    0.04652
+   ],
+   "wrist band at grip": [
+    0.32102,
+    1.09224,
+    0.13402
+   ],
+   "crotch fold": [
+    0.0188,
+    0.98136,
+    0.00234
+   ],
+   "forearm sleeve": [
+    0.23217,
+    1.16669,
+    -0.10163
+   ]
+  },
+  "include_points": {
+   "lower turbine housing a": [
+    0.10153,
+    0.84481,
+    0.21829
+   ],
+   "lower turbine housing b": [
+    0.17849,
+    0.78551,
+    0.21571
+   ]
+  }
+ },
+ "note": "Operator-assisted v2: whole UV islands (Rodin's own UV charts, Blender 'Select Linked, delimit UV') with >= 60 % of their faces in one generous board-aligned box, minus islands picked as character (6 picks: v1 + the forearm sleeve), plus islands picked as board (2 picks). Picks are surface points; each resolves to the island of the nearest face."
+}

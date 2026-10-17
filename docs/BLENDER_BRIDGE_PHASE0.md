@@ -1,27 +1,146 @@
-# Blender Bridge Phase 0: assessment and isolated proof (stopped at the install gate)
+# Blender Bridge Phase 0: assessment, isolated proof and results (stopped for review)
 
-## Recommendation: CONDITIONAL GO
+## Recommendation: GO for an optional, out-of-process job tool; NO-GO for expecting Blender to separate parts by itself
 
-**Blender as an optional, out-of-process job tool: yes.** Its value is real for generic glTF I/O, decimation,
-remeshing, UV unwrapping, texture baking and data transfer. It is clean to isolate, provided Forge never imports it.
+Blender 5.2.2 now runs here, isolated in the experiment's own venv (approved install; `bpy` from PyPI, size and
+sha256 verified).
 
-**Blender does not solve the hard part of the Rodin task.** Deciding where the board ends and the character begins
-is the hard part. Blender gives an excellent operator UI and robust mesh operations for that, not an automatic answer.
+**All seven success criteria are met:**
+- headless invocation;
+- the real Rodin GLB imported;
+- useful mesh information extracted;
+- geometry and scale preserved exactly on round trip;
+- two processing operations demonstrated;
+- every output independently verified by Forge-side code;
+- production untouched.
 
-**Conditions for the GO**
-1. **Install approval.** Approve a 402 MB `bpy` install here, or run the prepared Windows job on your tower.
-2. **Verification.** The three prepared jobs must pass Forge's independent verification (`verify.py`), not merely
-   export a file.
-3. **GPL boundary.** Blender stays a separate process exchanging files, and Forge never imports `bpy`.
-4. **Optional.** Blender stays optional, with no Forge feature depending on it. Forge already has its own QEM
-   decimation (`lod.py`).
+**What Blender gave this experiment**
+- **Exact glTF I/O.** All 500,000 triangles round-trip bit-identical in position and UV.
+- **Correct, topology-preserving decimation**, but only after an explicit weld.
+- **The idea that separated the board: UV islands.** Rodin's own UV charts follow the parts, and Blender exposes
+  them through its standard "Select Linked, delimit UV".
 
-**Not yet demonstrated: Blender itself.** No Blender ran. Success criteria 1, 2, 4, 5 and 6 are therefore **open**;
-criterion 7 holds (production systems untouched). Everything that does not need Blender is built and tested.
+**What it did not give:** a capability Forge couldn't reproduce. The same UV-island selection reimplemented in numpy
+selects the *identical* 89,796 triangles. Blender's real long-term value is its tool library (remesh, UV unwrap,
+bake, weight transfer) and its artist UI, not part separation.
 
-Experiment: `experiments/blender_bridge/` (README there).
+**Conditions**
+1. Blender stays a separate process exchanging files; Forge never imports `bpy` (GPL).
+2. It is never bundled; the user installs it.
+3. Every job's output is judged by Forge-side verification, never by Blender's own report. This phase showed why:
+   a decimated mesh that **passed the GLB validator was cracked into 4,240 pieces** (below).
 
-## 0A: Environment and architecture
+Experiment: `experiments/blender_bridge/` (README; dependencies and licences in `DEPENDENCIES.md`). Pre-install
+assessment sections follow the results.
+
+## Phase 0 results (Blender 5.2.2, 2026-10-17)
+
+All jobs ran through `bridge.py` with launcher `bpy`. Each had its own sandbox directory, a checksum-verified
+read-only input copy and a log. The source GLB's sha256 was unchanged after every job (`2f359f01…6e41f`).
+
+### Timings and memory (4 CPUs)
+
+| Job | Wall time | Blender op | Peak RSS | Output |
+|---|---|---|---|---|
+| Version probe | 0.76 s | — | — | `5.2.2` |
+| Inspect | 5.1 s | import 2.3 s | 896 MB | report |
+| Round trip | 6.4 s | — | 887 MB | 22.2 MB GLB |
+| Simplify 10 % (welded) | 15.3 s | weld + decimate 7.9 s | 1,338 MB | 1.35 MB GLB |
+| Board, slab v0 | 8.9 s | 1.8 s | 998 MB | 1.31 MB GLB |
+| Board, UV islands v2 | 14.4 s | ~7.8 s (island labelling in Python inside Blender) | 1,100 MB | 2.11 MB GLB |
+
+### 1-3. Import, unchanged round trip, validation (`results/roundtrip_vs_source.jpg`)
+
+**Import (Blender's view)**
+- 1 mesh object `model`, identity transform, 504,919 vertices, 500,000 triangles.
+- 1 UV layer and material `model` (base colour 0.5 grey, metallic 0.05, roughness 0.4, no images).
+- No armature, shape keys or vertex groups.
+
+**Round trip vs source** (`verify.py`, Forge's reader, node transforms applied)
+
+| Check | Result |
+|---|---|
+| Forge validator | 0 errors, 0 warnings |
+| Triangles | 500,000 / 500,000, **every one matched exactly by position** (1 µm) |
+| Bounding box | identical (0.000 mm) |
+| Transform, scale, axes | identity node; Blender's Z-up conversion undone exactly |
+| UVs | identical per corner (max difference 0.0) |
+| Normals | re-encoded: 99th percentile 0.03°, max 0.17° |
+| Material | name, base colour, metallic, roughness, double-sided: identical |
+| Vertices | 505,450 vs 504,919 (+531 splits: an exporter re-indexing, not a geometry change) |
+| Renders | max pixel difference 10/255; at most 2 pixels above 8 |
+
+**Topology gotcha.** On import Blender shows **409,580 open edges**: glTF stores UV-seam vertices split, and the
+importer keeps them split. The importer's own `merge_vertices` option barely helps (504,919 -> 487,197 vertices,
+still 383,648 open edges). An explicit weld (`remove_doubles`, 1 µm) gives exactly Forge's count: **249,818
+vertices, 0 open edges**.
+
+### 4. Non-destructive processing: Decimate to 10 % (`results/simplify_10pct_vs_source.jpg`)
+
+**First run: cracked.** Decimating the seam-split import exported a file the GLB validator accepts, but on welded
+geometry it has **63,832 open edges in 4,240 pieces**: each side of every UV seam collapsed independently.
+- `verify.py` did not catch this at first.
+- It now fails any job that adds open edges.
+- That run is recorded as failed.
+
+**Fixed run (weld first)**
+- 50,000 triangles (ratio 0.100), 24,818 vertices.
+- **0 open edges, 1 piece.** The Euler characteristic is still -182 (genus 92): topology preserved.
+- Bounding box within 0.6 mm; UVs kept; verifier passes.
+- Deviation to the nearest source vertex (an upper bound on surface distance): median 1.5 mm, p99 4.5 mm,
+  max 6.7 mm.
+- Silhouette preserved. Fine facial detail is lost at this ratio, as expected.
+
+### 5. Hoverboard selection
+
+| Method | Where | Result |
+|---|---|---|
+| Separate by Loose Parts (welded) | Blender | **1 part.** Useless |
+| Sharp-edge islands (30°) | Blender | One island holds **94 % of the mesh.** Useless (the same leak as Forge's crease growth) |
+| Crease-bounded growth | Python | Leaks into pants, belt and chest at 25° and 45° (pre-install evidence) |
+| Slab v0 (one oriented box) | Blender **and** numpy | Identical triangle sets (54,228). Includes thigh and pouch shreds, **misses** the front rails and lower turbine; 1,728 open edges in 11 loops (`board_extracted_slab_v0.jpg`) |
+| **UV islands v2** (one generous box votes whole UV islands at >= 60 %; 6 exclude picks: two pant legs, glove cuff, wrist band, crotch fold, forearm sleeve; 2 include picks: lower turbine housing) | Blender **and** numpy | **Identical triangle sets (89,796)**; 68 of 460 islands; every vertex within 0.0009 mm of the source. A coherent board from the front: plate, both turbines, rails, handles, strap; hand, glove and pants excluded. 1,528 open edges in 13 loops (`board_extracted_uv_islands_v2.jpg`, `board_selection_uv_islands_v2.jpg`) |
+
+**Remaining defects in v2 (needs an operator or artist)**
+- Open holes on the back of the lower board, where Rodin fused it to the thigh and body. That surface was never
+  generated.
+- A few small detached fragments.
+- One horizontal tube near the grip: either the board's handle or part of her forearm. Geometry alone can't settle
+  it; check against the artwork.
+- No capping, re-UV or texture (the source has none).
+
+### 6. Did Blender improve on the Python-only methods?
+
+**For this asset, the improvement came from a better signal (UV islands), not from Blender.**
+- Blender surfaced that signal in minutes through a standard selection tool, and running the probe inside Blender is
+  how it was found.
+- Forge's numpy port selects exactly the same faces, so Forge does not need Blender to do it.
+- The operator picks (8 points) are the real work. In Blender they would be clicks in the viewport, and that
+  interactive UI is where Blender beats anything Forge has today.
+- Where Blender clearly adds value: exact, robust glTF I/O; a decimation that, once welded, matches Forge's own
+  topology analysis; and the tool library for the next steps (hole capping, UV unwrapping, baking, weight transfer).
+
+## Limitations
+
+**Of the asset**
+- Hidden surfaces under the hands and against the thigh do not exist.
+- No textures.
+- Island ids are only meaningful for this checksum, so the picks are stored as surface points.
+
+**Of the bridge**
+- Confinement is by convention plus checks, not an OS sandbox.
+- Only `bpy` 5.2.2 on Linux has run. The Windows runner and the Blender-application launcher are unexecuted.
+
+**Of the jobs**
+- UV-island labelling inside Blender is plain Python (~8 s); acceptable here, slow for very large meshes.
+- Decimation deviation is measured vertex-to-vertex (an upper bound), not point-to-surface.
+
+**Not attempted, as instructed:** retopology, rigging, clothing reconstruction, character conversion, capping or
+texturing the board.
+
+## Pre-install assessment
+
+### 0A: Environment and architecture
 
 ### Environment (this container)
 
@@ -110,7 +229,7 @@ Forge (owns DNA, contracts, projects, editing)                Blender (optional,
 instead of reporting an error (`validate.py`, the "missing material" message). External tools can produce such
 files.
 
-### Prepared, NOT executed (needs Blender)
+### Prepared before the install (since executed: see Phase 0 results)
 
 **`job_blender.py`**
 - `inspect`: objects, transforms, counts, UVs, materials, images, armatures, shape keys, boundary and non-manifold
@@ -194,17 +313,7 @@ Column A is documented Blender functionality, **not verified here**.
 
 ## 0E: Validation record
 
-| Item | Recorded |
-|---|---|
-| Blender version | **not available here** (pin: 5.2.2) |
-| Import / export success | **not executed** |
-| Source counts (reference for the Blender import) | 500,000 triangles; 504,919 vertices as stored; 249,818 welded; 1 mesh, 1 material, 0 images, 0 skins/morphs/animations |
-| Expected Blender `inspect` | 500,000 triangles in 1 mesh object; ~249.8k vertices with merge on, 504,919 with it off |
-| Expected v0 board extraction | 54,228 triangles, 11 open boundary loops (numpy reference) |
-| Scale and coordinates | Source in metres, +Y up, +Z front, feet at y = 0. Blender converts Y-up to Z-up on import and back on export; `verify.py` checks bounds after node transforms |
-| Time and memory | Recorded per job by `bridge.py` (peak RSS on Linux/macOS). Forge-side probes: topology inspection 5.8 s; region growth 0.2 s plus rendering (selection not timed) |
-| Visual defects | Board segmentation evidence in `results/` |
-| Automation limits | Board separation is not automatable on this asset (above) |
+See **Phase 0 results** above: version, import/export, counts, geometry and scale, materials, timings, memory, visual defects and automation limits, all measured.
 
 ## Effort
 
@@ -215,10 +324,11 @@ Column A is documented Blender functionality, **not verified here**.
 | Operator-assisted prop extraction (Forge preview/volume editor + extract + cap + UV + verify) | 1-2 weeks; then per prop: hours of operator time |
 | Character-level work (retopology, rig and weight transfer, garments) | Months, with artist supervision; not recommended now |
 
-## Approval needed
+## Approvals and open decisions
 
-1. **The install.** Either:
-   - approve installing `bpy==5.2.2` (402 MB) in an isolated venv inside `experiments/blender_bridge/` here; or
-   - run `run_on_windows.ps1` on your tower and send back `blender_bridge_results.zip`.
-2. **Licensing of the Blender-side job scripts** if Forge ever distributes them (GPL-3.0-or-later recommended,
-   kept separate).
+- **Done:** the `bpy` 5.2.2 install was approved and performed (isolated; see `DEPENDENCIES.md`).
+- **Open: licensing.** The Blender-side job scripts need a licence if Forge ever distributes them (GPL-3.0-or-later
+  recommended, kept separate).
+- **Open: next step.** Choose one:
+  - an operator-assisted prop extraction milestone (capping, UVs, review); or
+  - the Studio reference overlay from the external-reference report.

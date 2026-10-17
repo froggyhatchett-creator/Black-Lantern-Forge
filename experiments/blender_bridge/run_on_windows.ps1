@@ -8,7 +8,7 @@
 #   # another Blender version: add  -ExpectVersion 4.2.3  (recorded in every result.json; the default pin is 5.2.2)
 #
 # Needs: the Rodin GLB at ..\rodin_reference\source\base.glb (checksum-checked) and Forge's Python (numpy) for the
-# Forge-side checks. Runs three jobs (inspect, simplify to 10 %, extract the v0 board slab), verifies each output with
+# Forge-side checks. Runs the jobs (inspect, round trip, simplify 10 %, board slab v0, board UV islands v2), verifies each with
 # Forge's own reader and validator (verify.py), and zips the small results (no input copies) into blender_bridge_results.zip.
 param([string]$BlenderExe = "", [switch]$InstallBpy, [string]$ExpectVersion = "5.2.2")
 $ErrorActionPreference = "Stop"
@@ -37,7 +37,7 @@ if ($InstallBpy) {
 
 & $fexe @frest bridge.py version --launcher $launcher --exe $exe
 $summary = @()
-foreach ($j in @("inspect_rodin", "simplify_rodin_10pct", "extract_board_slab_v0")) {
+foreach ($j in @("inspect_rodin", "roundtrip_rodin", "simplify_rodin_10pct", "extract_board_slab_v0", "extract_board_uv_islands_v2")) {
     $before = @(Get-ChildItem jobs -Directory -ErrorAction SilentlyContinue | ForEach-Object Name)
     & $fexe @frest bridge.py run "jobspecs\$j.json" --launcher $launcher --exe $exe --expect-version $ExpectVersion
     $runExit = $LASTEXITCODE

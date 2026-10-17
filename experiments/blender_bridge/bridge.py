@@ -31,7 +31,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 JOB_SCRIPT = HERE / "job_blender.py"
 PINNED_VERSION = "5.2.2"   # the version proposed for approval (bpy 5.2.2 / Blender 5.2.2); fail closed on anything else
-OPERATIONS = ("inspect", "simplify", "extract_region")
+OPERATIONS = ("inspect", "roundtrip", "simplify", "extract_region")
 SCHEMA = "forge.blender-job"
 SCHEMA_VERSION = 1
 
@@ -95,6 +95,8 @@ def _peak_rss_mb():
 
 def run(job_path, launcher, exe, jobs_root, timeout=1800, check_version=True, expect_version=PINNED_VERSION) -> dict:
     job = load_job(job_path)
+    if Path(exe).exists():  # jobs run with the job directory as working directory: never pass a relative path on
+        exe = str(Path(exe).absolute())  # not resolve(): a venv python is a symlink, and resolving it leaves the venv
     version = blender_version(launcher, exe) if check_version else None
     if check_version and version != expect_version:
         raise BridgeError(f"Blender {version} is not the expected {expect_version}")
@@ -120,6 +122,8 @@ def run(job_path, launcher, exe, jobs_root, timeout=1800, check_version=True, ex
             code = r.returncode
         except subprocess.TimeoutExpired:
             code = "timeout"
+        except OSError as e:  # launcher vanished or not executable: a recorded failure, not a crash
+            code = f"not runnable: {e}"
     res = {"schema": "forge.blender-job-result", "schema_version": 1, "job": job, "job_dir": str(jd), "launcher": launcher,
            "blender_version": version, "expected_version": expect_version, "exit_code": code, "seconds": round(time.time() - t0, 2), "peak_rss_mb": _peak_rss_mb()}
     stray = sorted({p.name for p in jd.iterdir()} - before - {"blender.log", "report.json"})

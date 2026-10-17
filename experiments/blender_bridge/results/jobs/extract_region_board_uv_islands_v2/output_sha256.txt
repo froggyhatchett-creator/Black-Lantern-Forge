@@ -1,0 +1,1 @@
+697ffe03bdbe3645ba126e6a084df9048b9e8eff6ebfd681e9846eb10f5a12e8  board_uv_islands_v2.glb

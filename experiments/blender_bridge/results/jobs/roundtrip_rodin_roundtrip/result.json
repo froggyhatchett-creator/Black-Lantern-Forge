@@ -1,0 +1,123 @@
+{
+ "schema": "forge.blender-job-result",
+ "schema_version": 1,
+ "job": {
+  "schema": "forge.blender-job",
+  "schema_version": 1,
+  "input": "../../rodin_reference/source/base.glb",
+  "input_sha256": "2f359f0135f632e33ad8ba378e3e1ecebcffafc45f698ccc7f4bd629ccc6e41f",
+  "operation": "roundtrip",
+  "output": "rodin_roundtrip.glb",
+  "params": {}
+ },
+ "job_dir": "/home/user/forge-worktrees/aaa-oneshot/experiments/blender_bridge/jobs/20261017T070620_roundtrip_2f359f01_5r7_xt7x",
+ "launcher": "bpy",
+ "blender_version": "5.2.2",
+ "expected_version": "5.2.2",
+ "exit_code": 0,
+ "seconds": 6.35,
+ "peak_rss_mb": 886.5,
+ "unexpected_files": [],
+ "report": {
+  "ok": true,
+  "blender_version": "5.2.2 LTS",
+  "operation": "roundtrip",
+  "params": {},
+  "import_merge_vertices": false,
+  "import_seconds": 2.1,
+  "scene": {
+   "objects": [
+    {
+     "name": "model",
+     "type": "MESH",
+     "parent": null,
+     "matrix_world": [
+      [
+       1.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       1.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       1.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ],
+     "mesh": {
+      "vertices": 504919,
+      "edges": 954790,
+      "polygons": 500000,
+      "triangles": 500000,
+      "boundary_edges": 409580,
+      "nonmanifold_edges": 0,
+      "uv_layers": [
+       "UVMap"
+      ],
+      "materials": [
+       "model"
+      ],
+      "shape_keys": [],
+      "vertex_groups": 0,
+      "bbox_gltf_min": [
+       -0.5386,
+       0.0,
+       -0.56555
+      ],
+      "bbox_gltf_max": [
+       0.53875,
+       1.89756,
+       0.56654
+      ]
+     }
+    }
+   ],
+   "materials": [
+    {
+     "name": "model",
+     "images": [],
+     "base_color": [
+      0.5,
+      0.5,
+      0.5,
+      1.0
+     ],
+     "metallic": 0.05,
+     "roughness": 0.4
+    }
+   ],
+   "images": [],
+   "actions": []
+  },
+  "export": {
+   "file": "rodin_roundtrip.glb",
+   "bytes": 22175624
+  },
+  "seconds": 5.53
+ },
+ "outputs": {
+  "report.json": {
+   "bytes": 1272,
+   "sha256": "bde1225e410059ebd6d7e736d4358001fa8a5b8ec897829ffee8c147453fd8c8"
+  },
+  "rodin_roundtrip.glb": {
+   "bytes": 22175624,
+   "sha256": "1d37c95c6b9e88dc9428bff7f2f660dfd59a53f656d458a8fb87a89fe627f37e"
+  }
+ },
+ "input_unchanged": true,
+ "ok": true
+}

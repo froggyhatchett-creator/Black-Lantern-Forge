@@ -1,0 +1,87 @@
+{
+ "ok": true,
+ "blender_version": "5.2.2 LTS",
+ "operation": "inspect",
+ "params": {},
+ "import_merge_vertices": false,
+ "import_seconds": 2.28,
+ "scene": {
+  "objects": [
+   {
+    "name": "model",
+    "type": "MESH",
+    "parent": null,
+    "matrix_world": [
+     [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      1.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "mesh": {
+     "vertices": 504919,
+     "edges": 954790,
+     "polygons": 500000,
+     "triangles": 500000,
+     "boundary_edges": 409580,
+     "nonmanifold_edges": 0,
+     "uv_layers": [
+      "UVMap"
+     ],
+     "materials": [
+      "model"
+     ],
+     "shape_keys": [],
+     "vertex_groups": 0,
+     "bbox_gltf_min": [
+      -0.5386,
+      0.0,
+      0.56654
+     ],
+     "bbox_gltf_max": [
+      0.53875,
+      1.89756,
+      -0.56555
+     ]
+    }
+   }
+  ],
+  "materials": [
+   {
+    "name": "model",
+    "use_nodes": true,
+    "images": [],
+    "base_color": [
+     0.5,
+     0.5,
+     0.5,
+     1.0
+    ],
+    "metallic": 0.05,
+    "roughness": 0.4
+   }
+  ],
+  "images": [],
+  "actions": []
+ },
+ "seconds": 4.42
+}
