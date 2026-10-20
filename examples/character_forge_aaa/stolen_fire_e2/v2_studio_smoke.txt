@@ -1,0 +1,24 @@
+PASS studio boots 1.0 s
+PASS character renders covered fraction 0.139
+PASS male preset changes geometry height 1.657 -> 1.776 m
+PASS shoulder slider moves vertices 4984 coordinates changed
+PASS height slider reaches requested height measured 2.047 m
+PASS undo restores the previous value 1.776 m
+PASS mouse drag rotates yaw 0.35 -> -1.41
+PASS wheel zooms distance 5.11 -> 2.49
+PASS face sliders reshape the face 9224 vertices moved > 0.5 mm
+PASS public coverage is enforced outfit=tshirt,shorts note="Public characters stay clothed: added shorts."
+PASS garments swap when coverage remains tshirt,skirt
+PASS animation advances clip time 0.00 -> 0.42 s
+PASS live secondary physics runs breast_l,breast_r,cloth_front_01,cloth_front_02,cloth_front_03,cloth_back_01,cloth_back_02,cloth_back_03
+PASS camera orbit causes no secondary motion breast particle speed 0.0000 m/s
+PASS spinning the character moves soft tissue breast particle speed 1.692 m/s
+PASS spin has inertia after release yaw 0.00 -> 5.52 -> 7.77
+PASS motion settles (damping) 0.0028 m/s after 3.5 s
+PASS GLB exported from the studio 8.3 MB
+PASS DNA export produced 76 traits
+PASS DNA reload restores every parameter max difference 0.00e+0
+PASS frame rate measured (software GL, informational) 1.0 fps under SwiftShader
+PASS no horizontal scroll at phone width 
+PASS no console errors 
+exit 0

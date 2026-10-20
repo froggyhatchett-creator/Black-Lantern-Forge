@@ -1,6 +1,7 @@
 // Black Lantern Character Studio: real-time editing over the baked fixed-topology morph basis.
 import { Renderer, OrbitCamera, M4, norm, sub, cross, dot, len } from "./gl.js";
 import { exportGLB, zipFiles } from "./glb.js";
+import { lockClips } from "./footlock.js";
 
 const $ = (s) => document.querySelector(s);
 const statusEl = $("#status");
@@ -178,6 +179,7 @@ class Studio {
     this.J = this.skel.names.length;
     this.restBase = this.arr(this.skel.rest);
     this.state = this.defaultState();
+    this.footLock = false;  // Stolen Fire E2: optional walk/run foot locks (v3); an export option, not part of the DNA
     this.history = []; this.future = [];
     this.parts = {};
     for (const [name, p] of Object.entries(this.man.parts)) this.buildPart(name, p);
@@ -476,7 +478,7 @@ class Studio {
     const pose = POSES[this.state.pose] || {};
     for (const [n, e] of Object.entries(pose)) { const j = names.indexOf(n); if (j >= 0) rot[j] = qeuler(...e); }
     let root = null;
-    const c = this.state.clip !== "none" && this.clips[this.state.clip];
+    const c = this.state.clip !== "none" && this.playClip(this.state.clip);
     if (c) {
       const f = (t * c.fps) % (c.frames - 1), i = Math.floor(f), a = f - i;
       if (this._lastF !== undefined && f < this._lastF && !c.loop) this._resetPhys = true;  // non-looping clip restarted
@@ -592,10 +594,21 @@ class Studio {
     }
     this.renderer.update(P.g, "pos", out);
   }
+  lockedClips() {  // the clips with walk and run foot-locked for this character (footlock.js), or null when off / not v3
+    if (!this.footLock || !(this.man.generator && this.man.generator.version >= 3)) return null;
+    const key = JSON.stringify([this.shapeKey, this.heightNow]);
+    if (!this._footLock || this._footLock.key !== key) {
+      const fl = lockClips(this.skel.names, this.skel.parents, this.rest, Object.values(this.clips), this.heightNow / 1.75);
+      this._footLock = { key, ...fl, byName: Object.fromEntries(fl.clips.map((c) => [c.name, c])) };
+    }
+    return this._footLock;
+  }
+  playClip(name) { const fl = this.lockedClips(); return fl ? fl.byName[name] : this.clips[name]; }
   exportState() {
+    const fl = this.lockedClips();
     return { skel: this.skel, J: this.J, rest: this.rest, parts: this.parts, u: this.heightNow / 1.75, name: this.state.name,
-      generator: this.man.generator || null,
-      expressions: this.man.expressions, clips: Object.values(this.clips),
+      generator: this.man.generator || null, animationCorrections: fl ? fl.record : null,
+      expressions: this.man.expressions, clips: fl ? fl.clips : Object.values(this.clips),
       coverage: { required: this.required(), covered_by: Object.fromEntries(this.required().map((r) => [r, this.state.outfit.filter((g) => this.meta.covers[r].includes(g))])), outfit: this.state.outfit },
       dna: this.toDNA(), decodeSparse: (enc, n) => this.decodeSparse(enc, n), expressionDelta: (e, n) => this.expressionDelta(e, n),
       texPNG: this.texPNG || {}, eyePNG: () => this.eyePNG(), anchoredDelta: (P, e) => this.anchoredDelta(P, e),
@@ -1067,6 +1080,12 @@ class Studio {
     });
     if ($("#lidfit-upgrade")) $("#lidfit-upgrade").addEventListener("click", () => this.upgradeLidFit());
     $("#dna-save").addEventListener("click", () => this.offerFile(`${this.state.name}.dna.json`, JSON.stringify(this.toDNA(), null, 1)));
+    const flRow = $("#foot-lock-row");
+    if (flRow) {
+      flRow.hidden = !(this.man.generator && this.man.generator.version >= 3);
+      if ($("#foot-lock-note")) $("#foot-lock-note").hidden = flRow.hidden;
+      $("#foot-lock").addEventListener("change", (e) => { this.footLock = e.target.checked; this._resetPhys = true; });
+    }
     $("#glb-export").addEventListener("click", () => { const bytes = this.exportBytes();
       setStatus(`Built ${(bytes.length / 1e6).toFixed(1)} MB GLB in the browser.`);
       this.offerFile(`${this.state.name}.glb`, bytes, `${this.state.name}_glb.zip`); });

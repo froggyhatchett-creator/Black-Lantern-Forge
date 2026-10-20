@@ -140,7 +140,7 @@ export function exportGLB(st) {
       contract: { id: "forge.character-forge.glb", version: 1 }, profile: "public", units: "meters", up_axis: "+Y", front_axis: "+Z",
       handedness: "right", joint_rest_orientation: "identity", dev_only_parts: [], coverage: st.coverage, exact: false, generator: st.generator, fixed_topology_vertices: st.parts.body.cur.length / 3,
       geometry_source: "Character Studio linear morph basis over exact Python builds; regenerate exact geometry from the DNA",
-      dna: st.dna } } },
+      dna: st.dna, ...(st.animationCorrections ? { animation_corrections: st.animationCorrections } : {}) } } },
     scene: 0, scenes: [{ name: "character", nodes: [nodes.length - 1] }], nodes, meshes, skins: [skin], materials, animations,
     ...(images.length ? { images, textures, samplers: [{ magFilter: 9729, minFilter: 9987, wrapS: 33071, wrapT: 33071 }] } : {}),
     accessors: b.accessors, bufferViews: b.views, buffers: [{ byteLength: 0 }],

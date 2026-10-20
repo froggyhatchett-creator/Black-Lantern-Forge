@@ -1,0 +1,85 @@
+{
+ "checks": [
+  {
+   "name": "v2 studio: no foot-lock option",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "v3 studio: foot-lock option shown, unticked",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "neutral: the checkbox sets the option",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "neutral: off -> on -> off exports the same bytes when off",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "neutral: on differs from off",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "neutral: the option leaves the DNA unchanged",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "id_a: the checkbox sets the option",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "id_a: off -> on -> off exports the same bytes when off",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "id_a: on differs from off",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "id_a: the option leaves the DNA unchanged",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "long_legs: the checkbox sets the option",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "long_legs: off -> on -> off exports the same bytes when off",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "long_legs: on differs from off",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "long_legs: the option leaves the DNA unchanged",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "preview uses the locked walk",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "no console or page errors",
+   "pass": true,
+   "detail": "[]"
+  }
+ ],
+ "errors": []
+}

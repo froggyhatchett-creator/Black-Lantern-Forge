@@ -180,7 +180,9 @@ code { font-family: var(--mono); font-size: 0.8em; }
           </fieldset>
           <fieldset><legend>Export</legend>
             <button type="button" id="glb-export">Export GLB</button>
+            <label id="foot-lock-row" hidden><input type="checkbox" id="foot-lock"> Foot locks (walk, run)</label>
             <p class="note">Builds a rigged, animated GLB of the character as shown (skin, expression morph targets, all animation clips). Inside claude.ai it is offered as a .zip containing the .glb.</p>
+            <p class="note" id="foot-lock-note" hidden>Foot locks (generator v3, off by default) plant each foot during the walk and run stance with two-bone leg IK; the GLB records the stride speed a game should move the character at.</p>
           </fieldset>
           <fieldset><legend>Exact build</legend>
             <p class="note" id="server-note">Sliders preview a linear blend of exact builds. Run <code>python3 -m forge_character_forge studio</code> locally to get exact rebuilds and GLB export from this page.</p>
