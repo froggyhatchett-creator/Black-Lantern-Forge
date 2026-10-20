@@ -15,7 +15,7 @@ does not touch PR #1 (`experiment/hair-gradient-v1`) or merge anything.
 | Python vs browser | Agree to 3e-8 on the shared fixtures; to 4e-7 on the exported GLBs |
 | GLB checks | Public validator 0 errors; independent checker OK; only the 12 leg rotation accessors of walk and run change |
 | Studio checks | 16/16 |
-| Regressions | Full suite 857 OK; v2 Studio smoke 23/23; v3 Studio check pending (environment-limited, see [Test results](#test-results)) |
+| Regressions | Full suite 857 OK; v2 Studio smoke 23/23; v3 Studio check 8/8 |
 
 **Not solved, and measured: the stance foot hovers.**
 - Forge's clips hold the hips too high for the planted foot to reach the floor.
@@ -174,7 +174,7 @@ What else the measurements show:
 | `tools/footlock_report.py` (validator public, independent check, contract diff) | 3/3 valid, contract equal apart from the 12 leg accessors and the added metadata |
 | Full suite `python3 -m unittest discover -s tests` | **857 tests OK, 7 skipped** (848 before + 9 new; 2,200 s) |
 | `tools/studio_smoke.mjs` (v2 Studio) | **23/23 PASS**, run with a 10-minute screenshot timeout as in Phase 4A.1 (SwiftShader here takes ~28 s per view screenshot, at the default 30 s limit; the default run timed out on a screenshot after 9 passes). Log: `v2_studio_smoke.txt` |
-| `tools/studio_v3_check.mjs` (v3 Studio) | **Pending.** 4/4 checks before the first screenshot pass (boot, generator, all 53 controls, exact height); the run then stalls on SwiftShader screenshots. Two attempts were lost (a 30 s screenshot timeout under load, then a container restart). A frame-rate probe shows the same speed on the baseline and on E2 (2.5 vs 2.2 frames/s, a 27 vs 28 s screenshot), so this is the environment, not E2. Re-running |
+| `tools/studio_v3_check.mjs` (v3 Studio) | **8/8 PASS**, no page errors. Run with a 10-minute screenshot timeout and on its own: SwiftShader here takes ~28 s per view screenshot, the same on the baseline and on E2 (2.5 vs 2.2 frames/s). Two earlier attempts were lost to a 30 s screenshot timeout under load and to a container restart. Log: `v3_studio_check.txt` |
 
 ## Pass/fail against the E2 proposal
 
@@ -187,7 +187,7 @@ What else the measurements show:
 | Loop seam no worse; no knee flips | **Knee: pass.** **Seam: pass in intent** (no seam step exceeds the clip's peak); literally +0.8° on the run's right calf |
 | Off = byte-identical; validator, independent checker and playback pass; only thigh/calf/foot values of walk and run differ | **Pass** |
 | Python and JavaScript agree to 1e-5 | **Pass** (3e-8 / 4e-7) |
-| Full suite, `studio_smoke`, `studio_v3_check` | **Suite and v2 smoke pass; v3 check pending** (see [Test results](#test-results)) |
+| Full suite, `studio_smoke`, `studio_v3_check` | **Pass** (857 OK; 23/23; 8/8) |
 | *(observed, not a proposal criterion)* ground contact | **Walk better** (no penetration while locked; the foot hovers 15–32 mm instead of sliding through the floor). **Run worse** (hovers 39–46 mm where it touched before) |
 
 ## Known limitations

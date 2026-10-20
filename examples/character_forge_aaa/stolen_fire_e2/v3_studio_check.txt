@@ -1,0 +1,9 @@
+PASS v3 studio boots 0.8 s
+PASS generator v3 loaded {"id":"forge.character-forge","version":3,"template_vertices":13380,"foundation":"makehuman-hm08-cc0","template":"human-adult"}
+PASS all 53 controls move the body at each used end 53/53
+PASS height control is exact 1.45 / 2.1 m
+PASS public coverage re-adds v3 garments basic_shorts,basic_top
+PASS GLB exported from the v3 studio 12.19 MB
+PASS DNA records generator v3 {"id":"forge.character-forge","version":3}
+PASS no page errors 
+exit 0
