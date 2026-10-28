@@ -2,6 +2,7 @@
 import json
 from dataclasses import dataclass
 from typing import Protocol, Iterator
+from urllib.error import HTTPError
 from urllib.request import Request, build_opener, ProxyHandler, HTTPRedirectHandler
 from urllib.parse import urlparse
 
@@ -33,11 +34,11 @@ class NoRedirect(HTTPRedirectHandler):
 
 
 class OllamaProvider:
-    def __init__(self, model, endpoint="http://127.0.0.1:11434"):
+    def __init__(self, model, endpoint="http://127.0.0.1:11434", think=False):
         u = urlparse(endpoint)
         if u.scheme != 'http' or u.hostname not in ('localhost', '127.0.0.1', '::1') or u.username or u.password or u.query or u.fragment or u.path not in ('', '/'):
             raise ValueError("Ollama endpoint must be a loopback HTTP origin.")
-        self.model, self.endpoint = model, endpoint.rstrip('/')
+        self.model, self.endpoint, self.think = model, endpoint.rstrip('/'), think is True
         self.http = build_opener(ProxyHandler({}), NoRedirect())
 
     def request(self, path, payload=None, timeout=120):
@@ -54,10 +55,24 @@ class OllamaProvider:
         except Exception as exc:
             raise ProviderError("Ollama unavailable. Start Ollama and check the endpoint.") from exc
 
+    def _open_chat(self, messages, tools):
+        """Open the chat stream. Reasoning is requested off (or on) explicitly; a model that
+        rejects the `think` field is retried once without it, since not all models accept it."""
+        payload = {"model": self.model, "messages": messages, "tools": tools,
+                   "stream": True, "keep_alive": "5m", "think": self.think}
+        try:
+            return self.request('/api/chat', payload)
+        except HTTPError as exc:
+            detail = exc.read(2000).decode('utf-8', 'replace').lower()
+            exc.close()
+            if exc.code != 400 or 'think' not in detail:
+                raise
+        del payload['think']
+        return self.request('/api/chat', payload)
+
     def stream(self, messages, tools):
         try:
-            with self.request('/api/chat', {"model": self.model, "messages": messages,
-                                           "tools": tools, "stream": True, "keep_alive": "5m"}) as response:
+            with self._open_chat(messages, tools) as response:
                 done = False
                 for line in response:
                     if len(line) > 1_000_000:
@@ -69,6 +84,7 @@ class OllamaProvider:
                     content = msg.get('content', '')
                     if not isinstance(content, str):
                         raise ProviderError("Invalid backend text.")
+                    # msg['thinking'] is deliberately dropped: reasoning is never shown or stored.
                     if content:
                         yield Event(text=content)
                     for call in msg.get('tool_calls', []):

@@ -1,5 +1,9 @@
 import json
+import time
 from .providers import ProviderError
+
+
+CHECKPOINT_INTERVAL = 0.25  # seconds; bounds text lost to a hard crash, finish_turn always persists everything
 
 
 class MercyCore:
@@ -15,7 +19,7 @@ class MercyCore:
             control.check()
         turn = self.store.begin_turn(conversation_id, text, getattr(self.provider, 'model', 'unknown'))
         self.broker.turn_id = turn
-        accumulated = ''
+        accumulated, last_checkpoint = '', float('-inf')
         try:
             messages = self.context.build(text, conversation_id)
             for round_number in range(4):
@@ -30,7 +34,9 @@ class MercyCore:
                     if len(accumulated) > 24000:
                         raise ProviderError("Response exceeds v0.1 size limit.")
                     if event.text:
-                        self.store.checkpoint(turn, accumulated)
+                        if time.monotonic() - last_checkpoint >= CHECKPOINT_INTERVAL:
+                            self.store.checkpoint(turn, accumulated)
+                            last_checkpoint = time.monotonic()
                         emit(event.text)
                     if event.tool is not None:
                         calls.append(event.tool)

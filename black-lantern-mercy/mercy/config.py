@@ -6,7 +6,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 DEFAULT = {'version': 2, 'provider': 'mock', 'model': '', 'endpoint': 'http://127.0.0.1:11434',
-           'generation_timeout': 60, 'status_timeout': 8, 'conversation_id': 1}
+           'generation_timeout': 60, 'status_timeout': 8, 'conversation_id': 1, 'think': False}
 
 
 def validate(value):
@@ -37,6 +37,8 @@ def validate(value):
         x = result[key]
         if type(x) not in (int, float) or not math.isfinite(x) or not low <= x <= high:
             raise ValueError(f'{key} must be between {low} and {high} seconds.')
+    if type(result['think']) is not bool:
+        raise ValueError('think must be true or false.')
     if type(result['conversation_id']) is not int or result['conversation_id'] < 1:
         raise ValueError('Invalid conversation ID.')
     return result
