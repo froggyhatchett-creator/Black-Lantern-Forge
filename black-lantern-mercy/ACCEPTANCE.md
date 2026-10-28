@@ -37,8 +37,9 @@ It briefly unloads models (`keep_alive 0`) so cold-start numbers are genuine.
 ## Reading the context result
 Mercy now always sends `num_ctx` (default **8192**, allowed 4096-131072) and sizes its own context to fit.
 Without it Ollama loaded the model maximum (262144), which made qwen3.5:4b 13 GB and 75% CPU on a 16 GB card.
-Stage 8 checks that `/api/ps` reports a window equal to Mercy's setting, and still runs the codeword
-canary at Ollama's own default window (raw API, for comparison) and at 8192. After the run, `ollama ps`
+Stage 8 checks that `/api/ps` reports a window equal to Mercy's setting, and runs the codeword
+canary at that same window. The harness never makes a request without `num_ctx` (an unset window loads the model
+maximum, which is the original 13 GB / CPU-spill bug); `--num-ctx` changes the value for every call. After the run, `ollama ps`
 should show CONTEXT 8192, a small SIZE and 100% GPU. To change it: Provider/profile > Context window.
 Larger windows cost VRAM; measure with `nvidia-smi` before raising it.
 

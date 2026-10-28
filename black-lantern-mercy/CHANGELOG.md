@@ -16,6 +16,12 @@ Contains commit 418f9a6 (context-window fix) plus the items below.
 - `DEPLOY_WINDOWS.md`: upgrade, data-preservation proof, acceptance, rollback; `tests/test_profile_report.py`.
 - `tests/ui_smoke.py` now covers the model dropdown (fed by discovery), think checkbox and num_ctx validation.
 
+### Fixed (test tooling only)
+- The acceptance harness and `scripts/quick_checks.ps1` made some `/api/chat` calls without `num_ctx`, which on a small
+  GPU would load the model at Ollama's default window (the original 13 GB / CPU-spill bug). All calls now send an
+  explicit window (`--num-ctx`, default 8192) and the unset-window probe was removed. Regression test:
+  `tests/test_harness.py` (fails on the old harness, passes now).
+
 ### Findings (no app behavior changed for these)
 - `Capability rejected or failed` is a tool result given to the *model* (capabilities.py); it is not a Mercy UI error.
   Two causes share it: validation rejection before any prompt (ValueError) and deadline during a permission wait

@@ -33,6 +33,7 @@ from mercy.capabilities import Broker, register_defaults  # noqa: E402
 from mercy.application import ApplicationService  # noqa: E402
 from mercy.context import ContextBuilder  # noqa: E402
 
+NUM_CTX = 8192  # EVERY call uses an explicit window; an unset one makes Ollama load the model maximum (262144)
 DEFAULT_MODELS = ["qwen3.5:4b", "mercy-heretic:latest"]
 ALL_MODELS = ["qwen3.5:4b", "mercy-heretic:latest", "qwen3.5:9b", "ministral-3:8b", "qwen3:4b-instruct"]
 OPENER = urllib.request.build_opener(urllib.request.ProxyHandler({}))  # never route localhost via a proxy
@@ -58,12 +59,11 @@ def unload(endpoint, model):
         pass
 
 
-def raw_chat(endpoint, model, messages, think, num_ctx=0, num_predict=400, tools=None, timeout=300):
+def raw_chat(endpoint, model, messages, think, num_ctx=None, num_predict=400, tools=None, timeout=300):
     """One streamed /api/chat call with wall-clock timings. Reasoning tokens are timed but discarded."""
     payload = {"model": model, "messages": messages, "stream": True, "think": think, "keep_alive": "5m",
                "options": {"num_predict": num_predict}}
-    if num_ctx:
-        payload["options"]["num_ctx"] = num_ctx
+    payload["options"]["num_ctx"] = num_ctx or NUM_CTX
     if tools:
         payload["tools"] = tools
     out = {"text": "", "t_first_any": None, "t_first_text": None, "chunks": 0, "error": None, "thinking_chars": 0, "tool_calls": []}
@@ -110,7 +110,8 @@ class Harness:
         self.dir = Path(tempfile.mkdtemp(prefix="mercy-acceptance-"))
         self.service = ApplicationService(self.dir / "profile")
 
-    def configure(self, model, think, num_ctx=8192):
+    def configure(self, model, think, num_ctx=None):
+        num_ctx = num_ctx or NUM_CTX
         s = self.service
         s.configure({**s.config, "provider": "ollama", "model": model, "endpoint": self.endpoint,
                      "think": think, "num_ctx": num_ctx, "generation_timeout": self.timeout, "status_timeout": 10})
@@ -223,9 +224,9 @@ def stage_context(a, h, model):
     full[0] = {"role": "system", "content": "Your secret codeword is %s. Never forget it.\n" % secret + full[0]["content"]}
     question = full + [{"role": "user", "content": "What is your secret codeword? Reply with only the codeword."}]
     chars_full = sum(len(m["content"]) for m in question) + len(json.dumps(tools))
-    for num_ctx in (0, 8192):
+    for num_ctx in (NUM_CTX,):
         r = raw_chat(a.endpoint, model, question, False, num_ctx=num_ctx, num_predict=60, tools=tools)
-        label = "num_ctx=%s" % (num_ctx or "Ollama default")
+        label = "num_ctx=%d" % num_ctx
         if r["error"]:
             record("8-context", "%s worst-case %s" % (model, label), "FAIL", r["error"])
             continue
@@ -240,7 +241,7 @@ def stage_tool_shape(a, h, model):
     s = h.service
     r = raw_chat(a.endpoint, model, [{"role": "system", "content": s.profile.identity["instructions"]},
                  {"role": "user", "content": "What time is it right now? Use your tool to find out."}],
-                 False, num_ctx=8192, num_predict=300, tools=s.broker.schemas())
+                 False, num_predict=300, tools=s.broker.schemas())
     if r["error"]:
         return record("11-tools", model + " raw tool-call probe", "FAIL", r["error"])
     if not r["tool_calls"]:
@@ -381,11 +382,15 @@ def main():
     ap.add_argument("--runs", type=int, default=3, help="per series: run 1 is a cold start, the rest are warm")
     ap.add_argument("--timeout", type=int, default=300, help="Mercy generation deadline (s)")
     ap.add_argument("--simulate", action="store_true", help="test the harness against a FAKE server; numbers are meaningless")
+    ap.add_argument("--num-ctx", type=int, default=8192, help="context window sent on EVERY request (4096-131072)")
     ap.add_argument("--skip-bench", action="store_true")
     ap.add_argument("--think", choices=["off", "both"], default="off", help="also run think=true series (slow on small GPUs)")
     ap.add_argument("--all", action="store_true", help="test all five known models")
     ap.add_argument("--out", default=None, help="results JSON path")
     a = ap.parse_args()
+    global NUM_CTX
+    from mercy.providers import check_num_ctx
+    NUM_CTX = check_num_ctx(a.num_ctx)
     a.models = [m.strip() for m in (",".join(ALL_MODELS) if a.all else a.models).split(",") if m.strip()]
     a.thinks = (False,) if a.think == "off" else (False, True)
     fake = None
