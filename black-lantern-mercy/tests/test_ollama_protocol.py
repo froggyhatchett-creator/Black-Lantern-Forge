@@ -72,6 +72,13 @@ class OllamaProtocolTests(unittest.TestCase):
         fake = self.serve(chunks('answer', thinking=['secret reasoning']))
         self.assertEqual(self.stream(fake, think=True), ['answer'])
 
+    def test_num_ctx_sent_only_when_configured(self):
+        fake = self.serve(chunks('x'))
+        self.stream(fake)
+        self.assertNotIn('options', fake.requests[0])
+        self.stream(fake, num_ctx=8192)
+        self.assertEqual(fake.requests[1]['options'], {'num_ctx': 8192})
+
     def test_model_without_thinking_support_falls_back_once(self):
         fake = self.serve(chunks('ok'), reject_think=True)
         self.assertEqual(self.stream(fake), ['ok'])
@@ -99,6 +106,13 @@ class ConfigThinkTests(unittest.TestCase):
     def test_v02_config_without_field_loads(self):
         legacy = {'version': 2, 'provider': 'mock'}
         self.assertIs(config.validate(legacy)['think'], False)
+        self.assertEqual(config.validate(legacy)['num_ctx'], 0)
+
+    def test_num_ctx_validation(self):
+        self.assertEqual(config.validate({'num_ctx': 8192})['num_ctx'], 8192)
+        for bad in (-1, 100, 10**7, 8192.0, '8192', True):
+            with self.assertRaises(ValueError):
+                config.validate({'num_ctx': bad})
 
 
 class CheckpointThrottleTests(unittest.TestCase):

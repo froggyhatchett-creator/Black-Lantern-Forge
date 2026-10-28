@@ -40,7 +40,8 @@ def mock_factory(settings):
 
 
 def ollama_factory(settings):
-    return OllamaProvider(settings['model'], settings['endpoint'], settings.get('think', False))
+    return OllamaProvider(settings['model'], settings['endpoint'],
+                          settings.get('think', False), settings.get('num_ctx', 0))
 
 
 REGISTRY = {'mock': mock_factory, 'ollama': ollama_factory}

@@ -15,6 +15,14 @@ Baseline: v0.2.0 "The Vessel", imported verbatim (commit 3e1e7d1). 67 tests, OK.
   per-token commit: ~1.2 ms/token on Linux/local disk (not measured on Windows).
 
 ### Added
+- `num_ctx` config (0 = server default, else 512-262144) sent as `options.num_ctx`. UI: editable
+  model dropdown filled from `/api/tags` discovery, `think` checkbox, `num_ctx` field. **UI code is
+  compile-checked only; Tk is not installed in the dev sandbox, so `tests/ui_smoke.py` has not been
+  run on these changes.**
+- `tools/real_model_acceptance.py`, `scripts/run_acceptance.ps1`, `scripts/quick_checks.ps1`,
+  `ACCEPTANCE.md`: discovery, selection, cold/warm benchmarks (think on/off), streaming, identity,
+  context-truncation canary, cancellation, persistence - through the real ApplicationService path.
+- `tools/fake_ollama.py`: simulator used only to test the harness (`--simulate`).
 - `tests/test_ollama_protocol.py` (9 tests): wire-protocol behavior against a **local fake
   server**, config validation, checkpoint throttling. A fake server is not evidence that real
   Ollama works.
@@ -24,6 +32,7 @@ Baseline: v0.2.0 "The Vessel", imported verbatim (commit 3e1e7d1). 67 tests, OK.
 - Provider event contract, permissions, broker, audit and schema are untouched.
 
 ### Verified / NOT verified
-- Verified: full suite 76 tests, 1 skipped (Windows-only process-handle test), on Linux, Python 3.13.
+- Verified: full suite 78 tests, 1 skipped (Windows-only process-handle test), on Linux, Python 3.13.
+- Harness verified end-to-end only against the FAKE server (simulated). PowerShell scripts never executed (no PowerShell in sandbox).
 - NOT verified: anything against a real Ollama/model. No Ollama binary or reachable
   endpoint in this environment. Effect of `think:false` on real latency is unmeasured.

@@ -81,18 +81,27 @@ class Application:
         self.tabs.add(settings, text='Provider / profile')
         self.fields = {}
         for row, (key, label) in enumerate([('provider', 'Provider'), ('model', 'Exact model name'), ('endpoint', 'Local endpoint'),
-                                           ('generation_timeout', 'Generation deadline (seconds)'), ('status_timeout', 'Status deadline (seconds)')]):
+                                           ('generation_timeout', 'Generation deadline (seconds)'), ('status_timeout', 'Status deadline (seconds)'),
+                                           ('num_ctx', 'Context window in tokens (0 = Ollama default)')]):
             ttk.Label(settings, text=label).grid(row=row, column=0, sticky='w', pady=5)
             value = tk.StringVar(value=str(self.service.config[key]))
             self.fields[key] = value
-            widget = ttk.Combobox(settings, textvariable=value, values=['mock', 'ollama'], state='readonly') if key == 'provider' else ttk.Entry(settings, textvariable=value, width=48)
+            if key == 'provider':
+                widget = ttk.Combobox(settings, textvariable=value, values=['mock', 'ollama'], state='readonly')
+            elif key == 'model':
+                # Editable: filled from the provider's discovered models, but typing an exact name still works.
+                widget = self.model_box = ttk.Combobox(settings, textvariable=value, values=[], width=46)
+            else:
+                widget = ttk.Entry(settings, textvariable=value, width=48)
             widget.grid(row=row, column=1, sticky='ew', padx=10)
+        self.think = tk.BooleanVar(value=self.service.config['think'])
+        ttk.Checkbutton(settings, text='Let the model reason before answering (slower; reasoning is never shown or stored)', variable=self.think).grid(row=6, column=1, sticky='w', padx=10)
         self.apply_button = ttk.Button(settings, text='Save / check provider / reload identity', command=self.apply)
-        self.apply_button.grid(row=5, column=0, columnspan=2, pady=12)
-        ttk.Label(settings, text='No cloud backend or automatic model downloads. Switching providers preserves this profile.\nGeneration deadlines include permission waits. Cancel stops provider work.').grid(row=6, column=0, columnspan=2, sticky='w')
-        ttk.Label(settings, text=f'Profile: {self.service.profile.path}', wraplength=880).grid(row=7, column=0, columnspan=2, sticky='w', pady=12)
-        ttk.Button(settings, text='Inspect identity', command=lambda: self.show_detail('Identity', self.service.profile.identity)).grid(row=8, column=0, sticky='w')
-        ttk.Label(settings, text='To upgrade v0.1, use a COPY of its profile with --data-dir. Schema upgrades create a database backup.\nKeep Acceptance 001 frozen. Never open its original profile with this version.', wraplength=880).grid(row=9, column=0, columnspan=2, sticky='w', pady=12)
+        self.apply_button.grid(row=7, column=0, columnspan=2, pady=12)
+        ttk.Label(settings, text='No cloud backend or automatic model downloads. Switching providers preserves this profile.\nGeneration deadlines include permission waits. Cancel stops provider work.').grid(row=8, column=0, columnspan=2, sticky='w')
+        ttk.Label(settings, text=f'Profile: {self.service.profile.path}', wraplength=880).grid(row=9, column=0, columnspan=2, sticky='w', pady=12)
+        ttk.Button(settings, text='Inspect identity', command=lambda: self.show_detail('Identity', self.service.profile.identity)).grid(row=10, column=0, sticky='w')
+        ttk.Label(settings, text='To upgrade v0.1, use a COPY of its profile with --data-dir. Schema upgrades create a database backup.\nKeep Acceptance 001 frozen. Never open its original profile with this version.', wraplength=880).grid(row=11, column=0, columnspan=2, sticky='w', pady=12)
         root.protocol('WM_DELETE_WINDOW', self.close)
         self.refresh()
         self.reload_history()
@@ -158,6 +167,8 @@ class Application:
             values = {key: var.get() for key, var in self.fields.items()}
             for key in ('generation_timeout', 'status_timeout'):
                 values[key] = float(values[key])
+            values['num_ctx'] = int(values['num_ctx'])
+            values['think'] = self.think.get()
             self.service.configure({**self.service.config, **values})
             self.service.check_status()
             self.status.set('Checking provider…')
@@ -209,6 +220,8 @@ class Application:
                     self.append(value)
                 elif kind == 'status':
                     self.status.set(value['detail'] + ' | ' + ', '.join(value['models']))
+                    if self.service.config['provider'] == 'ollama':
+                        self.model_box['values'] = value['models']
                 elif kind == 'error':
                     self.status.set(value)
                 elif kind == 'permission':

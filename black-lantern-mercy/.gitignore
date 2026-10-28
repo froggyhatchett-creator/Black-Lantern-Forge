@@ -10,3 +10,4 @@ config.json
 *.bak
 profile.lock
 *.tmp
+acceptance-results/
