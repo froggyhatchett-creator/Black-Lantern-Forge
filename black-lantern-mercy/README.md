@@ -199,10 +199,10 @@ unit suite uses mock providers and local synthetic HTTP servers; no real model,
 network service, account or GPU is required. A Windows-only test checks worker
 exit after parent termination; it is skipped on other OSes.
 
-Optional install from the provided wheel:
+Optional install from the provided wheel (see `DEPLOY_WINDOWS.md` for upgrade, backup and rollback):
 
 ```powershell
-py -3 -m pip install --no-deps .\black_lantern_mercy-0.2.0-py3-none-any.whl
+py -3 -m pip install --no-deps .\black_lantern_mercy-0.2.1-py3-none-any.whl
 ```
 
 Source launch avoids installation. Building uses setuptools >=68; standard build

@@ -1,20 +1,20 @@
 # Mercy real-model acceptance (Windows, local Ollama)
 
-**Status: NOT YET RUN on real hardware.** Everything below was developed against a fake
+**Status: NOT YET RUN on real hardware (RTX 4050 6 GB / Windows 11 is the target).** Everything below was developed against a fake
 Ollama server (`tools/fake_ollama.py`). Simulated numbers prove the harness works, not that
 any model does.
 
-## Run it (PowerShell, from the `black-lantern-mercy` folder)
+## Run it
+Full Windows procedure (install, backup, GUI checks, harness, rollback): **`DEPLOY_WINDOWS.md`**.
+Harness only, from the `black-lantern-mercy` folder:
 
 ```powershell
-.\scripts\run_acceptance.ps1 -Quick     # qwen3.5:9b + qwen3.5:4b, roughly 10-20 min
-.\scripts\run_acceptance.ps1            # all four models
-.\scripts\quick_checks.ps1              # optional: no-Python spot checks of API + thinking on/off
+powershell -ExecutionPolicy Bypass -File .\scripts\run_acceptance.ps1                 # qwen3.5:4b, then mercy-heretic:latest
+powershell -ExecutionPolicy Bypass -File .\scripts\run_acceptance.ps1 -WithThinking   # also think=true
+powershell -ExecutionPolicy Bypass -File .\scripts\run_acceptance.ps1 -All            # all five models
 ```
-If scripts are blocked: `powershell -ExecutionPolicy Bypass -File .\scripts\run_acceptance.ps1 -Quick`
-
-Send back the two files it prints from `acceptance-results\` (`.json` and `.txt`).
-Optional second window during the run: `nvidia-smi -l 2`. Afterwards: `ollama ps`.
+Results land in `acceptance-results\` **inside the folder you ran it from** (the black-lantern-mercy source folder):
+`mercy-acceptance-REAL-<timestamp>.json` and `.txt`. Send both back.
 
 It uses a throwaway Mercy profile in `%TEMP%`, never pulls models, and auto-denies every tool request.
 It briefly unloads models (`keep_alive 0`) so cold-start numbers are genuine.
@@ -31,6 +31,7 @@ It briefly unloads models (`keep_alive 0`) so cold-start numbers are genuine.
 | 7 identity | Does she answer as Mercy, not as the model? | **keyword heuristic**; read the printed replies yourself |
 | 8 context | Does the window hold identity + tools, and a worst-case full 16,000-char context? | a random codeword at the very start of the system prompt is still recalled |
 | 9 cancel | Does Cancel stop generation quickly and free the backend? | state `cancelled`, under 3 s, next request not slowed |
+| 11 tools | What tool-call JSON does this Ollama emit, and does Mercy's validation accept it? Permission is denied, never bypassed. | shape printed; PASS if accepted |
 | 10 persistence | Is history identical after closing and reopening the profile? | exact match |
 
 ## Reading the context result

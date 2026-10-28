@@ -4,10 +4,12 @@ Run from project root: python -m tests.ui_smoke --data-dir PATH
 The supplied profile is disposable; never point this test at a real profile.
 """
 import argparse
+import sys
 import time
 import tkinter as tk
 from pathlib import Path
 from unittest.mock import patch
+import mercy
 from mercy.ui import Application
 
 
@@ -72,8 +74,29 @@ def run(path):
     settle(root, app)
     assert 'Lantern lit' in app.transcript.get('1.0', 'end')
     assert app.store.memories()[0]['content'].startswith('The compiler')
+    # Provider controls: model dropdown fed by discovery, think checkbox, num_ctx validation (fake server, no real Ollama).
+    assert app.fields['num_ctx'].get() == '8192' and app.think.get() is False
+    sys.path.insert(0, str(Path(__file__).parents[1] / 'tools'))
+    from fake_ollama import FakeOllama
+    fake = FakeOllama()
+    try:
+        app.fields['provider'].set('ollama')
+        app.fields['model'].set('qwen3.5:4b')
+        app.fields['endpoint'].set(fake.endpoint)
+        app.think.set(True)
+        app.apply()
+        settle(root, app)
+        assert 'mercy-heretic:latest' in app.model_box['values'], app.model_box['values']
+        assert app.service.config['think'] is True and app.service.config['num_ctx'] == 8192
+        app.fields['num_ctx'].set('100')
+        with patch('mercy.ui.messagebox.showerror') as shown:
+            app.apply()
+        assert shown.called and app.service.config['num_ctx'] == 8192
+    finally:
+        fake.close()
     app.close()
-    print('PASS: Tk startup, streaming, permission buttons, memory provenance/deletion, session switching, cancel pending permission, audit filter, restart persistence')
+    print('mercy under test:', mercy.__file__)
+    print('PASS: Tk startup, streaming, permission buttons, memory provenance/deletion, session switching, cancel pending permission, audit filter, restart persistence, provider controls (model dropdown, think, num_ctx)')
 
 
 if __name__ == '__main__':

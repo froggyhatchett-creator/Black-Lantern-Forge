@@ -17,8 +17,9 @@ CHARS_PER_TOKEN = 3.5
 
 
 class FakeOllama:
-    def __init__(self, models=("qwen3.5:9b", "ministral-3:8b", "qwen3.5:4b", "qwen3:4b-instruct"),
-                 default_ctx=4096, truncate="front", load_s=0.15, think_s=0.25, token_s=0.004):
+    def __init__(self, models=("qwen3.5:4b", "mercy-heretic:latest", "qwen3.5:9b", "ministral-3:8b", "qwen3:4b-instruct"),
+                 default_ctx=4096, truncate="front", load_s=0.15, think_s=0.25, token_s=0.004, tool_shape="plain"):
+        self.tool_shape = tool_shape  # "plain" | "with-index" (hypothetical newer wire shape)
         self.models, self.default_ctx, self.truncate = list(models), default_ctx, truncate
         self.load_s, self.think_s, self.token_s = load_s, think_s, token_s
         self.loaded, self.requests, self.aborted = {}, [], 0
@@ -43,7 +44,7 @@ class FakeOllama:
                 elif self.path == "/api/tags":
                     self.reply({"models": [{"name": m, "size": 1} for m in fake.models]})
                 elif self.path == "/api/ps":
-                    self.reply({"models": [{"name": m, "context_length": ctx} for m, ctx in fake.loaded.items()]})
+                    self.reply({"models": [{"name": m, "context_length": ctx, "size": 5_000_000_000, "size_vram": 3_000_000_000} for m, ctx in fake.loaded.items()]})
                 else:
                     self.reply({"error": "not found"}, 404)
 
@@ -97,6 +98,7 @@ class FakeOllama:
             time.sleep(self.load_s)
             load = int(self.load_s * 1e9)
             self.loaded[model] = window
+            self.sizes = getattr(self, "sizes", {})
         last = messages[-1].get("content", "")
         codeword = re.search(r"secret codeword is ([A-Za-z0-9-]+)", seen)
         if "codeword" in last.lower():
@@ -109,8 +111,16 @@ class FakeOllama:
             reply = "A mutex is a lock giving mutual exclusion to a shared resource. Only one thread holds it at a time."
         else:
             reply = ("Omg, fine, a spookulous little story. " * 40).strip()
+        wants_tool = body.get("tools") and messages[-1]["role"] == "user" and "time" in last.lower() and "tool" in last.lower()
         h.send_response(200)
         h.end_headers()
+        if wants_tool:
+            fn = {"name": "current_time", "arguments": {}}
+            if self.tool_shape == "with-index":
+                fn["index"] = 0
+            h.wfile.write((json.dumps({"message": {"role": "assistant", "content": "", "tool_calls": [{"id": "call_1", "function": fn}]}}) + "\n").encode())
+            h.wfile.write((json.dumps({"message": {"role": "assistant", "content": ""}, "done": True, "prompt_eval_count": prompt_tokens, "eval_count": 5, "eval_duration": 10**7}) + "\n").encode())
+            return
         send = lambda o: (h.wfile.write((json.dumps(o) + "\n").encode()), h.wfile.flush())
         n_think = 0
         if body.get("think") is True:

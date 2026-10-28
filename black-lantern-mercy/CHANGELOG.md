@@ -2,7 +2,31 @@
 
 Baseline: v0.2.0 "The Vessel", imported verbatim (commit 3e1e7d1). 67 tests, OK.
 
-## Unreleased
+## 0.2.1 (release build; supersedes Unreleased below)
+
+Version bumped 0.2.0 -> 0.2.1 so pip treats it as a distinct upgrade and 0.2.0 stays a clean rollback target.
+Contains commit 418f9a6 (context-window fix) plus the items below.
+
+### Added
+- `tools/profile_report.py`: read-only profile report (counts, fingerprints, config) and `--diagnose`, which explains
+  non-complete turns and turns with failed tool requests (deadline vs validation rejection vs denial vs inference).
+- Harness: prefers the INSTALLED `mercy` and prints which file ran; GPU/CPU placement from `/api/ps`;
+  explicit `think=false` honored check; real tool-call shape probe (stage 11); 5-turn identity/continuity check;
+  `--think off|both` (default off), `--all`; default models `qwen3.5:4b` then `mercy-heretic:latest`.
+- `DEPLOY_WINDOWS.md`: upgrade, data-preservation proof, acceptance, rollback; `tests/test_profile_report.py`.
+- `tests/ui_smoke.py` now covers the model dropdown (fed by discovery), think checkbox and num_ctx validation.
+
+### Findings (no app behavior changed for these)
+- `Capability rejected or failed` is a tool result given to the *model* (capabilities.py); it is not a Mercy UI error.
+  Two causes share it: validation rejection before any prompt (ValueError) and deadline during a permission wait
+  (DeadlineExceeded). See DEPLOY_WINDOWS.md section 8.
+- Rollback to 0.2.0 requires restoring config.json: 0.2.0 rejects the new `think`/`num_ctx` fields.
+
+### Verified (Linux, Python 3.12): 93 unit tests pass (1 Windows-only skip); Tk smoke PASS under a virtual display;
+upgrade 0.2.0 -> 0.2.1 leaves message/memory/identity/config fingerprints identical; rollback procedure restores a
+working 0.2.0 with all data. **Not verified: Windows, real Ollama, the RTX 4050.**
+
+## Unreleased (history)
 
 ### Fixed (urgent): unset context window made Ollama use the model maximum
 Real hardware (RTX 5060 Ti 16 GB, qwen3.5:4b): `ollama ps` showed CONTEXT 262144, SIZE 13 GB,

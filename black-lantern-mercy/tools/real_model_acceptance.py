@@ -23,12 +23,18 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+try:
+    import mercy  # the INSTALLED wheel wins, so the build under test is the one you installed
+except ImportError:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    import mercy
 from mercy import __version__  # noqa: E402
+from mercy.capabilities import Broker, register_defaults  # noqa: E402
 from mercy.application import ApplicationService  # noqa: E402
 from mercy.context import ContextBuilder  # noqa: E402
 
-DEFAULT_MODELS = ["qwen3.5:9b", "ministral-3:8b", "qwen3.5:4b", "qwen3:4b-instruct"]
+DEFAULT_MODELS = ["qwen3.5:4b", "mercy-heretic:latest"]
+ALL_MODELS = ["qwen3.5:4b", "mercy-heretic:latest", "qwen3.5:9b", "ministral-3:8b", "qwen3:4b-instruct"]
 OPENER = urllib.request.build_opener(urllib.request.ProxyHandler({}))  # never route localhost via a proxy
 RESULTS = []  # (stage, name, status, detail)
 
@@ -60,7 +66,7 @@ def raw_chat(endpoint, model, messages, think, num_ctx=0, num_predict=400, tools
         payload["options"]["num_ctx"] = num_ctx
     if tools:
         payload["tools"] = tools
-    out = {"text": "", "t_first_any": None, "t_first_text": None, "chunks": 0, "error": None}
+    out = {"text": "", "t_first_any": None, "t_first_text": None, "chunks": 0, "error": None, "thinking_chars": 0, "tool_calls": []}
     t0 = time.perf_counter()
     try:
         req = urllib.request.Request(endpoint + "/api/chat", data=json.dumps(payload).encode(),
@@ -70,6 +76,8 @@ def raw_chat(endpoint, model, messages, think, num_ctx=0, num_predict=400, tools
                 item = json.loads(line)
                 now = time.perf_counter() - t0
                 msg = item.get("message", {})
+                out["thinking_chars"] += len(msg.get("thinking") or "")
+                out["tool_calls"].extend(msg.get("tool_calls") or [])
                 if (msg.get("thinking") or msg.get("content")) and out["t_first_any"] is None:
                     out["t_first_any"] = now
                 if msg.get("content"):
@@ -227,8 +235,31 @@ def stage_context(a, h, model):
                "start-of-system-prompt retained" if kept else "identity/head of context was NOT retained - window too small. Reply: " + r["text"][:80])
 
 
+def stage_tool_shape(a, h, model):
+    """What does this Ollama/model actually emit for a tool call, and does Mercy's validation accept it?"""
+    s = h.service
+    r = raw_chat(a.endpoint, model, [{"role": "system", "content": s.profile.identity["instructions"]},
+                 {"role": "user", "content": "What time is it right now? Use your tool to find out."}],
+                 False, num_ctx=8192, num_predict=300, tools=s.broker.schemas())
+    if r["error"]:
+        return record("11-tools", model + " raw tool-call probe", "FAIL", r["error"])
+    if not r["tool_calls"]:
+        return record("11-tools", model + " raw tool-call probe", "INFO", "model did not call a tool; said: " + r["text"][:100])
+    call = r["tool_calls"][0]
+    fn = call.get("function") if isinstance(call, dict) else None
+    shape = {"top_level_keys": sorted(call) if isinstance(call, dict) else type(call).__name__,
+             "function_keys": sorted(fn) if isinstance(fn, dict) else None,
+             "arguments_type": type(fn.get("arguments")).__name__ if isinstance(fn, dict) else None}
+    broker = Broker(s.store, lambda c, a_: False)  # DENY: the permission system is exercised, never bypassed
+    register_defaults(broker, s.platform)
+    result = broker.execute(call)
+    ok = result == {"error": "Permission denied"}
+    record("11-tools", model + " real tool-call shape vs Mercy validation", "PASS" if ok else "FAIL",
+           "shape=%s -> %s" % (json.dumps(shape), "accepted by validation (then denied by harness)" if ok else "REJECTED before any permission prompt: " + json.dumps(result)))
+
+
 def stage_bench(a, model):
-    for think in (False, True):
+    for think in a.thinks:
         runs = []
         unload(a.endpoint, model)
         time.sleep(1)
@@ -250,6 +281,10 @@ def stage_bench(a, model):
                    "warm_tokens_per_s": med([r.get("tok_s") for r in warm]), "warm_total_s": med([r["total"] for r in warm]),
                    "eval_tokens": med([r.get("eval_count") for r in warm]), "stopped_by": runs[-1].get("done_reason")}
         record("5-bench", "%s think=%s [raw API]" % (model, think), "INFO", json.dumps(summary))
+        if not think:
+            leaked = sum(r["thinking_chars"] for r in runs)
+            record("5-bench", model + " think=false accepted by server and honored", "PASS" if leaked == 0 else "FAIL",
+                   "no HTTP error; reasoning characters received: %d" % leaked)
         BENCH.append({"model": model, "think": think, **summary})
 
 
@@ -263,7 +298,12 @@ def stage_app(a, h, model, think):
         loaded = {m.get("name"): m.get("context_length") for m in http(a.endpoint, "/api/ps", timeout=10).get("models", [])}
         got = loaded.get(model)
         record("8-context", tag + " Ollama loaded window equals Mercy's num_ctx", "PASS" if got == h.service.config["num_ctx"] else ("FAIL" if got else "INFO"),
-               "/api/ps context_length=%s, configured=%s; also check `ollama ps`: PROCESSOR should read 100%% GPU" % (got, h.service.config["num_ctx"]))
+               "/api/ps context_length=%s, configured=%s" % (got, h.service.config["num_ctx"]))
+        for m in http(a.endpoint, "/api/ps", timeout=10).get("models", []):
+            if m.get("name") == model and m.get("size"):
+                gpu = 100.0 * (m.get("size_vram") or 0) / m["size"]
+                record("8-context", tag + " placement (NOT assumed to be 100% GPU on a 6 GB card)", "INFO",
+                       "GPU %.0f%% / CPU %.0f%%, loaded size %.1f GB, VRAM %.1f GB" % (gpu, 100 - gpu, m["size"] / 1e9, (m.get("size_vram") or 0) / 1e9))
     except Exception as exc:
         record("8-context", tag + " /api/ps check", "INFO", str(exc)[:120])
     warm = [h.turn("In two sentences, what is a mutex?") for _ in range(max(1, a.runs - 1))]
@@ -285,6 +325,20 @@ def stage_app(a, h, model, think):
         record("7-identity", "%s: %r" % (tag, q), "PASS" if ok else "REVIEW", r["text"][:240].replace("\n", " "))
     persona = sum(w_ in w["text"].lower() + text for w_ in ("darling", "lantern", "omg", "spook", "cryptsy", "gloom", "battery", "like"))
     record("7-identity", tag + " persona markers (heuristic)", "INFO", "%d marker words; judge tone yourself" % persona)
+    # identity across several turns in ONE conversation (history + memory path)
+    h.turn("I'm building a compiler called Gloomforge. Remember that.")
+    h.turn("One sentence: why do compilers need an intermediate representation?")
+    r = h.turn("Quick check: who are you, and what is my project called?")
+    t = r["text"].lower()
+    record("7-identity", tag + " after 3 more turns: still Mercy and recalls the project", "PASS" if "mercy" in t and "gloomforge" in t else "REVIEW",
+           r["text"][:240].replace("\n", " "))
+    # tool path through the app; every permission prompt is DENIED. Diagnoses the 'Capability rejected' error.
+    r = h.turn("What time is it right now? Use your time tool.")
+    tid = h.service.store.turns(h.service.config["conversation_id"])[-1]["id"]
+    rows = [json.loads(x["data"]) for x in reversed(h.service.store.audits(turn_id=tid))]
+    summary = [{k: x.get(k) for k in ("capability", "authorization", "execution", "error") if x.get(k)} for x in rows]
+    record("11-tools", tag + " tool request via app (denied by harness)", "INFO",
+           "permission prompts=%d; audit=%s; final state=%s; reply=%r" % (r["permissions"], json.dumps(summary), h.last_turn_state(), r["text"][:120]))
     # cancellation
     base = h.turn("Say hi.")
     c = h.turn("Write a long, detailed 600-word gothic story about a lighthouse keeper.", cancel_after_first=True)
@@ -323,14 +377,17 @@ def main():
         stream.reconfigure(encoding='utf-8', errors='replace')  # model replies may contain emoji; Windows consoles are cp1252
     ap = argparse.ArgumentParser()
     ap.add_argument("--endpoint", default="http://127.0.0.1:11434")
-    ap.add_argument("--models", default=",".join(DEFAULT_MODELS))
+    ap.add_argument("--models", default=",".join(DEFAULT_MODELS), help="comma list; default is the two-model acceptance order")
     ap.add_argument("--runs", type=int, default=3, help="per series: run 1 is a cold start, the rest are warm")
     ap.add_argument("--timeout", type=int, default=300, help="Mercy generation deadline (s)")
     ap.add_argument("--simulate", action="store_true", help="test the harness against a FAKE server; numbers are meaningless")
     ap.add_argument("--skip-bench", action="store_true")
+    ap.add_argument("--think", choices=["off", "both"], default="off", help="also run think=true series (slow on small GPUs)")
+    ap.add_argument("--all", action="store_true", help="test all five known models")
     ap.add_argument("--out", default=None, help="results JSON path")
     a = ap.parse_args()
-    a.models = [m.strip() for m in a.models.split(",") if m.strip()]
+    a.models = [m.strip() for m in (",".join(ALL_MODELS) if a.all else a.models).split(",") if m.strip()]
+    a.thinks = (False,) if a.think == "off" else (False, True)
     fake = None
     if a.simulate:
         sys.path.insert(0, str(Path(__file__).parent))
@@ -338,15 +395,16 @@ def main():
         fake = FakeOllama()
         a.endpoint = fake.endpoint
     mode = "SIMULATED (fake server - NOT real hardware)" if a.simulate else "REAL (%s)" % a.endpoint
-    print("=" * 78, "\nMercy %s acceptance | mode: %s\n%s | Python %s" % (__version__, mode, platform.platform(), platform.python_version()), "\n" + "=" * 78, flush=True)
+    print("=" * 78, "\nMercy %s acceptance | mode: %s\n%s | Python %s\nmercy package under test: %s" % (__version__, mode, platform.platform(), platform.python_version(), mercy.__file__), "\n" + "=" * 78, flush=True)
     h = Harness(a.endpoint, a.timeout)
     try:
         present = stage_discovery(a, h)
         for model in present or []:
             stage_context(a, h, model)
+            stage_tool_shape(a, h, model)
             if not a.skip_bench:
                 stage_bench(a, model)
-            for think in (False, True):
+            for think in a.thinks:
                 if any(r["name"].startswith("%s think=True" % model) and r["status"] == "UNSUPPORTED" for r in RESULTS) and think:
                     record("6-stream", "%s think=True [Mercy path]" % model, "SKIP", "model rejects think")
                     continue
@@ -367,7 +425,7 @@ def main():
     print("REVIEW/MANUAL items need a human. Identity checks are heuristic keyword tests, not a quality judgement.")
     out = Path(a.out) if a.out else Path.cwd() / ("mercy-acceptance-%s-%s.json" % ("SIMULATED" if a.simulate else "REAL", time.strftime("%Y%m%d-%H%M%S")))
     out.write_text(json.dumps({"mode": mode, "mercy": __version__, "platform": platform.platform(), "python": platform.python_version(),
-                               "endpoint": a.endpoint, "results": RESULTS, "bench": BENCH}, indent=2), encoding="utf-8")
+                               "endpoint": a.endpoint, "mercy_file": mercy.__file__, "results": RESULTS, "bench": BENCH}, indent=2), encoding="utf-8")
     print("Results written to", out)
     return 1 if counts.get("FAIL") else 0
 
