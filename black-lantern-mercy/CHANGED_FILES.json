@@ -1,0 +1,176 @@
+{
+  "baseline": "Black-Lantern-Mercy-v0.1-First-Voice.zip",
+  "self_excluded": "CHANGED_FILES.json is generated inventory metadata and is not self-hashed",
+  "files": [
+    {
+      "file": ".gitignore",
+      "status": "modified",
+      "sha256": "c94addf7b00655265c38b16fad87a38e212ab0ae7a5dbca12c80a5c205ea2530"
+    },
+    {
+      "file": "ENGINEERING_REPORT.md",
+      "status": "modified",
+      "sha256": "c637f6bae97a9167b3214242b4cca110f066e0c8902d07cf166f030f03b1c6c4"
+    },
+    {
+      "file": "FROZEN_ARTIFACT_CHECK.json",
+      "status": "added",
+      "sha256": "689aaf9d947da70fc3448b346ab914896485565c84cc3889d97f30e0decffe12"
+    },
+    {
+      "file": "IMPLEMENTATION_PLAN.md",
+      "status": "added",
+      "sha256": "e0d5c77f844c5a07821622bf3a5fb56b92de0f4b62f0e6a9f651243fa60b0201"
+    },
+    {
+      "file": "MIGRATION_EVIDENCE.json",
+      "status": "added",
+      "sha256": "94f084d044d2899e6b2a6c87867b42207163f60406cb218c486568b32c79d5bd"
+    },
+    {
+      "file": "PACKAGING_EVIDENCE.json",
+      "status": "added",
+      "sha256": "a37afb0fa91dbc3d82a59ba7526b338ed3f0edb28d669fd1ab3cffe5617e19e4"
+    },
+    {
+      "file": "README.md",
+      "status": "modified",
+      "sha256": "99a49a53c9cb530210ab4a2800e1e5f309d5e293a5675b69bcdcb4a401f11fd3"
+    },
+    {
+      "file": "TEST_RESULTS.txt",
+      "status": "modified",
+      "sha256": "546f0ae6755a3be74de41d047e11c321702e828e631316a022726a6a3b072529"
+    },
+    {
+      "file": "TK_SMOKE_RESULTS.txt",
+      "status": "added",
+      "sha256": "6655a55cc0c45ee4a45d7570e6942605d04bf639ae7ed0f079ced3a07406d1f2"
+    },
+    {
+      "file": "launch.cmd",
+      "status": "unchanged",
+      "sha256": "44aa461ac1b0b04e940f21738f998f292daf007358871e4975c62d181bd807c7"
+    },
+    {
+      "file": "mercy/__init__.py",
+      "status": "modified",
+      "sha256": "667d4a15b970b851e20d17510224670c14646cfb6d5a1e388ca6b9cc6da8bf41"
+    },
+    {
+      "file": "mercy/__main__.py",
+      "status": "modified",
+      "sha256": "3558e45cefc7ec63167b7a5352544226ed3a7dc93e496117e8b2c3398352a925"
+    },
+    {
+      "file": "mercy/application.py",
+      "status": "added",
+      "sha256": "392caa39b0e1f4ec73119f4e57437062941a6f30f5c491dd1a9180b89703a173"
+    },
+    {
+      "file": "mercy/capabilities.py",
+      "status": "modified",
+      "sha256": "e8e21722d470247de79db56c46cf707ce5523a6d2611e3228eb7ec2998d9d515"
+    },
+    {
+      "file": "mercy/config.py",
+      "status": "added",
+      "sha256": "f657b732816ac82364ba96efb48a4753fd2b349347271d91409544bb079215d5"
+    },
+    {
+      "file": "mercy/context.py",
+      "status": "modified",
+      "sha256": "32995b402bbc1227392d27210ea6cbd7d3ed31380251ac31ffa3ab2c2f2364b2"
+    },
+    {
+      "file": "mercy/core.py",
+      "status": "modified",
+      "sha256": "cc2335a910f922820b02124cf04c9b115ca8f735717a74b6220e4d981e459905"
+    },
+    {
+      "file": "mercy/identity.json",
+      "status": "unchanged",
+      "sha256": "7d5d00221d1da3fefb10019f74a7eec42911496d2c983495398c9ac56c10ce57"
+    },
+    {
+      "file": "mercy/migrations.py",
+      "status": "added",
+      "sha256": "9cc25efe0bb38a2c58b3e11ac8921300c69203ccc0077f52856af106be347420"
+    },
+    {
+      "file": "mercy/platform.py",
+      "status": "modified",
+      "sha256": "7ae287703c6c86e703754857ebd4654eebcdf8dfbb16df508639a1ab94d601cf"
+    },
+    {
+      "file": "mercy/profile.py",
+      "status": "added",
+      "sha256": "f53dbd85cc23ea171557925c4b70d96f77748331bc1b3e2c592be4577e469501"
+    },
+    {
+      "file": "mercy/providers.py",
+      "status": "unchanged",
+      "sha256": "64fd81ca67e57fdcdf0db77ad0745760a2edfb7eea69ec47c942d4f4ffb709fd"
+    },
+    {
+      "file": "mercy/runtime.py",
+      "status": "added",
+      "sha256": "cf624a3234c2ed635fd08347e51124677c53de09eed2d38b0f481b88f06d0c4a"
+    },
+    {
+      "file": "mercy/storage.py",
+      "status": "modified",
+      "sha256": "e769e39817984897ceb3ae3053a04f26b502ccff3cac28744b0ede00442e585d"
+    },
+    {
+      "file": "mercy/ui.py",
+      "status": "modified",
+      "sha256": "d1bdf2548c94b4d4a8ae3aea909dc34b77c06f4a16ae060b2009287f900fb44e"
+    },
+    {
+      "file": "mercy/worker.py",
+      "status": "added",
+      "sha256": "a2508f6cc9f0edfc0f9ce1f4c5133d951f3f84a28b716028709f3d9f19d7d7fe"
+    },
+    {
+      "file": "pyproject.toml",
+      "status": "modified",
+      "sha256": "09d440366f7235a0843682be1376360440b52799f96178105432e3b2908c2bf6"
+    },
+    {
+      "file": "tests/__init__.py",
+      "status": "unchanged",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "tests/test_application_v2.py",
+      "status": "added",
+      "sha256": "ac79e4320d25d31dc35cf9bde33d85c034ab3d50175c89a85659610fedf2aef6"
+    },
+    {
+      "file": "tests/test_failures_v2.py",
+      "status": "added",
+      "sha256": "dbc6e3b5d2410c746b2c8d20add8546d9a64367ae53457f95bb3ed87def19d4f"
+    },
+    {
+      "file": "tests/test_mercy.py",
+      "status": "modified",
+      "sha256": "148db0f473dc19f0bf3b34557114678728e1250ac2dee96b244be7627cc18858"
+    },
+    {
+      "file": "tests/test_runtime_v2.py",
+      "status": "added",
+      "sha256": "a1692e42412f1fbed009ba3e45310c22a5a4c857be8c1f56c84d414842f3fe9f"
+    },
+    {
+      "file": "tests/test_storage_v2.py",
+      "status": "added",
+      "sha256": "d3d47c0dca0761f6fbb340bcb22245e47065f09998ca7327eb0e3ebfb7129f72"
+    },
+    {
+      "file": "tests/ui_smoke.py",
+      "status": "modified",
+      "sha256": "53f607930ee8ab6b6c6150c0e62ffd3099803500541abcba8d6e4899dded13f7"
+    }
+  ]
+}

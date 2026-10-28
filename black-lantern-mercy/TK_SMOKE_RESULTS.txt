@@ -1,0 +1,5 @@
+Python: 3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]
+Command: python -m tests.ui_smoke --data-dir C:\Users\mcfly\Documents\Codex\2026-09-27\files-pasted-by-the-user-black\work\v02\final-ui-profile
+Exit: 0
+
+PASS: Tk startup, streaming, permission buttons, memory provenance/deletion, session switching, cancel pending permission, audit filter, restart persistence

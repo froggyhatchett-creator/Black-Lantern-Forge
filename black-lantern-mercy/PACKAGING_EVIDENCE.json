@@ -1,0 +1,6 @@
+{
+  "wheel_build": "PASS (setuptools direct bdist_wheel)",
+  "wheel_payload_execution": "PASS: extracted wheel imports, profile creation, subprocess mock turn and clean shutdown",
+  "pip_install": "BLOCKED by host temporary-directory ACL: WinError 5; not claimed successful",
+  "fresh_machine_install": "NOT VERIFIED"
+}

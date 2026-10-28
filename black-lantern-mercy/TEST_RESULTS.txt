@@ -1,0 +1,76 @@
+Python: 3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]
+Command: python -m unittest discover -s tests -v
+Exit: 0
+
+test_actual_crash_and_profile_recovery (test_application_v2.ApplicationTests.test_actual_crash_and_profile_recovery) ... ok
+test_begin_turn_rolls_back_on_bad_session (test_application_v2.ApplicationTests.test_begin_turn_rolls_back_on_bad_session) ... ok
+test_cancel_pending_permission (test_application_v2.ApplicationTests.test_cancel_pending_permission) ... ok
+test_config_replace_failure_preserves_file (test_application_v2.ApplicationTests.test_config_replace_failure_preserves_file) ... ok
+test_config_while_busy_rejected (test_application_v2.ApplicationTests.test_config_while_busy_rejected) ... ok
+test_controller_mock_conversation_and_sessions (test_application_v2.ApplicationTests.test_controller_mock_conversation_and_sessions) ... ok
+test_controller_permission_one_use (test_application_v2.ApplicationTests.test_controller_permission_one_use) ... ok
+test_memory_transaction_rolls_back_on_audit_failure (test_application_v2.ApplicationTests.test_memory_transaction_rolls_back_on_audit_failure) ... ok
+test_migration_rollback (test_application_v2.ApplicationTests.test_migration_rollback) ... ok
+test_permission_deadline_and_stale_approval (test_application_v2.ApplicationTests.test_permission_deadline_and_stale_approval) ... ok
+test_audit_paging_and_turn_filter (test_failures_v2.FailureTests.test_audit_paging_and_turn_filter) ... ok
+test_identity_field_validation (test_failures_v2.FailureTests.test_identity_field_validation) ... ok
+test_invalid_memory_reference (test_failures_v2.FailureTests.test_invalid_memory_reference) ... ok
+test_memory_deletion_rolls_back_with_failed_audit (test_failures_v2.FailureTests.test_memory_deletion_rolls_back_with_failed_audit) ... ok
+test_profile_lock_cross_process (test_failures_v2.FailureTests.test_profile_lock_cross_process) ... ok
+test_session_selection_persists (test_failures_v2.FailureTests.test_session_selection_persists) ... ok
+test_status_deadline (test_failures_v2.FailureTests.test_status_deadline) ... ok
+test_timeout_preserves_partial_turn (test_failures_v2.FailureTests.test_timeout_preserves_partial_turn) ... ok
+test_unexpected_provider_exit (test_failures_v2.FailureTests.test_unexpected_provider_exit) ... ok
+test_unversioned_database_rejected (test_failures_v2.FailureTests.test_unversioned_database_rejected) ... ok
+test_worker_exits_when_parent_crashes (test_failures_v2.FailureTests.test_worker_exits_when_parent_crashes) ... ok
+test_http_stream (test_mercy.HTTPTests.test_http_stream) ... ok
+test_malformed (test_mercy.HTTPTests.test_malformed) ... ok
+test_missing_model (test_mercy.HTTPTests.test_missing_model) ... ok
+test_status (test_mercy.HTTPTests.test_status) ... ok
+test_truncated (test_mercy.HTTPTests.test_truncated) ... ok
+test_approval (test_mercy.MercyTests.test_approval) ... ok
+test_audit (test_mercy.MercyTests.test_audit) ... ok
+test_context_bounded (test_mercy.MercyTests.test_context_bounded) ... ok
+test_context_selects (test_mercy.MercyTests.test_context_selects) ... ok
+test_conversation_restart (test_mercy.MercyTests.test_conversation_restart) ... ok
+test_credential_rejection (test_mercy.MercyTests.test_credential_rejection) ... ok
+test_delete_memory (test_mercy.MercyTests.test_delete_memory) ... ok
+test_denial_inference_continues (test_mercy.MercyTests.test_denial_inference_continues) ... ok
+test_denial_no_execution (test_mercy.MercyTests.test_denial_no_execution) ... ok
+test_empty_response (test_mercy.MercyTests.test_empty_response) ... ok
+test_endpoint_guard (test_mercy.MercyTests.test_endpoint_guard) ... ok
+test_failed_audit_prevents_execution (test_mercy.MercyTests.test_failed_audit_prevents_execution) ... ok
+test_identity (test_mercy.MercyTests.test_identity) ... ok
+test_input_limits (test_mercy.MercyTests.test_input_limits) ... ok
+test_invalid_identity (test_mercy.MercyTests.test_invalid_identity) ... ok
+test_loop_limit (test_mercy.MercyTests.test_loop_limit) ... ok
+test_malformed_requests (test_mercy.MercyTests.test_malformed_requests) ... ok
+test_memory_restart (test_mercy.MercyTests.test_memory_restart) ... ok
+test_partial_failure (test_mercy.MercyTests.test_partial_failure) ... ok
+test_provider_substitution (test_mercy.MercyTests.test_provider_substitution) ... ok
+test_registration (test_mercy.MercyTests.test_registration) ... ok
+test_rejected_args_redacted (test_mercy.MercyTests.test_rejected_args_redacted) ... ok
+test_retriever_substitution (test_mercy.MercyTests.test_retriever_substitution) ... ok
+test_streaming_mock (test_mercy.MercyTests.test_streaming_mock) ... ok
+test_tool_loop (test_mercy.MercyTests.test_tool_loop) ... ok
+test_truthy_is_not_approval (test_mercy.MercyTests.test_truthy_is_not_approval) ... ok
+test_validation (test_mercy.MercyTests.test_validation) ... ok
+test_bad_config_preserved_and_lock_released (test_runtime_v2.RuntimeTests.test_bad_config_preserved_and_lock_released) ... ok
+test_cancellation_kills_worker (test_runtime_v2.RuntimeTests.test_cancellation_kills_worker) ... ok
+test_config_rejects_invalid (test_runtime_v2.RuntimeTests.test_config_rejects_invalid) ... ok
+test_deadline_kills_worker (test_runtime_v2.RuntimeTests.test_deadline_kills_worker) ... ok
+test_legacy_config (test_runtime_v2.RuntimeTests.test_legacy_config) ... ok
+test_managed_mock_contract (test_runtime_v2.RuntimeTests.test_managed_mock_contract) ... ok
+test_profile_lock_and_release (test_runtime_v2.RuntimeTests.test_profile_lock_and_release) ... ok
+test_transaction_cancel_state (test_runtime_v2.RuntimeTests.test_transaction_cancel_state) ... ok
+test_conversation_isolation (test_storage_v2.StorageV2Tests.test_conversation_isolation) ... ok
+test_finish_atomic_and_terminal (test_storage_v2.StorageV2Tests.test_finish_atomic_and_terminal) ... ok
+test_memory_provenance_delete (test_storage_v2.StorageV2Tests.test_memory_provenance_delete) ... ok
+test_migration_v1 (test_storage_v2.StorageV2Tests.test_migration_v1) ... ok
+test_turn_recovery (test_storage_v2.StorageV2Tests.test_turn_recovery) ... ok
+test_unknown_schema_rejected (test_storage_v2.StorageV2Tests.test_unknown_schema_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 67 tests in 12.408s
+
+OK

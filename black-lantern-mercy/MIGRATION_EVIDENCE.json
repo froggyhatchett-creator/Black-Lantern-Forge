@@ -1,0 +1,9 @@
+{
+  "result": "PASS",
+  "source": "Copied Acceptance 001 snapshot, not original profile",
+  "legacy_history_preserved": true,
+  "memory_preserved": true,
+  "identity_byte_unchanged": true,
+  "pre_migration_backup_verified": true,
+  "repeat_open_idempotent": true
+}
