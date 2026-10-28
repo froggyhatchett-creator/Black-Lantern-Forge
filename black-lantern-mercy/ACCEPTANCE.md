@@ -34,10 +34,12 @@ It briefly unloads models (`keep_alive 0`) so cold-start numbers are genuine.
 | 10 persistence | Is history identical after closing and reopening the profile? | exact match |
 
 ## Reading the context result
-Mercy does not set `num_ctx` by default, so Ollama picks the window (check the CONTEXT column of
-`ollama ps`). If stage 8 says `FAIL ... Ollama default` but `PASS ... num_ctx=8192`, set
-**Context window in tokens** to 8192 in Provider/profile (or `"num_ctx": 8192` in `config.json`).
-That costs extra VRAM; with 16 GB it should fit both 9B and 4B models, but verify with `nvidia-smi`.
+Mercy now always sends `num_ctx` (default **8192**, allowed 4096-131072) and sizes its own context to fit.
+Without it Ollama loaded the model maximum (262144), which made qwen3.5:4b 13 GB and 75% CPU on a 16 GB card.
+Stage 8 checks that `/api/ps` reports a window equal to Mercy's setting, and still runs the codeword
+canary at Ollama's own default window (raw API, for comparison) and at 8192. After the run, `ollama ps`
+should show CONTEXT 8192, a small SIZE and 100% GPU. To change it: Provider/profile > Context window.
+Larger windows cost VRAM; measure with `nvidia-smi` before raising it.
 
 ## Not covered
 Output *quality*, tool-call behavior of each model (tool requests are denied), long-session soak,

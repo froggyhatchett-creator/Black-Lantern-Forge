@@ -93,7 +93,7 @@ class FakeOllama:
         seen = "\n".join(m.get("content", "") for m in messages)
         prompt_tokens = int(total(messages) / CHARS_PER_TOKEN)
         load = 0
-        if model not in self.loaded:
+        if self.loaded.get(model) != window:  # like real Ollama, a different num_ctx forces a reload
             time.sleep(self.load_s)
             load = int(self.load_s * 1e9)
             self.loaded[model] = window

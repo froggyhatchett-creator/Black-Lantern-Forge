@@ -4,9 +4,10 @@ import os
 import uuid
 from pathlib import Path
 from urllib.parse import urlparse
+from .providers import DEFAULT_NUM_CTX, check_num_ctx
 
 DEFAULT = {'version': 2, 'provider': 'mock', 'model': '', 'endpoint': 'http://127.0.0.1:11434',
-           'generation_timeout': 60, 'status_timeout': 8, 'conversation_id': 1, 'think': False, 'num_ctx': 0}
+           'generation_timeout': 60, 'status_timeout': 8, 'conversation_id': 1, 'think': False, 'num_ctx': DEFAULT_NUM_CTX}
 
 
 def validate(value):
@@ -37,8 +38,7 @@ def validate(value):
         x = result[key]
         if type(x) not in (int, float) or not math.isfinite(x) or not low <= x <= high:
             raise ValueError(f'{key} must be between {low} and {high} seconds.')
-    if type(result['num_ctx']) is not int or not (result['num_ctx'] == 0 or 512 <= result['num_ctx'] <= 262144):
-        raise ValueError('num_ctx must be 0 (server default) or between 512 and 262144 tokens.')
+    check_num_ctx(result['num_ctx'])
     if type(result['think']) is not bool:
         raise ValueError('think must be true or false.')
     if type(result['conversation_id']) is not int or result['conversation_id'] < 1:
@@ -51,7 +51,10 @@ def load(path):
         return dict(DEFAULT)
     if path.stat().st_size > 16384:
         raise ValueError('Configuration is too large.')
-    return validate(json.loads(path.read_text(encoding='utf-8')))
+    value = json.loads(path.read_text(encoding='utf-8'))
+    if isinstance(value, dict) and value.get('num_ctx') == 0 and type(value.get('num_ctx')) is int:
+        value['num_ctx'] = DEFAULT_NUM_CTX  # an earlier build wrote 0 for "unset"; unset is no longer allowed
+    return validate(value)
 
 
 def save(path, value):

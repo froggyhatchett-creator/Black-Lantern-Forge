@@ -9,7 +9,7 @@ import subprocess
 import sys
 import threading
 import time
-from .providers import MockProvider, OllamaProvider, ProviderError, Event
+from .providers import DEFAULT_NUM_CTX, MockProvider, OllamaProvider, ProviderError, Event
 
 
 class Cancelled(ProviderError):
@@ -41,7 +41,7 @@ def mock_factory(settings):
 
 def ollama_factory(settings):
     return OllamaProvider(settings['model'], settings['endpoint'],
-                          settings.get('think', False), settings.get('num_ctx', 0))
+                          settings.get('think', False), settings.get('num_ctx', DEFAULT_NUM_CTX))
 
 
 REGISTRY = {'mock': mock_factory, 'ollama': ollama_factory}

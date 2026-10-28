@@ -102,7 +102,7 @@ class Harness:
         self.dir = Path(tempfile.mkdtemp(prefix="mercy-acceptance-"))
         self.service = ApplicationService(self.dir / "profile")
 
-    def configure(self, model, think, num_ctx=0):
+    def configure(self, model, think, num_ctx=8192):
         s = self.service
         s.configure({**s.config, "provider": "ollama", "model": model, "endpoint": self.endpoint,
                      "think": think, "num_ctx": num_ctx, "generation_timeout": self.timeout, "status_timeout": 10})
@@ -259,6 +259,13 @@ def stage_app(a, h, model, think):
     conv = h.service.new_conversation("%s think=%s" % (model, think))
     tag = "%s think=%s" % (model, think)
     h.turn("Mercy?")  # warm the model so numbers below are not load time
+    try:  # the original bug: an unset window made Ollama load the model maximum (262144) and spill to CPU
+        loaded = {m.get("name"): m.get("context_length") for m in http(a.endpoint, "/api/ps", timeout=10).get("models", [])}
+        got = loaded.get(model)
+        record("8-context", tag + " Ollama loaded window equals Mercy's num_ctx", "PASS" if got == h.service.config["num_ctx"] else ("FAIL" if got else "INFO"),
+               "/api/ps context_length=%s, configured=%s; also check `ollama ps`: PROCESSOR should read 100%% GPU" % (got, h.service.config["num_ctx"]))
+    except Exception as exc:
+        record("8-context", tag + " /api/ps check", "INFO", str(exc)[:120])
     warm = [h.turn("In two sentences, what is a mutex?") for _ in range(max(1, a.runs - 1))]
     w = warm[-1]
     if w["error"]:

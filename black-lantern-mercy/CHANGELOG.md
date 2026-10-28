@@ -4,6 +4,19 @@ Baseline: v0.2.0 "The Vessel", imported verbatim (commit 3e1e7d1). 67 tests, OK.
 
 ## Unreleased
 
+### Fixed (urgent): unset context window made Ollama use the model maximum
+Real hardware (RTX 5060 Ti 16 GB, qwen3.5:4b): `ollama ps` showed CONTEXT 262144, SIZE 13 GB,
+75% CPU / 25% GPU. Cause: Mercy sent no `num_ctx`.
+- `num_ctx` is now **always** sent in `/api/chat` `options`; default **8192**; valid range 4096-131072
+  (`0`/unset, floats, bools, strings are rejected). A `config.json` written by the previous build with
+  `num_ctx: 0` is migrated to 8192 on load.
+- Mercy's context character budget is derived from the window (`window_budget`), so history shrinks
+  before the identity prompt is ever clipped. Identity too large for the window fails loudly.
+- Provider refuses to send a prompt whose conservative estimate (2.5 chars/token) exceeds
+  window - 512 tokens, and raises if the server reports a prompt that filled the window
+  (`prompt_eval_count >= num_ctx - 64`) instead of truncating silently.
+- Verified only with unit tests and the fake server. **Not verified on real hardware.**
+
 ### Changed
 - **Ollama: reasoning is now explicitly off by default** (`think: false` sent on `/api/chat`).
   Config field `think` (bool, default `false`) enables it. Reasoning tokens

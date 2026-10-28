@@ -1,4 +1,7 @@
 import json
+from .providers import CHARS_PER_TOKEN, REPLY_RESERVE_TOKENS
+
+DEFAULT_BUDGET = 16000
 
 
 def load_identity(path):
@@ -12,8 +15,14 @@ def load_identity(path):
     return value
 
 
+def window_budget(num_ctx, tools):
+    """Character budget for messages so prompt + tool schemas + reply headroom fit the model window."""
+    room = int((num_ctx - 2 * REPLY_RESERVE_TOKENS) * CHARS_PER_TOKEN) - len(json.dumps(tools or []))
+    return max(0, min(DEFAULT_BUDGET, room))
+
+
 class ContextBuilder:
-    def __init__(self, store, identity, retriever=None, budget=16000):
+    def __init__(self, store, identity, retriever=None, budget=DEFAULT_BUDGET):
         self.store, self.identity = store, identity
         self.retrieve = retriever or store.retrieve
         self.budget = budget

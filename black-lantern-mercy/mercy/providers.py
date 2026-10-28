@@ -11,6 +11,22 @@ class ProviderError(RuntimeError):
     pass
 
 
+DEFAULT_NUM_CTX, MIN_NUM_CTX, MAX_NUM_CTX = 8192, 4096, 131072
+CHARS_PER_TOKEN = 2.5  # deliberately pessimistic (typical English is ~4) so we refuse rather than silently truncate
+REPLY_RESERVE_TOKENS = 512  # headroom a prompt must leave inside the window
+
+
+def check_num_ctx(value):
+    if type(value) is not int or not MIN_NUM_CTX <= value <= MAX_NUM_CTX:
+        raise ValueError('num_ctx must be an integer between %d and %d tokens.' % (MIN_NUM_CTX, MAX_NUM_CTX))
+    return value
+
+
+def estimate_tokens(messages, tools):
+    chars = sum(len(str(m.get('content', ''))) + len(json.dumps(m.get('tool_calls', ''))) for m in messages)
+    return int((chars + len(json.dumps(tools or []))) / CHARS_PER_TOKEN)
+
+
 @dataclass
 class Event:
     text: str = ""
@@ -34,12 +50,12 @@ class NoRedirect(HTTPRedirectHandler):
 
 
 class OllamaProvider:
-    def __init__(self, model, endpoint="http://127.0.0.1:11434", think=False, num_ctx=0):
+    def __init__(self, model, endpoint="http://127.0.0.1:11434", think=False, num_ctx=DEFAULT_NUM_CTX):
         u = urlparse(endpoint)
         if u.scheme != 'http' or u.hostname not in ('localhost', '127.0.0.1', '::1') or u.username or u.password or u.query or u.fragment or u.path not in ('', '/'):
             raise ValueError("Ollama endpoint must be a loopback HTTP origin.")
         self.model, self.endpoint, self.think = model, endpoint.rstrip('/'), think is True
-        self.num_ctx = num_ctx  # 0 = leave the server's default window untouched
+        self.num_ctx = check_num_ctx(num_ctx)  # always sent: an unset window lets Ollama pick the model maximum
         self.http = build_opener(ProxyHandler({}), NoRedirect())
 
     def request(self, path, payload=None, timeout=120):
@@ -61,8 +77,7 @@ class OllamaProvider:
         rejects the `think` field is retried once without it, since not all models accept it."""
         payload = {"model": self.model, "messages": messages, "tools": tools,
                    "stream": True, "keep_alive": "5m", "think": self.think}
-        if self.num_ctx:
-            payload["options"] = {"num_ctx": self.num_ctx}
+        payload["options"] = {"num_ctx": self.num_ctx}
         try:
             return self.request('/api/chat', payload)
         except HTTPError as exc:
@@ -74,6 +89,9 @@ class OllamaProvider:
         return self.request('/api/chat', payload)
 
     def stream(self, messages, tools):
+        if estimate_tokens(messages, tools) > self.num_ctx - REPLY_RESERVE_TOKENS:
+            raise ProviderError("Prompt would not fit the %d-token context window. Raise num_ctx or shorten the conversation; "
+                                "nothing was sent." % self.num_ctx)
         try:
             with self._open_chat(messages, tools) as response:
                 done = False
@@ -94,6 +112,10 @@ class OllamaProvider:
                         yield Event(tool=call)
                     if item.get('done'):
                         done = True
+                        used = item.get('prompt_eval_count')
+                        if type(used) is int and used >= self.num_ctx - 64:
+                            raise ProviderError("The prompt filled the %d-token context window; the server truncated it. "
+                                                "Raise num_ctx. This reply may have lost Mercy's identity." % self.num_ctx)
                         break
                 if not done:
                     raise ProviderError("Backend disconnected before completion.")

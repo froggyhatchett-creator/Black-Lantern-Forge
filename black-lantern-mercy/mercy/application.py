@@ -4,7 +4,7 @@ import threading
 import uuid
 from dataclasses import dataclass, field
 from .profile import Profile
-from .context import ContextBuilder, load_identity
+from .context import ContextBuilder, load_identity, window_budget, DEFAULT_BUDGET
 from .capabilities import Broker, register_defaults
 from .core import MercyCore
 from .platform import HostPlatform
@@ -61,6 +61,11 @@ class ApplicationService:
             self.profile.save_config({**self.config, 'conversation_id': ident})
             return ident
 
+    def context_budget(self, settings):
+        if settings['provider'] != 'ollama':
+            return DEFAULT_BUDGET
+        return window_budget(settings['num_ctx'], self.broker.schemas())
+
     def _start(self, operation, timeout):
         with self._lock:
             if self.busy or self.closed:
@@ -90,7 +95,7 @@ class ApplicationService:
         settings = self.config
         def operation(control):
             provider = ManagedProvider(settings, control)
-            context = ContextBuilder(self.store, self.profile.identity)
+            context = ContextBuilder(self.store, self.profile.identity, budget=self.context_budget(settings))
             self.broker.check_control = control.check
             core = MercyCore(self.store, context, provider, self.broker)
             core.chat(text, lambda part: self.events.put(('text', part)), settings['conversation_id'], control)

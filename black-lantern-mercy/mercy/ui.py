@@ -82,7 +82,7 @@ class Application:
         self.fields = {}
         for row, (key, label) in enumerate([('provider', 'Provider'), ('model', 'Exact model name'), ('endpoint', 'Local endpoint'),
                                            ('generation_timeout', 'Generation deadline (seconds)'), ('status_timeout', 'Status deadline (seconds)'),
-                                           ('num_ctx', 'Context window in tokens (0 = Ollama default)')]):
+                                           ('num_ctx', 'Context window in tokens (4096-131072; Ollama only)')]):
             ttk.Label(settings, text=label).grid(row=row, column=0, sticky='w', pady=5)
             value = tk.StringVar(value=str(self.service.config[key]))
             self.fields[key] = value

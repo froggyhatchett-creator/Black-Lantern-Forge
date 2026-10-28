@@ -72,12 +72,52 @@ class OllamaProtocolTests(unittest.TestCase):
         fake = self.serve(chunks('answer', thinking=['secret reasoning']))
         self.assertEqual(self.stream(fake, think=True), ['answer'])
 
-    def test_num_ctx_sent_only_when_configured(self):
+    def test_num_ctx_always_sent_default_8192(self):
         fake = self.serve(chunks('x'))
         self.stream(fake)
-        self.assertNotIn('options', fake.requests[0])
-        self.stream(fake, num_ctx=8192)
-        self.assertEqual(fake.requests[1]['options'], {'num_ctx': 8192})
+        self.assertEqual(fake.requests[0]['options']['num_ctx'], 8192)
+        self.stream(fake, num_ctx=16384)
+        self.assertEqual(fake.requests[1]['options']['num_ctx'], 16384)
+
+    def test_num_ctx_sent_on_think_fallback_retry(self):
+        fake = self.serve(chunks('ok'), reject_think=True)
+        self.stream(fake)
+        self.assertEqual([r['options']['num_ctx'] for r in fake.requests], [8192, 8192])
+
+    def test_unsupported_num_ctx_rejected_by_provider(self):
+        for bad in (0, None, -1, 4095, 131073, 8192.0, '8192', True):
+            with self.assertRaises(ValueError, msg=repr(bad)):
+                OllamaProvider('fake', 'http://127.0.0.1:1', num_ctx=bad)
+
+    def test_oversized_prompt_refused_before_any_request(self):
+        fake = self.serve(chunks('x'))
+        provider = OllamaProvider('fake', fake.endpoint, num_ctx=4096)
+        with self.assertRaises(ProviderError) as ctx:
+            list(provider.stream([{'role': 'system', 'content': 'identity'}, {'role': 'user', 'content': 'x' * 20000}], []))
+        self.assertIn('context window', str(ctx.exception))
+        self.assertEqual(fake.requests, [])
+
+    def test_prompt_that_filled_the_window_is_reported_not_silent(self):
+        lines = chunks('answer')
+        lines[-1]['prompt_eval_count'] = 4096  # server evaluated exactly a full window: it clipped the prompt
+        fake = self.serve(lines)
+        with self.assertRaises(ProviderError) as ctx:
+            self.stream(fake, num_ctx=4096)
+        self.assertIn('truncat', str(ctx.exception))
+
+    def test_normal_prompt_count_is_accepted(self):
+        lines = chunks('answer')
+        lines[-1]['prompt_eval_count'] = 600
+        fake = self.serve(lines)
+        self.assertEqual(self.stream(fake, num_ctx=4096), ['answer'])
+
+    def test_worker_path_passes_num_ctx(self):
+        from mercy.runtime import ManagedProvider, Control
+        fake = self.serve(chunks('hi'))
+        settings = {'provider': 'ollama', 'model': 'fake', 'endpoint': fake.endpoint, 'think': False, 'num_ctx': 12288}
+        events = list(ManagedProvider(settings, Control(30)).stream([{'role': 'user', 'content': 'hi'}], []))
+        self.assertEqual([e.text for e in events], ['hi'])
+        self.assertEqual(fake.requests[0]['options']['num_ctx'], 12288)
 
     def test_model_without_thinking_support_falls_back_once(self):
         fake = self.serve(chunks('ok'), reject_think=True)
@@ -106,13 +146,61 @@ class ConfigThinkTests(unittest.TestCase):
     def test_v02_config_without_field_loads(self):
         legacy = {'version': 2, 'provider': 'mock'}
         self.assertIs(config.validate(legacy)['think'], False)
-        self.assertEqual(config.validate(legacy)['num_ctx'], 0)
+        self.assertEqual(config.validate(legacy)['num_ctx'], 8192)
 
-    def test_num_ctx_validation(self):
-        self.assertEqual(config.validate({'num_ctx': 8192})['num_ctx'], 8192)
-        for bad in (-1, 100, 10**7, 8192.0, '8192', True):
-            with self.assertRaises(ValueError):
+    def test_default_is_8192(self):
+        self.assertEqual(config.DEFAULT['num_ctx'], 8192)
+
+    def test_num_ctx_validation_bounds(self):
+        for good in (4096, 8192, 131072):
+            self.assertEqual(config.validate({'num_ctx': good})['num_ctx'], good)
+        for bad in (0, -1, 4095, 131073, 262144, 8192.0, '8192', True, None):
+            with self.assertRaises(ValueError, msg=repr(bad)):
                 config.validate({'num_ctx': bad})
+
+    def test_previous_build_zero_meaning_unset_migrates_to_default(self):
+        tmp = tempfile.TemporaryDirectory(); self.addCleanup(tmp.cleanup)
+        path = Path(tmp.name) / 'config.json'
+        path.write_text(json.dumps({'version': 2, 'provider': 'mock', 'num_ctx': 0}))
+        self.assertEqual(config.load(path)['num_ctx'], 8192)
+
+
+class ContextBudgetTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory(); self.addCleanup(self.tmp.cleanup)
+        self.store = Store(Path(self.tmp.name) / 'm.sqlite3')
+        self.identity = load_identity(Path(__file__).parents[1] / 'mercy/identity.json')
+
+    def test_budget_never_exceeds_window_and_identity_survives(self):
+        from mercy.context import window_budget
+        from mercy.providers import estimate_tokens
+        broker = Broker(self.store, lambda c, a: True)
+        from mercy.capabilities import register_defaults
+        from mercy.platform import HostPlatform
+        register_defaults(broker, HostPlatform())
+        tools = broker.schemas()
+        for i in range(60):
+            self.store.message('user' if i % 2 == 0 else 'assistant', ('filler %d ' % i) * 60)
+        for window in (4096, 8192, 32768):
+            messages = ContextBuilder(self.store, self.identity, budget=window_budget(window, tools)).build('hello')
+            self.assertEqual(messages[0]['role'], 'system')
+            self.assertIn('You are Mercy', messages[0]['content'])
+            self.assertLessEqual(estimate_tokens(messages, tools), window - 512, window)
+
+    def test_identity_that_cannot_fit_fails_loudly(self):
+        from mercy.context import window_budget
+        huge = dict(self.identity, instructions='x' * 12000)
+        with self.assertRaises(ValueError):
+            ContextBuilder(self.store, huge, budget=window_budget(4096, [])).build('hi')
+
+    def test_service_derives_budget_from_configured_window(self):
+        from mercy.application import ApplicationService
+        from mercy.context import window_budget
+        service = ApplicationService(Path(self.tmp.name) / 'p')
+        self.addCleanup(service.close)
+        self.assertEqual(service.context_budget({'provider': 'ollama', 'num_ctx': 4096}),
+                         window_budget(4096, service.broker.schemas()))
+        self.assertEqual(service.context_budget({'provider': 'mock', 'num_ctx': 4096}), 16000)
 
 
 class CheckpointThrottleTests(unittest.TestCase):
