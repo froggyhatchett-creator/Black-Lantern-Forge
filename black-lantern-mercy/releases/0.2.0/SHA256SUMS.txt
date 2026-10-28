@@ -1,0 +1,1 @@
+81ea6a640cdc2ebab92d58e4421d0a43083908416dcaf98aaf26ead174848a39  black_lantern_mercy-0.2.0-py3-none-any.whl

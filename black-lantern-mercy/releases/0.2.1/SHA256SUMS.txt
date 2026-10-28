@@ -1,0 +1,2 @@
+531d56f776fb1a6c8b04c293550227d98d41161c5866dad4a7427c63fac8d962  black_lantern_mercy-0.2.1-py3-none-any.whl
+edce723c8f6b6ca2bcb650b5d29ae4dbbeb9cc91411e9bca8cd3711b1c970d9f  black-lantern-mercy-0.2.1-source.zip

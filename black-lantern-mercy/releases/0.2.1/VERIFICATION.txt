@@ -1,0 +1,58 @@
+VERIFICATION (Linux sandbox, NOT Windows, NOT real Ollama/GPU) - build commit 52f5c118f02ec18e700702d4f88d2441cc4316ec
+
+Unit tests: 95 passed, 1 skipped (Windows-only) on Python 3.11, 3.12, 3.13
+Tk smoke (tests/ui_smoke.py, Python 3.12, virtual display): PASS incl. provider controls
+WHEEL mercy/ == SOURCE mercy/ at 52f5c118f02ec18e700702d4f88d2441cc4316ec: IDENTICAL
+
+--- upgrade 0.2.0 -> 0.2.1 and rollback rehearsal (original 0.2.0 wheel, clean venv) ---
+### 1. install ORIGINAL v0.2.0 wheel
+0.2.0
+### 2. seed profile with old version
+mercy 0.2.0 <venv>/mercy/__init__.py
+seeded; config {'version': 2, 'provider': 'ollama', 'model': 'qwen3.5:4b', 'endpoint': 'http://127.0.0.1:11434', 'generation_timeout': 60, 'status_timeout': 8, 'conversation_id': 2}
+### 3. backup + before snapshot
+{'schema': 2, 'conversations': 2, 'messages': 4, 'memories': 2, 'turns': 2} {'version': 2, 'provider': 'ollama', 'model': 'qwen3.5:4b', 'endpoint': 'http://127.0.0.1:11434', 'generation_timeout': 60, 'status_timeout': 8, 'conversation_id': 2}
+### 4. UPGRADE (pip install --force-reinstall new wheel)
+0.2.1 <venv>/mercy/__init__.py
+### 5. after-install snapshot vs before
+  schema                   2 -> 2 OK
+  conversations            2 -> 2 OK
+  messages                 4 -> 4 OK
+  turns                    2 -> 2 OK
+  memories                 2 -> 2 OK
+  audit                    4 -> 4 OK
+  messages_fingerprint     d1b71b0473246c08 -> d1b71b0473246c08 OK
+  memories_fingerprint     af1306190dbdcf59 -> af1306190dbdcf59 OK
+  identity.json_sha256     7d5d00221d1da3fe -> 7d5d00221d1da3fe OK
+  config.json_sha256       938e148f256e589f -> 938e148f256e589f OK
+### 6. NEW version opens the OLD profile
+mercy 0.2.1 <venv>/mercy/__init__.py
+config {'provider': 'ollama', 'model': 'qwen3.5:4b', 'conversation_id': 2} num_ctx 8192 think False
+conversations ['Second chat', 'First conversation'] memories ['My compiler project is na', 'Prefers dark themes.']
+messages 2
+### 7. use new version (switch provider => config now has new fields)
+mercy 0.2.1 <venv>/mercy/__init__.py
+saved config keys: ['conversation_id', 'endpoint', 'generation_timeout', 'model', 'num_ctx', 'provider', 'status_timeout', 'think', 'version']
+### 8. ROLLBACK to original wheel
+0.2.0
+### 8a. old version opens profile whose config.json was written by NEW version:
+    raise ValueError('Configuration contains unknown fields.')
+ValueError: Configuration contains unknown fields.
+### 8b. restore config.json from backup, reopen
+mercy 0.2.0 <venv>/mercy/__init__.py
+config {'provider': 'ollama', 'model': 'qwen3.5:4b', 'conversation_id': 2} num_ctx None think None
+conversations ['Second chat', 'First conversation'] memories ['My compiler project is na', 'Prefers dark themes.']
+messages 4
+### 9. data-only check after rollback
+{
+  "profile": "<profile>",
+  "schema": 2,
+  "conversations": 2,
+  "messages": 6,
+  "turns": 3,
+  "memories": 2,
+  "audit": 4,
+  "messages_fingerprint": "0bd19d3d5c53491f",
+  "memories_fingerprint": "af1306190dbdcf59",
+  "identity.json_sha256": "7d5d00221d1da3fe",
+  "config.json_sha256": "938e148f256e589f",

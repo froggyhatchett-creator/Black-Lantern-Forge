@@ -1,0 +1,9 @@
+Black Lantern Mercy 0.2.1
+Build commit : 52f5c118f02ec18e700702d4f88d2441cc4316ec   (branch claude/ecstatic-goldberg-3wxxve)
+Contains     : 418f9a6 (explicit num_ctx fix) + profile diagnostics, harness upgrades, version bump, docs
+Wheel        : mercy/ package is byte-identical to the source tree at the build commit (diffed)
+Source zip   : git archive of black-lantern-mercy/ at the build commit (adds tests/, tools/, scripts/, docs)
+Built with   : setuptools 84.2.1, wheel 0.48.0, Linux, Python 3.12 (pure-Python wheel, py3-none-any)
+Runtime deps : none (standard library + Tcl/Tk)
+This releases/ folder was added in the commit AFTER the build commit; it changes nothing under mercy/.
+Original v0.2.0 wheel for rollback: ../0.2.0/ (sha256 81ea6a64...8a39, matches the hash you supplied)
